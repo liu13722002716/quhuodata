@@ -502,7 +502,7 @@ ele_month_env:
         # 提取违规账单
         - use_df:
             key: ele_day_36_std
-            columns: [运单号, 金额, 账单类型, 账单时间, 详情, 业务类型]
+            columns: [运单号, 金额, 账单类型, 账单时间, 详情, 业务类型, 骑手ID, 站点ID]
         - df_select:
             - '[账单类型] == @p1'
             - p1: 违规扣款
@@ -525,18 +525,18 @@ ele_month_env:
             how: left
             drop_stash: true
         - stash_push_df: []
-        - use_df:
-            key: ele_month_58_std_lookup_map
-            columns: [运单号, 骑手ID, 站点ID]
-        - dask_persist_compute:
-            sync_compute: true
-            chunk_size: 10000
-        - stash_push_df: []
-        - stash_join_df:
-            on: 运单号
-            how: right
-            drop_stash: true
-        - stash_push_df: []
+        # - use_df:
+        #     key: ele_month_58_std_lookup_map
+        #     columns: [运单号, 骑手ID, 站点ID]
+        # - dask_persist_compute:
+        #     sync_compute: true
+        #     chunk_size: 10000
+        # - stash_push_df: []
+        # - stash_join_df:
+        #     on: 运单号
+        #     how: right
+        #     drop_stash: true
+        # - stash_push_df: []
         # 增加站点信息
         - use_df:
             key: std_qplus_dc

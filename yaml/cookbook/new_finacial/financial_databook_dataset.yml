@@ -450,7 +450,6 @@ new_financial_form_snap_env:
             on: [owner_team_id]
             how: left
             drop_stash: true
-        # TODO: columns为空？
         - df_fillna:
             columns: ['51001','41001','41011','41012','41002','41013','41014','41003','41005','41006','41015','41016','41004','41007','41008','41009','41010','41018','41017','41019','41102','41103','6100101','6100102','3100101','3100401','3100201','3120101',"6100202","3160201","31305","71001","71002","71003","71004","71005","71006","71007","71008","72001","72002","72003","72004","72005","72006","72007","72008","72101","72102","73001","73002","73101","73102","73103","73201",settlement_order_quantity_second,platform_basic_income,platform_KPI_income,platform_policy_income,platform_fine_income,strong_allocation_income,unconventional_income,knight_wages,knight_safeguard,settlement_order_quantity_first,main_business_income,outside_business_income,assets_income,asset_gross_profit_deduction_strong_allocation,asset_gross_profit,knight_welfare,riders_with_orders,assets_dc_num,bike_dc_base_vehicle_num,bike_dc_scheduling_vehicle_num,bike_dc_vans_num,bike_dc_other_type_vehicle_num,bike_dc_basic_income,bike_dc_scheduling_income,bike_dc_vans_income,bike_dc_other_type_income,bike_dc_unconventional_income,bike_dc_knight_salary,bike_dc_knight_safeguard,bike_dc_knight_welfare,bike_dc_settlement_vehicls_num,bike_dc_main_business_income,bike_dc_knight_cost,bike_dc_outside_business_income,bike_dc_knight_profit]
             value: 0.0
@@ -578,15 +577,12 @@ new_financial_form_snap_env:
 
         - use_df:
             key: std_qplus_team
-            columns: [team_id,team_type,team_name,industry_codes]
+            columns: [team_id,team_type,team_name]
             rename:
               team_id: coach_team_id
               team_name: coach_team_name
         - df_select:
             - 'team_type == 10'
-        - df_fillna:
-            columns: [industry_codes]
-            value: '[]'
         - stash_push_df: []
 
         - stash_join_df:
@@ -652,7 +648,21 @@ new_financial_form_snap_env:
             on: [coach_team_id]
             how: right
             drop_stash: true
-  
+        - stash_push_df: []
+        - use_df:
+            key: std_qplus_team
+            columns: [team_id,industry_codes]
+            rename:
+              team_id: coach_team_id
+        - df_fillna:
+            columns: [industry_codes]
+            value: '[]'
+        - stash_push_df: []
+
+        - stash_join_df:
+            on: [coach_team_id]
+            how: right
+            drop_stash: true  
 
 
     # 商圈聚合到大区
@@ -774,15 +784,13 @@ new_financial_form_snap_env:
 
         - use_df:
             key: std_qplus_team
-            columns: [team_id,team_type,team_name,industry_codes]
+            columns: [team_id,team_type,team_name]
             rename:
               team_id: theater_team_id
               team_name: theater_team_name
         - df_select:
             - 'team_type == 20'
-        - df_fillna:
-            columns: [industry_codes]
-            value: '[]'
+
         - stash_push_df: []
 
         - stash_join_df:
@@ -847,7 +855,22 @@ new_financial_form_snap_env:
             on: [theater_team_id]
             how: right
             drop_stash: true
-  
+        - stash_push_df: []
+
+        - use_df:
+            key: std_qplus_team
+            columns: [team_id,industry_codes]
+            rename:
+              team_id: theater_team_id
+        - df_fillna:
+            columns: [industry_codes]
+            value: '[]'
+        - stash_push_df: []
+
+        - stash_join_df:
+            on: [theater_team_id]
+            how: right
+            drop_stash: true  
 
 
 
@@ -1001,7 +1024,7 @@ new_financial_form_snap_env:
 
         - use_df:
             key: std_qplus_team
-            columns: [team_id,team_type,team_name,industry_codes]
+            columns: [team_id,team_type,team_name]
             rename:
               team_id: division_team_id
               team_name: division_team_name
@@ -1074,9 +1097,21 @@ new_financial_form_snap_env:
             on: [division_team_id]
             how: right
             drop_stash: true
- 
+        - stash_push_df: []
 
-
+        - use_df:
+            key: std_qplus_team
+            columns: [team_id,industry_codes]
+            rename:
+              team_id: division_team_id
+        - df_fillna:
+            columns: [industry_codes]
+            value: '[]'
+        - stash_push_df: []
+        - stash_join_df:
+            on: [division_team_id]
+            how: right
+            drop_stash: true 
 
     # 商圈聚合到事业部
     - name: cost_revenue_dc_agg_business
@@ -1230,15 +1265,12 @@ new_financial_form_snap_env:
 
         - use_df:
             key: std_qplus_team
-            columns: [team_id,team_type,team_name,industry_codes]
+            columns: [team_id,team_type,team_name]
             rename:
               team_id: business_team_id
               team_name: business_team_name
         - df_select:
             - 'team_type == 40'
-        - df_fillna:
-            columns: [industry_codes]
-            value: '[]'
         - stash_push_df: []
 
         - stash_join_df:
@@ -1291,7 +1323,22 @@ new_financial_form_snap_env:
 
         - stash_concat_df:
             drop_stash: True
+        - stash_push_df: []
 
+        - use_df:
+            key: std_qplus_team
+            columns: [team_id,industry_codes]
+            rename:
+              team_id: business_team_id
+        - df_fillna:
+            columns: [industry_codes]
+            value: '[]'
+        - stash_push_df: []
+
+        - stash_join_df:
+            on: [business_team_id]
+            how: right
+            drop_stash: true
 
 
 
