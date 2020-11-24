@@ -150,8 +150,8 @@ ele_month_env:
             - '([账单类型] == @p3) & ([业务类型] in @p4)'
             - p3: 考核奖惩
               p4: KPI
-        - df_py_select:
-            - 'df[u"详情"].str.contains(u"上")'
+#        - df_py_select:
+#            - 'df[u"详情"].str.contains(u"上")'
         - df_groupby:
             by: [账单时间, 骑手ID, 站点ID]
         - df_sum:
@@ -465,6 +465,7 @@ ele_month_env:
               - T时效
               - 驻店补贴
               - 品类补贴
+              - 加盟商ID
         - rename_cols:
             - 团队ID: 站点ID
         - set_date_column:
@@ -561,6 +562,7 @@ ele_daily_env:
               - T时效
               - 驻店补贴
               - 品类补贴
+              - 加盟商ID
             dataset_cate: raw
             template_code: ele_day_34
         - rename_cols:
@@ -678,8 +680,8 @@ ele_daily_env:
             - '([账单类型] == @p3) & ([业务类型] in @p4)'
             - p3: 考核奖惩
               p4: KPI
-        - df_py_select:
-            - 'df[u"详情"].str.contains(u"上")'
+#        - df_py_select:
+#            - 'df[u"详情"].str.contains(u"上")'
         - df_groupby:
             by: [账单时间, 骑手ID, 站点ID]
         - df_sum:
@@ -812,6 +814,7 @@ ele_daily_env:
       name: ele_day_40_std_ext
     - cooks:
         - fetch_dataset:
+            datakit_pull_way: last_day
             columns:
               - 运单号
               - 问题单类型

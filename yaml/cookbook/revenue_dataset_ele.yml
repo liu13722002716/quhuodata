@@ -142,6 +142,216 @@ ele_daily_env:
         - set_meta_month_column:
             - month
 
+
+  #通过上月的kpi数据形成映射表
+  ###### modify kpi 20201120
+    - cooks:
+        - fetch_dataset:
+            dataset_type_code: ele_month_37_std_ext
+            dataset_cate: std
+            columns: [ 账单时间,站点ID,上KPI收入 ]
+            month_range: true
+            month_delta: -4
+            ignore_null_error: true
+            empty_df_record:
+              账单时间: 19990909
+              站点ID: '-'
+              上KPI收入: 0.0
+            rename:
+              上KPI收入: KPI收入
+
+#        - df_select:
+#            - '[账单时间] != 19990909'
+        - set_month_column:
+            src_column: 账单时间
+        #            dest_column: month
+        - df_rename_columns:
+            - 账单时间: month
+        - df_groupby:
+            by: [ month,站点ID ]
+        - df_sum:
+            column: KPI收入
+        - df_reset_index: [ ]
+        - stash_push_df: [ ]
+
+        - fetch_dataset:
+            dataset_type_code: ele_worker_order_common_kpi_by_monthly_t2
+            dataset_cate: std
+            columns: [ month,dc_id,站点ID,完成单量 ]
+            month_range: true
+            month_delta: -4
+            ignore_null_error: true
+            empty_df_record:
+              month: 199909
+              dc_id: '-'
+              站点ID: '-'
+              完成单量: 0
+#        - df_select:
+#            - '[month] != 199909 '
+        - df_groupby:
+            by: [ month,dc_id,站点ID ]
+        - df_sum:
+            column: 完成单量
+        - df_reset_index: [ ]
+        - stash_push_df: [ ]
+
+        - stash_join_df:
+            on: [ month,站点ID ]
+            how: right
+            drop_stash: true
+        - df_fillna:
+            columns: [ KPI收入,完成单量 ]
+            value: 0
+        - df_reset_index: [ ]
+        - run_py:
+            - |
+              df = to_df(df)
+              df[u'单KPI收入'] = 0
+              df.loc[df.loc[:,u'完成单量'] > 0,u'单KPI收入'] =  df[u'KPI收入']/df[u'完成单量']
+              result = df
+        - df_select:
+            - '[单KPI收入] > 0'
+        - df_groupby:
+            by: [ dc_id,站点ID ]
+        - df_median:
+            column: [ 单KPI收入 ]
+        - df_reset_index: [ ]
+        - df_rename_columns:
+            - 单KPI收入: 上月单均KPI
+        - add_cols:
+            - 本月默认每单KPI: 0.00
+        - df_eval:
+            - |
+              [本月实际每单KPI] = [上月单均KPI] + [本月默认每单KPI]
+        - set_meta_month_column:
+            - month
+      sync_result: true
+      keep_result: true
+      name: ele_day_36_std_ext_mini
+
+    #    - name: ele_day_36_std_ext_mini
+#      sync_result: true
+#      keep_result: true
+#      cooks:
+#        - use_df:
+#            key: std_qplus_vendor_dc_map
+#            columns: [vendor_dc_id,dc_id]
+#            rename:
+#              vendor_dc_id: 站点ID
+#        - add_cols:
+#            - 本月默认每单KPI: 0.00
+#        - stash_push_df: []
+#        - fetch_dataset:
+#            dataset_type_code: ele_month_37_std_ext
+#            dataset_cate: std
+#            columns: [站点ID,上KPI收入]
+#            month_value: prev_month
+#            ignore_null_error: true
+#            empty_df_record:
+#              站点ID: '-'
+#              上KPI收入: 0.0
+#            rename:
+#                上KPI收入: KPI收入
+#        - df_groupby:
+#            by: [站点ID]
+#        - df_sum:
+#          column: KPI收入
+#        - df_reset_index: []
+#
+#        - stash_push_df: []
+#        - stash_join_df:
+#            on: [站点ID]
+#            how: left
+#            drop_stash: true
+#        - stash_push_df: []
+#        - fetch_dataset:
+#            dataset_type_code: ele_worker_order_common_kpi_by_monthly_t2
+#            dataset_cate: std
+#            columns: [dc_id,站点ID,完成单量]
+#            month_value: prev_month
+#            ignore_null_error: true
+#            empty_df_record:
+#              dc_id: '-'
+#              站点ID: '-'
+#              完成单量: 0
+#        - df_groupby:
+#            by: [dc_id,站点ID]
+#        - df_sum:
+#          column: 完成单量
+#        - df_reset_index: []
+#
+#        - stash_push_df: []
+#        - stash_join_df:
+#            on: [站点ID]
+#            how: right
+#            drop_stash: true
+#        - df_to_float:
+#            - KPI收入
+#        - df_to_int:
+#            - 完成单量
+#        - df_eval:
+#            - '[上月单均KPI] = [KPI收入] / [完成单量]'
+#        - df_to_float:
+#            - 上月单均KPI
+#        - df_to_float:
+#            - 本月默认每单KPI
+#        - df_eval:
+#            - '[本月实际每单KPI] = [上月单均KPI] + [本月默认每单KPI]'
+#
+#        - set_meta_month_column:
+#            - month
+
+    #计算当月的KPI收入
+    - name: ele_day_36_std_ext_kpi
+      sync_result: true
+      keep_result: true
+      cooks:
+        - fetch_dataset:
+            dataset_type_code: ele_worker_order_common_kpi_by_monthly_t2
+            dataset_cate: std
+            columns: [dc_id,站点ID,完成单量]
+            ignore_null_error: true
+            empty_df_record:
+              dc_id: '-'
+              站点ID: '-'
+              完成单量: 0
+        - df_groupby:
+            by: [dc_id,站点ID]
+        - df_sum:
+            column: 完成单量
+        - df_reset_index: []
+        - stash_push_df: []
+
+        - use_df:
+            key: ele_day_36_std_ext_mini
+            columns: [dc_id,站点ID, 本月实际每单KPI]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [站点ID]
+            how: right
+            drop_stash: true
+
+        - df_reset_index: []
+        - df_to_int:
+            - 完成单量
+        - df_to_float:
+            - 本月实际每单KPI
+        - df_fillna:
+            columns: [本月实际每单KPI]
+            value: 0.0
+        - df_eval:
+            - '[上KPI收入] = [完成单量] * [本月实际每单KPI]'
+        - set_meta_month_column:
+            - month
+
+
+
+
+
+
+
+
+
     - name: ele_day_36_std_ext_lookup_map
       sync_result: true
       keep_result: true
@@ -149,7 +359,7 @@ ele_daily_env:
         # 申诉应收金额(六级指标)
         - use_df:
             key: ele_day_36_std_ext
-            column: [骑手ID, 站点ID, 申诉]
+            columns: [骑手ID, 站点ID, 申诉]
         - df_groupby:
             by: [站点ID]
         - df_sum:
@@ -160,7 +370,7 @@ ele_daily_env:
         # 违规扣款(六级指标)
         - use_df:
             key: ele_day_36_std_ext
-            column: [骑手ID, 站点ID, 违规（含罚单）]
+            columns: [骑手ID, 站点ID, 违规（含罚单）]
         - df_groupby:
             by: [站点ID]
         - df_sum:
@@ -171,7 +381,7 @@ ele_daily_env:
         # 骑手费用扣款(六级指标)
         - use_df:
             key: ele_day_36_std_ext
-            column: [骑手ID, 站点ID, 骑手费用扣款]
+            columns: [骑手ID, 站点ID, 骑手费用扣款]
         - df_groupby:
             by: [站点ID]
         - df_sum:
@@ -180,8 +390,8 @@ ele_daily_env:
         - stash_push_df: []
         # 上KPI收入
         - use_df:
-            key: ele_day_36_std_ext
-            column: [骑手ID, 站点ID, 上KPI收入]
+            key: ele_day_36_std_ext_kpi
+            columns: [站点ID, 上KPI收入]
         - df_groupby:
             by: [站点ID]
         - df_sum:
@@ -191,7 +401,7 @@ ele_daily_env:
         # 下KPI收入
         - use_df:
             key: ele_day_36_std_ext
-            column: [骑手ID, 站点ID, 下KPI收入]
+            columns: [骑手ID, 站点ID, 下KPI收入]
         - df_groupby:
             by: [站点ID]
         - df_sum:
@@ -316,6 +526,10 @@ ele_daily_env:
         - use_df:
             key: ele_day_38_std_ext_lookup_map
             columns: [dc_id, 运单补贴]
+            ignore_null_error: true
+            empty_df_record:
+              dc_id: '-'
+              运单补贴: 0.0
         - stash_push_df: []
         - use_df:
             key: ele_day_40_std_ext_lookup_map
@@ -370,6 +584,9 @@ ele_month_env:
     - ele_month_37_std_ext
     - ele_month_39_std_ext
     - ele_month_41_std_ext
+  context_global_vars:
+  # 增值税率
+    tax_rate: 1.06
 
   play:
     - name: ele_month_35_single_std_ext

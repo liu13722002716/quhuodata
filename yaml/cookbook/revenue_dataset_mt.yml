@@ -26,6 +26,7 @@ mt_daily_env:
     tax_rate: 1.06
 
   play:
+     #收入表和订单表拼接，以日期和商圈为索引
     - name: mt_day_4_std_single_ext
       sync_result: true
       keep_result: true
@@ -96,6 +97,28 @@ mt_daily_env:
         - set_meta_month_column:
             - month
 
+    #测算商圈一天的收入
+    - name: mt_base_revenue_add_one_day
+      sync_result: true
+      keep_result: true
+      cooks:
+        - use_df:
+            key: mt_day_4_std_single_ext
+            columns: [日期,dc_id,单日收入小计]
+            rename:
+              日期: order_day
+              单日收入小计: money
+        - df_groupby:
+            by: [dc_id]
+        - df_agg:
+            - order_day: max
+              money: mean
+        - df_reset_index: []
+
+
+
+
+    #将收入订单表进行聚合
     - name: mt_day_4_std_ttl_ext
       sync_result: true
       keep_result: true
@@ -144,6 +167,48 @@ mt_daily_env:
         - set_meta_month_column:
             - month
 
+        #添加一天的基础收入
+        - push_dataset:
+            key: mt_day_4_std_ttl_ext_mini
+        - use_df:
+            key: mt_day_4_std_ttl_ext_mini
+        - stash_push_df: []
+        - use_df:
+            key: mt_base_revenue_add_one_day
+        - fetch_cols:
+            columns: [dc_id,money]
+        - stash_push_df: []
+        - stash_join_df:
+            on: dc_id
+            how: right
+            drop_stash: true
+        - df_reset_index: []
+        - df_fillna:
+            columns: [money]
+            value: 0.0
+        - df_eval:
+            - '[收入小计] = [收入小计] + [money]'
+
+#        - push_dataset:
+#            key: final_add_one_day
+#        - use_df:
+#            key: final_add_one_day
+#        - df_select:
+#            - '[订单天数] < [当月总天数]'
+#        - df_eval:
+#            - '[收入小计] = [收入小计] + [money]'
+#        - stash_push_df: []
+#
+#        - use_df:
+#            key: final_add_one_day
+#        - df_select:
+#            - '[订单天数] >= [当月总天数]'
+#        - stash_push_df: []
+#
+#        - stash_concat_df:
+#            drop_stash: True
+
+    #餐损赔付
     - name: mt_day_5_std_ext
       sync_result: true
       keep_result: true
@@ -191,6 +256,7 @@ mt_daily_env:
         - set_meta_month_column:
             - month
 
+    #固定奖惩的明细
     - name: mt_day_12_std_ext
       sync_result: true
       keep_result: true
@@ -258,6 +324,7 @@ mt_daily_env:
         - set_meta_month_column:
             - month
 
+    #配送服务2.0违规扣款明细
     - name: mt_day_25_std_ext
       sync_result: true
       keep_result: true
@@ -429,6 +496,7 @@ mt_daily_env:
           - set_meta_month_column:
               - month
 
+    #星火履约罚单
     - name: mt_day_15_std_ext
       sync_result: true
       keep_result: true
@@ -567,6 +635,9 @@ mt_month_env:
     - mt_month_29_std
 
     - mt_day_2_3_dc_qs_order_lookup_map
+  context_global_vars:
+     # 增值税率
+    tax_rate: 1.06
 
   play:
     - name: mt_month_7_std_single_ext

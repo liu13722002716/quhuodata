@@ -23,7 +23,7 @@ mt_daily_env:
       cooks:
         - use_df:
             key: mt_dc_cost_t2
-            columns: [dc_id, 单成本]
+            columns: [dc_id, 单成本,工资单成本]
             index: dc_id
         - stash_push_df: []
         - use_df:
@@ -38,7 +38,7 @@ mt_daily_env:
             drop_stash: true
         - df_reset_index: []
         - df_eval:
-            - '[商圈骑手成本] = [单成本] * ([完成单量])'
+            - '[商圈骑手成本] = [工资单成本] * ([完成单量])'
         - set_meta_month_column:
             - month
 
