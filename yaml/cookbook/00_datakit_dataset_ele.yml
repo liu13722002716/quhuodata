@@ -418,9 +418,10 @@ ele_month_env:
       keep_result: true
       cooks:
         - fetch_dataset:
+            datakit_pull_way: last_day
             dataset_cate: raw
             template_code: ele_month_57
-            columns: [团队ID, 骑手id,运单号, 运单送达时间, 骑手T超时时长, 用户评价状态,用户评价责任方]
+            columns: [团队ID, 骑手id,运单号, 运单送达时间, 骑手T超时时长, 用户评价状态,用户评价责任方,下载城市,是否T+2用户评价]
             rename:
               团队ID: 站点ID
               骑手id: 骑手ID
@@ -439,6 +440,7 @@ ele_month_env:
       keep_result: true
       cooks:
         - fetch_dataset:
+            datakit_pull_way: last_day
             dataset_cate: raw
             template_code: ele_month_58
             columns:
@@ -488,6 +490,7 @@ ele_month_env:
       sync_result: true
       cooks:
         - fetch_dataset:
+            datakit_pull_way: last_day
             columns:
               - 评价日期
               - 运单号
@@ -497,6 +500,8 @@ ele_month_env:
               - 评价来源
               - 骑手id
               - 判定状态
+              - 下载城市
+              - 团队
             dataset_cate: raw
             template_code: ele_month_59
             rename:
