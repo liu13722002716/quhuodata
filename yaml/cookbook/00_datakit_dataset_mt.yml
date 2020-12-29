@@ -10,7 +10,6 @@ mt_daily_env:
   play:
     - name: mt_day_1_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns:
@@ -51,7 +50,6 @@ mt_daily_env:
 
     - name: mt_day_2_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns:
@@ -81,7 +79,6 @@ mt_daily_env:
             - '[日期] != 0'
     - name: mt_day_3_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns:
@@ -112,7 +109,6 @@ mt_daily_env:
 
     - name: mt_day_2_3_dc_qs_order_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_2_std
@@ -136,7 +132,6 @@ mt_daily_env:
 
     - name: mt_day_30_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns:
@@ -168,7 +163,6 @@ mt_daily_env:
 
     - name: mt_day_30_dc_qs_order_std_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_30_std
@@ -228,7 +222,6 @@ mt_daily_env:
             template_code: mt_day_12
     - name: mt_day_13_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             datakit_pull_way: last_day
@@ -342,7 +335,6 @@ mt_daily_env:
             template_code: mt_day_25
     - name: mt_day_18_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns:
@@ -633,7 +625,6 @@ mt_month_env:
             template_code: mt_month_29
     - name: mt_month_21_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns:

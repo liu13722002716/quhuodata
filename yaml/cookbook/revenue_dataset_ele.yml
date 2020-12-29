@@ -22,7 +22,6 @@ ele_daily_env:
   play:
     - name: ele_day_34_single_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         # 单日结算单量
         - use_df:
@@ -84,7 +83,6 @@ ele_daily_env:
 
     - name: ele_day_34_ttl_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         # 结算单量(六级指标)
         - use_df:
@@ -226,12 +224,10 @@ ele_daily_env:
         - set_meta_month_column:
             - month
       sync_result: true
-      keep_result: true
       name: ele_day_36_std_ext_mini
 
     #    - name: ele_day_36_std_ext_mini
 #      sync_result: true
-#      keep_result: true
 #      cooks:
 #        - use_df:
 #            key: std_qplus_vendor_dc_map
@@ -304,7 +300,6 @@ ele_daily_env:
     #计算当月的KPI收入
     - name: ele_day_36_std_ext_kpi
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: ele_worker_order_common_kpi_by_monthly_t2
@@ -354,7 +349,6 @@ ele_daily_env:
 
     - name: ele_day_36_std_ext_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         # 申诉应收金额(六级指标)
         - use_df:
@@ -445,7 +439,6 @@ ele_daily_env:
 
     - name: ele_day_38_std_ext_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         # 运单补贴(六级指标)
         - use_df:
@@ -481,7 +474,6 @@ ele_daily_env:
 
     - name: ele_day_40_std_ext_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         # 非运单补贴(六级指标)
         - use_df:
@@ -591,7 +583,6 @@ ele_month_env:
   play:
     - name: ele_month_35_single_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         # 单日结算单量
         - use_df:
@@ -653,7 +644,6 @@ ele_month_env:
 
     - name: ele_month_35_ttl_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         # 结算单量(六级指标)
         - use_df:
@@ -713,7 +703,6 @@ ele_month_env:
 
     - name: ele_month_37_std_ext_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         # 申诉应收金额(六级指标)
         - use_df:
@@ -804,7 +793,6 @@ ele_month_env:
 
     - name: ele_month_39_std_ext_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         # 运单补贴(六级指标)
         - use_df:
@@ -840,7 +828,6 @@ ele_month_env:
 
     - name: ele_month_41_std_ext_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
         # 非运单补贴(六级指标)
         - use_df:

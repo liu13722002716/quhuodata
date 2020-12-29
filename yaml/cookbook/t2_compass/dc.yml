@@ -44,7 +44,6 @@ compass_knight_form_snap_env:
   play:
     # 得到本月总天数和当前天数
     - name: compass_current_total_days
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -60,9 +59,8 @@ compass_knight_form_snap_env:
                 df = df.groupby(u'month').agg(lambda x: x.mode()).reset_index()
                 result = df
 
-    # 处理美团收入形成dc基础表
-    - name: compass_dc_label_mt_base
-      keep_result: true
+    # 将所有商圈进行保存，供下面无效商圈数据做筛选
+    - name: compass_dc_label_mt_all_dc
       sync_result: true
       cooks:
         - use_df:
@@ -213,10 +211,14 @@ compass_knight_form_snap_env:
                 df.loc[df.loc[:,u'资产商圈收入'] < 0,u'资产商圈利润率'] = np.nan
                 result = df
 
-        # 将所有商圈进行保存，供下面无效商圈数据做筛选
-        - push_dataset:
-            key: compass_dc_label_mt_all_dc
 
+
+
+    - name: compass_dc_label_mt_base
+      sync_result: true
+      cooks:
+        - use_df:
+            key: compass_dc_label_mt_all_dc
         # 结算单量、收入（主营业务收入）、成本（骑士成本：6100101、6100102、3100101、3100401、3100201、3120101），3项任意一项不为0时定义为参与排名商圈
         - df_select:
             - '[商圈总成本] != @p1 | [主营业务收入] != @p1 | [结算单量] != @p1'
@@ -305,7 +307,6 @@ compass_knight_form_snap_env:
 
     # 处理美团外卖dc中间表
     - name: compass_dc_label_mt_platform_median
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -415,7 +416,6 @@ compass_knight_form_snap_env:
 
     # 美团外卖dc结果
     - name: compass_dc_label_mt_platform
-      keep_result: true
       sync_result: true
       cooks:
 
@@ -577,7 +577,6 @@ compass_knight_form_snap_env:
 
     # 美团非外卖dc中间结果
     - name: compass_dc_label_mt_non_platform_median
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -675,7 +674,6 @@ compass_knight_form_snap_env:
 
     # 美团非外卖dc中间结果2
     - name: compass_dc_label_mt_non_platform_median2
-      keep_result: true
       sync_result: true
       cooks:
         # 打利润标签
@@ -725,7 +723,6 @@ compass_knight_form_snap_env:
 
     # 美团非外卖dc结果
     - name: compass_dc_label_mt_non_platform
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -895,8 +892,7 @@ compass_knight_form_snap_env:
 
 
     # 处理饿了么收入形成dc基础表
-    - name: compass_dc_label_ele_base
-      keep_result: true
+    - name: compass_dc_label_ele_all_dc
       sync_result: true
       cooks:
         - use_df:
@@ -1044,7 +1040,14 @@ compass_knight_form_snap_env:
                 result = df
 
         # 将所有商圈进行保存，供下面无效商圈数据做筛选
-        - push_dataset:
+#        - push_dataset:
+#            key: compass_dc_label_ele_all_dc
+
+
+    - name: compass_dc_label_ele_base
+      sync_result: true
+      cooks:
+        - use_df:
             key: compass_dc_label_ele_all_dc
 
         # 结算单量、收入（主营业务收入）、成本（骑士成本：6100101、6100102、3100101、3100401、3100201、3120101），3项任意一项不为0时定义为参与排名商圈
@@ -1134,7 +1137,6 @@ compass_knight_form_snap_env:
 
 #    # 饿了么外卖dc中间表
 #    - name: compass_dc_label_ele_platform_median
-#      keep_result: true
 #      sync_result: true
 #      cooks:
 #        - use_df:
@@ -1244,7 +1246,6 @@ compass_knight_form_snap_env:
 #
 #    # 饿了么外卖dc结果
 #    - name: compass_dc_label_ele_platform
-#      keep_result: true
 #      sync_result: true
 #      cooks:
 #        # 打难度标签
@@ -1404,7 +1405,6 @@ compass_knight_form_snap_env:
 
     # 饿了么非外卖dc中间表
     - name: compass_dc_label_ele_non_platform_median
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -1502,7 +1502,6 @@ compass_knight_form_snap_env:
 
     # 饿了么非外卖dc中间表2
     - name: compass_dc_label_ele_non_platform_median2
-      keep_result: true
       sync_result: true
       cooks:
         # 打利润标签
@@ -1552,7 +1551,6 @@ compass_knight_form_snap_env:
 
     # 饿了么非外卖dc结果表
     - name: compass_dc_label_ele_non_platform
-      keep_result: true
       sync_result: true
       cooks:
         # 打利润率标签
@@ -1725,7 +1723,6 @@ compass_knight_form_snap_env:
 
     # 将美团、饿了么(外卖|非外卖)合并在一起，计算各种生肖总数
     - name: compass_dc_label_total_zodiac
-      keep_result: true
       sync_result: true
       cooks:
 
@@ -1770,7 +1767,6 @@ compass_knight_form_snap_env:
 
     # 进行生肖排序
     - name: compass_dc_label_zodiac_rank
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -1918,7 +1914,6 @@ compass_knight_form_snap_env:
 
     # 计算商圈利润、利润率，增加团队关系
     - name: compass_dc_label_add_relation
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -1979,7 +1974,6 @@ compass_knight_form_snap_env:
 
     # mt和elem所有不参与排名的商圈(展示列表)
     - name: compass_dc_label_non_rank_dc
-      keep_result: true
       sync_result: true
       cooks:
         # 筛选美团不参与排名的商圈
@@ -2102,7 +2096,6 @@ compass_knight_form_snap_env:
 
     # mt和elem所有不参与排名的商圈(参与商圈数据合并)
     - name: compass_dc_label_non_rank_dc_add_relation
-      keep_result: true
       sync_result: true
       cooks:
         # 筛选不参与排名商圈进行合并，过滤掉无用字段
@@ -2170,7 +2163,6 @@ compass_knight_form_snap_env:
     # TODO: 需要确认商务维度统计时，是否去除未排名商圈
     # 与上月的商圈结果做差值
     - name: compass_dc_label_chain
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:

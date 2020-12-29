@@ -19,7 +19,6 @@ mt_month_env:
   play:
     - name: mt_cost_revenue_dc_agg_dc_by_monthly
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: std_qplus_dc
@@ -76,7 +75,6 @@ mt_month_env:
 
     - name: mt_teams_basic_lable_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_cost_revenue_dc_agg_dc_by_monthly
@@ -128,7 +126,6 @@ mt_month_env:
 
     - name: mt_cost_knight_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: std_qplus_dc

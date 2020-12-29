@@ -20,7 +20,6 @@ compass_knight_form_snap_env:
 
   play:
     - name: compass_business_team_knight_num
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -34,7 +33,6 @@ compass_knight_form_snap_env:
 
     # 处理事业部基础数据
     - name: compass_business_label_base_front
-      keep_result: true
       sync_result: true
       cooks:
         # 事业部新财报
@@ -176,7 +174,6 @@ compass_knight_form_snap_env:
 
 
     - name: compass_business_label_base
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -395,7 +392,6 @@ compass_knight_form_snap_env:
 
     # 根据城市与大区维度聚合数据
     - name: compass_dc_city_agg_theater
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -412,7 +408,6 @@ compass_knight_form_snap_env:
 
     # 根据城市与分部维度聚合数据
     - name: compass_dc_city_agg_division
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -429,7 +424,6 @@ compass_knight_form_snap_env:
 
     # 根据城市、主体与事业部维度聚合数据
     - name: compass_dc_city_agg_business
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:

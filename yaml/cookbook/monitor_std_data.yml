@@ -68,7 +68,6 @@ monitor_std_data_env:
     # 饿了么和美团可能会出现最终日期不同的情况
     # 监控完成单量，日对比，
     - name: monitor_std_dc_order_num_daily
-      keep_result: true
       sync_result: true
       cook: 
         # 饿了么和美团的最终日期是不同的
@@ -257,7 +256,6 @@ monitor_std_data_env:
 
     # 监控商圈基础收入
     - name: monitor_std_dc_revenue
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -363,7 +361,6 @@ monitor_std_data_env:
 
    # 监控骑手成本
     - name: monitor_std_dc_knight_cost
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -522,7 +519,6 @@ monitor_std_data_env:
 
    # 汇总输出数据监控结果
     - name: monitor_std_output
-      keep_result: true
       sync_result: true
       cook:
         - use_df:
@@ -567,7 +563,6 @@ monitor_std_data_env:
 
    # 对基础数据的单量监控
     - name: monitor_std_input_dc_order_num
-      keep_result: true
       sync_result: true
       cook: 
       # 饿了么和美团最终日期可能不一样，所以要分开计算再汇总
@@ -763,7 +758,6 @@ monitor_std_data_env:
 
    # 对商圈基础收入的输入数据进行监控
     - name: monitor_std_input_dc_revenue_cost
-      keep_result: true
       sync_result: true
       cook:
         - use_df:
@@ -882,7 +876,6 @@ monitor_std_data_env:
 
    # 商圈单成本异常值
     - name: monitor_std_dc_order_cost_outlier
-      keep_result: true
       sync_result: true
       cook:
         - use_df:
@@ -943,7 +936,6 @@ monitor_std_data_env:
 
     # 汇总输入监控结果
     - name: monitor_std_input
-      keep_result: true
       sync_result: true
       cook: 
         - use_df:
@@ -983,7 +975,6 @@ monitor_std_data_env:
 
    # 输出最终结果
     - name: monitor_std_data
-      keep_result: true
       sync_result: true
       cook:
         - use_df:

@@ -12,7 +12,6 @@ mt_ele_daily_env:
     # 计算饿了么当月城市单成本
     - name: ele_city_per_order_cost_median_month
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc
@@ -68,7 +67,6 @@ mt_ele_daily_env:
     # 计算美团当月城市单成本
     - name: mt_city_per_order_cost_median_month
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc

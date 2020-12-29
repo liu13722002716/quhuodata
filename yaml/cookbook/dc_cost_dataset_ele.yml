@@ -23,7 +23,6 @@ ele_daily_env:
     #维度: 日期 站点 骑手 
     - name: ele_cost_basic_lable_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_dc_cost_t2
@@ -52,7 +51,6 @@ ele_daily_env:
     # 维度：单站点 骑手累计 
     - name: ele_cost_knight_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_cost_basic_lable_by_daily_t2
@@ -68,7 +66,6 @@ ele_daily_env:
     # 维度：日期 站点
     - name: ele_cost_dc_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_cost_basic_lable_by_daily_t2
@@ -84,7 +81,6 @@ ele_daily_env:
     #  维度：站点  
     - name: ele_cost_dc_knight_by_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_cost_basic_lable_by_daily_t2

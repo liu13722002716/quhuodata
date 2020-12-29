@@ -21,7 +21,6 @@ mt_daily_env:
   play:
     - name: mt_worker_order_common_kpi_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_18_std
@@ -161,7 +160,6 @@ mt_month_env:
   play:
     - name: mt_worker_order_common_kpi_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_21_std

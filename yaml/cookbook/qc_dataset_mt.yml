@@ -50,7 +50,6 @@ mt_daily_env:
   play:
     - name: mt_teams_service_quality_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: std_qplus_vendor_dc_map
@@ -72,7 +71,6 @@ mt_daily_env:
     # 15分钟超时订单占比得分
     - name: mt_fifteen_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 15分钟超时订单占比得分,15分钟超时订单占比】
         - use_df:
@@ -127,7 +125,6 @@ mt_daily_env:
 
     - name: mt_advance_reach_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 提前点送达得分,提前点送达率】
         - use_df:
@@ -183,7 +180,6 @@ mt_daily_env:
   # 不满意率得分
     - name: mt_unsatisfied_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 不满意率得分,不满意率】
         - use_df:
@@ -239,7 +235,6 @@ mt_daily_env:
     # 配送原因未完成率得分
     - name: mt_unfinished_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 表格样式【dc_id, 配送原因未完成率得分,配送原因未完成率】
         - use_df:
@@ -295,7 +290,6 @@ mt_daily_env:
     # 复合准时率考核得分
     - name: mt_punctual_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 复合准时率考核得分,复合准时率】
         - use_df:
@@ -351,7 +345,6 @@ mt_daily_env:
     # merge
     - name: mt_dc_parts_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         #   形成表格样式【dc_id,15分钟超时订单占比得分,提前点送达得分,不满意率得分,配送原因未完成率得分,复合准时率考核得分,服务质量分】
         - use_df:
@@ -474,7 +467,6 @@ mt_month_env:
   play:
     - name: mt_month_16_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: std_qplus_vendor_dc_map
@@ -496,7 +488,6 @@ mt_month_env:
     # 15分钟超时订单占比得分
     - name: mt_fifteen_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 15分钟超时订单占比得分,15分钟超时订单占比】
         - use_df:
@@ -551,7 +542,6 @@ mt_month_env:
 
     - name: mt_advance_reach_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 提前点送达得分,提前点送达率】
         - use_df:
@@ -607,7 +597,6 @@ mt_month_env:
   # 不满意率得分
     - name: mt_unsatisfied_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 不满意率得分,不满意率】
         - use_df:
@@ -663,7 +652,6 @@ mt_month_env:
     # 配送原因未完成率得分
     - name: mt_unfinished_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 表格样式【dc_id, 配送原因未完成率得分,配送原因未完成率】
         - use_df:
@@ -719,7 +707,6 @@ mt_month_env:
     # 复合准时率考核得分
     - name: mt_punctual_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         #  表格样式【dc_id, 复合准时率考核得分,复合准时率】
         - use_df:
@@ -775,7 +762,6 @@ mt_month_env:
     # merge
     - name: mt_dc_parts_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         #   形成表格样式【dc_id,15分钟超时订单占比得分,提前点送达得分,不满意率得分,配送原因未完成率得分,复合准时率考核得分,服务质量分】
         - use_df:

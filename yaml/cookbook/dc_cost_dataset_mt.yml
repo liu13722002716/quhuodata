@@ -19,7 +19,6 @@ mt_daily_env:
     #维度: 日期 站点 骑手
     - name: mt_cost_basic_lable_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_dc_cost_t2
@@ -45,7 +44,6 @@ mt_daily_env:
     # 维度：单站点 骑手
     - name: mt_cost_knight_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_cost_basic_lable_by_daily_t2
@@ -61,7 +59,6 @@ mt_daily_env:
     # 维度：日期 站点
     - name: mt_cost_dc_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_cost_basic_lable_by_daily_t2
@@ -77,7 +74,6 @@ mt_daily_env:
     #  维度：站点 
     - name: mt_cost_dc_knight_by_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_cost_basic_lable_by_daily_t2

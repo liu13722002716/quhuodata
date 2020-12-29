@@ -20,7 +20,6 @@ compass_monitor_form_snap_env:
   play:
       # 处理集团单均成本
     - name: monitor_compass_group_avgcost
-      keep_result: true
       sync_result: true
       cooks:
         #”单均成本“，”单均收入“，”利润率“，”日均单量“判断其余的指标
@@ -84,7 +83,6 @@ compass_monitor_form_snap_env:
 
       #通过单均收入可以直接判断主营业务收入和完成单量是否正常
     - name: monitor_compass_group_avgincome
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -148,7 +146,6 @@ compass_monitor_form_snap_env:
 
     #日均单量范围不和其他相关，单独监测（可以考虑直接验算）。完成单量
     - name: monitor_compass_group_dailyorder
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -218,7 +215,6 @@ compass_monitor_form_snap_env:
 
     #利润率可以直接判定 利润 收入 事业部总成本
     - name: monitor_compass_group_profitratio
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -281,7 +277,6 @@ compass_monitor_form_snap_env:
 
     #合并表格
     - name: monitor_compass_group_index_base
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -309,7 +304,6 @@ compass_monitor_form_snap_env:
             columns: [利润率区间是否异常,单均收入区间是否异常,单均成本区间是否异常,日均单量区间是否异常,完成单量区间是否异常]
     #三个值均异常时的特例，无法判断，所有重要指标均标记为错误
     - name: monitor_compass_group_index
-      keep_result: true
       sync_result: true
       cooks:
         #以上为提取前几个表的字段
@@ -408,7 +402,6 @@ compass_monitor_form_snap_env:
     #商圈监测，采用反向思路，只监测最基础的数据
     #日均avg
     - name: monitor_compass_dc_label_dailyorders_avg_mid
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -443,7 +436,6 @@ compass_monitor_form_snap_env:
             how: left
 
     - name: monitor_compass_dc_label_dailyorders
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -547,7 +539,6 @@ compass_monitor_form_snap_env:
             columns: [dc_id,dc_name,platform_code,dc日均单量,是否是新增商圈,dc日均单量区间是否异常,mt_ele_teams_basic_lable_by_daily_t2是否异常]
     #收入
     - name: monitor_compass_dc_label_income
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -675,7 +666,6 @@ compass_monitor_form_snap_env:
             columns: [dc_id,dc_name,platform_code,dc收入,cost_revenue_dc_agg_dc是否异常,dc收入区间是否异常,是否是新增商圈]
     #资产商圈利润
     - name: monitor_compass_dc_label_assetsbusinessprofit
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -805,7 +795,6 @@ compass_monitor_form_snap_env:
 
       # 商圈监控
     - name: monitor_compass_dc_label_index
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:

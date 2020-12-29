@@ -10,7 +10,6 @@ mt_ele_daily_env:
     # 计算美团当月单均成本
     - name: mt_dc_cost_t2_by_dc_month
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc
@@ -57,7 +56,6 @@ mt_ele_daily_env:
     ##### modified at 20201116
     - name: ele_dc_cost_t2_by_dc_month
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc
@@ -101,7 +99,6 @@ mt_ele_daily_env:
     # 变换表名称，供下个指标调用
     - name: mt_dc_cost_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_dc_cost_t2_by_dc_month
@@ -109,7 +106,6 @@ mt_ele_daily_env:
 
     - name: ele_dc_cost_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_dc_cost_t2_by_dc_month

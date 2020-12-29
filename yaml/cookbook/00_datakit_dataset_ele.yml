@@ -55,7 +55,6 @@ ele_month_env:
         - parse_time_span_cols:
             - 业务交易时间
       sync_result: true
-      keep_result: true
       name: ele_month_35_std
     - cooks:
         - use_df:
@@ -65,7 +64,6 @@ ele_month_env:
             - [骑手ID, 站点ID, 订单号, 运单号]
         - df_reset_index: []
       sync_result: true
-      keep_result: True
       name: ele_month_35_std_lookup_map
     - cooks:
         - fetch_dataset:
@@ -95,7 +93,6 @@ ele_month_env:
             - month
       name: ele_month_37_std
       sync_result: true
-      keep_result: true
     - name: ele_month_37_std_ext
       sync_result: true
       cooks:
@@ -197,7 +194,6 @@ ele_month_env:
             drop_stash: true
     - name: ele_month_39_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns:
@@ -259,7 +255,6 @@ ele_month_env:
         - set_meta_month_column:
             - month
       sync_result: true
-      keep_result: true
       name: ele_month_41_std
     - cooks:
         - use_df:
@@ -284,7 +279,6 @@ ele_month_env:
             dataset_cate: raw
             template_code: ele_month_33
       sync_result: true
-      keep_result: true
       name: ele_month_33_std
     - cooks:
         - use_df:
@@ -321,6 +315,20 @@ ele_month_env:
         - df_reset_index: []
         - push_dataset:
             key: ele_month_33_std_tmp
+
+        - use_df:
+            key: ele_month_33_std_tmp
+        - df_select:
+            - '[问题单类型] in @p1'
+            - p1: [配送原因取消, 骑手T+12超时,坏单,超时,虚假配送,违规送达]
+        - df_groupby:
+            by: [ 账单时间, 骑手ID, 站点ID ]
+        - df_count:
+            column: 运单号
+            rename: 问题单总单量
+        - df_reset_index: [ ]
+        - stash_push_df: [ ]
+
         - use_df:
             key: ele_month_33_std_tmp
         - df_select:
@@ -333,6 +341,18 @@ ele_month_env:
             rename: 虚假配送单量
         - df_reset_index: []
         - stash_push_df: []
+
+        - stash_join_df:
+            on: [ 账单时间, 骑手ID, 站点ID ]
+            how: right
+            fillna: 0
+            drop_stash: true
+            force_rebuild_dask: true
+            dtypes:
+              问题单总单量: int64
+              虚假配送单量: int64
+        - stash_push_df: []
+
         - use_df:
             key: ele_month_33_std_tmp
         - df_select:
@@ -345,6 +365,17 @@ ele_month_env:
             rename: 配送原因取消单量
         - df_reset_index: []
         - stash_push_df: []
+
+        - stash_join_df:
+            on: [ 账单时间, 骑手ID, 站点ID ]
+            how: right
+            fillna: 0
+            drop_stash: true
+            force_rebuild_dask: true
+            dtypes:
+              配送原因取消单量: int64
+        - stash_push_df: [ ]
+
         - use_df:
             key: ele_month_33_std_tmp
         - df_select:
@@ -357,6 +388,17 @@ ele_month_env:
             rename: 骑手T12超时单量
         - df_reset_index: []
         - stash_push_df: []
+
+        - stash_join_df:
+            on: [ 账单时间, 骑手ID, 站点ID ]
+            how: right
+            fillna: 0
+            drop_stash: true
+            force_rebuild_dask: true
+            dtypes:
+              骑手T12超时单量: int64
+        - stash_push_df: [ ]
+
         - use_df:
             key: ele_month_33_std_tmp
         - df_select:
@@ -369,6 +411,17 @@ ele_month_env:
             rename: 坏单单量
         - df_reset_index: []
         - stash_push_df: []
+
+        - stash_join_df:
+            on: [ 账单时间, 骑手ID, 站点ID ]
+            how: right
+            fillna: 0
+            drop_stash: true
+            force_rebuild_dask: true
+            dtypes:
+              坏单单量: int64
+        - stash_push_df: [ ]
+
         - use_df:
             key: ele_month_33_std_tmp
         - df_select:
@@ -381,6 +434,17 @@ ele_month_env:
             rename: 超时单量
         - df_reset_index: []
         - stash_push_df: []
+
+        - stash_join_df:
+            on: [ 账单时间, 骑手ID, 站点ID ]
+            how: right
+            fillna: 0
+            drop_stash: true
+            force_rebuild_dask: true
+            dtypes:
+              超时单量: int64
+        - stash_push_df: [ ]
+
         - use_df:
             key: ele_month_33_std_tmp
         - df_select:
@@ -396,16 +460,11 @@ ele_month_env:
         # merge
         - stash_join_df:
             on: [账单时间, 骑手ID, 站点ID]
-            how: outer
+            how: right
             fillna: 0
             drop_stash: true
             force_rebuild_dask: true
             dtypes:
-              虚假配送单量: int64
-              配送原因取消单量: int64
-              骑手T12超时单量: int64
-              坏单单量: int64
-              超时单量: int64
               违规送达单量: int64
         - df_reset_index: []
         - set_meta_month_column:
@@ -415,7 +474,6 @@ ele_month_env:
 # 新增运单详情月账单 0927
     - name: ele_month_57_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             datakit_pull_way: last_day
@@ -437,7 +495,6 @@ ele_month_env:
 # 1-30日累计配送费账单
     - name: ele_month_58_std
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             datakit_pull_way: last_day
@@ -506,6 +563,48 @@ ele_month_env:
             template_code: ele_month_59
             rename:
               骑手id: 骑手ID
+
+    - name: ele_month_48_std
+      sync_result: true
+      cooks:
+      - fetch_dataset:
+          datakit_pull_way: last_day
+          columns:
+              - 骑手ID
+              - 团队ID
+              - 考勤日期
+              - 全天在线时长
+              - 凌晨夜宵在线时长
+              - 早餐在线时长
+              - 午高峰在线时长
+              - 下午在线时长
+              - 晚高峰在线时长
+              - 晚间在线时长
+              - 晚间夜宵在线时长
+          dataset_cate: raw
+          template_code: ele_month_48
+          rename:
+              团队ID: 站点ID
+      - set_meta_month_column:
+          - month
+      - set_date_column:
+          src_column: 考勤日期
+      - df_fillna:
+          columns: [ 全天在线时长,凌晨夜宵在线时长,早餐在线时长,午高峰在线时长,下午在线时长,晚高峰在线时长,晚间在线时长,晚间夜宵在线时长 ]
+          value: '-'
+      - run_py:
+          - |
+            df = to_df(df)
+            fn = lambda x: (int(re.match(u'(.*)小时(.*)分钟', x, ).group(1)) * 60 + int(re.match(u'(.*)小时(.*)分钟', x, ).group(2))) if re.match(u'(.*)小时(.*)分钟', x, ) else 0
+            df[u'全天在线时长-分钟'] = df[u'全天在线时长'].apply(fn)
+            df[u'凌晨夜宵在线时长-分钟'] = df[u'凌晨夜宵在线时长'].apply(fn)
+            df[u'早餐在线时长-分钟'] = df[u'早餐在线时长'].apply(fn)
+            df[u'午高峰在线时长-分钟'] = df[u'午高峰在线时长'].apply(fn)
+            df[u'下午在线时长-分钟'] = df[u'下午在线时长'].apply(fn)
+            df[u'晚高峰在线时长-分钟'] = df[u'晚高峰在线时长'].apply(fn)
+            df[u'晚间在线时长-分钟'] = df[u'晚间在线时长'].apply(fn)
+            df[u'晚间夜宵在线时长-分钟'] = df[u'晚间夜宵在线时长'].apply(fn)
+            result = to_dd(df)
 
 
 ele_daily_env:
@@ -587,7 +686,6 @@ ele_daily_env:
         - parse_time_span_cols:
             - 业务交易时间
       sync_result: true
-      keep_result: true
       name: ele_day_34_std
     - cooks:
         - use_df:
@@ -600,7 +698,6 @@ ele_daily_env:
             sync_compute: true
             chunk_size: 10000
       sync_result: true
-      keep_result: true
       name: ele_day_34_std_lookup_map
     - cooks:
         - fetch_dataset:
@@ -631,7 +728,6 @@ ele_daily_env:
         - set_meta_month_column:
             - month
       sync_result: true
-      keep_result: true
       name: ele_day_36_std
     - cooks:
         - use_df:
@@ -760,7 +856,6 @@ ele_daily_env:
         - set_meta_month_column:
             - month
       sync_result: true
-      keep_result: true
       name: ele_day_38_std
     - cooks:
         - use_df:
@@ -800,7 +895,6 @@ ele_daily_env:
         - set_meta_month_column:
             - month
       sync_result: true
-      keep_result: true
       name: ele_day_40_std
     - cooks:
         - use_df:
@@ -826,7 +920,6 @@ ele_daily_env:
             dataset_cate: raw
             template_code: ele_day_32
       sync_result: true
-      keep_result: true
       name: ele_day_32_std
     - cooks:
         - use_df:

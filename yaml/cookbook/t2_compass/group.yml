@@ -40,7 +40,6 @@ compass_knight_form_snap_env:
   play:
     # 处理集团基础数据
     - name: compass_group_label_base
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -110,7 +109,6 @@ compass_knight_form_snap_env:
 
     # 集团汇总
     - name: compass_group_label_summary
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -158,7 +156,6 @@ compass_knight_form_snap_env:
 
     # 集团城市
     - name: compass_group_label_start_city
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -176,7 +173,6 @@ compass_knight_form_snap_env:
 
     # 集团事业部
     - name: compass_group_label_business
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -188,7 +184,6 @@ compass_knight_form_snap_env:
 
     # 集团分部
     - name: compass_group_label_division
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -197,7 +192,6 @@ compass_knight_form_snap_env:
 
     # 集团大区
     - name: compass_group_label_theater
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -207,7 +201,6 @@ compass_knight_form_snap_env:
 
     # 集团私教
     - name: compass_group_label_coach
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -234,7 +227,6 @@ compass_knight_form_snap_env:
 
     # 集团业主
     - name: compass_group_label_owner
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -260,7 +252,6 @@ compass_knight_form_snap_env:
 
     # 美团日均单
     - name: mt_dc_day_order
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -290,7 +281,6 @@ compass_knight_form_snap_env:
 
     # 饿了么日均单量
     - name: ele_dc_day_order
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -316,7 +306,6 @@ compass_knight_form_snap_env:
 
     # 商圈日单
     - name: dc_day_order
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -333,7 +322,6 @@ compass_knight_form_snap_env:
 
     # 主体单量
     - name: supplier_day_order
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -346,7 +334,6 @@ compass_knight_form_snap_env:
 
     # 主体日均单量及日环比
     - name: supplier_day_order_chain
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -429,7 +416,6 @@ compass_knight_form_snap_env:
 
     # 平台单量
     - name: platform_day_order
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -443,7 +429,6 @@ compass_knight_form_snap_env:
 
     # 项目日均单量及日环比
     - name: platform_day_order_chain
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -499,7 +484,6 @@ compass_knight_form_snap_env:
 
     # 商圈天数据
     - name: dc_day_data
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -527,7 +511,6 @@ compass_knight_form_snap_env:
 
     # 业主天数据
     - name: owner_day_data
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -556,7 +539,6 @@ compass_knight_form_snap_env:
 
     # 私教天数据
     - name: coach_day_data
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -585,7 +567,6 @@ compass_knight_form_snap_env:
 
     # 大区天数据
     - name: theater_day_data
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -614,7 +595,6 @@ compass_knight_form_snap_env:
 
     # 分部天数据
     - name: division_day_data
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -645,7 +625,6 @@ compass_knight_form_snap_env:
 
     # 事业部天数据
     - name: business_day_data
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -676,7 +655,6 @@ compass_knight_form_snap_env:
 
     # 集团天数据
     - name: group_day_data
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:

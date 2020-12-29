@@ -11,7 +11,6 @@ mt_ele_daily_env:
     # 测算饿了么城市单均成本(暂定取历史月份单成本)
 #     - name: ele_city_per_order_cost_median_forecast
 #       sync_result: true
-#       keep_result: true
 #       cooks:
 #         - fetch_dataset:
 #             dataset_type_code: ele_city_per_order_cost_median_month
@@ -29,7 +28,6 @@ mt_ele_daily_env:
   ### 根据上个月的数据计算ele相应的城市工资单成本_median
     - name: ele_city_per_order_cost_median_forecast
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc
@@ -103,7 +101,6 @@ mt_ele_daily_env:
     # 测算美团城市单均成本(暂定取历史月份单成本)
     - name: mt_city_per_order_cost_median_forecast
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: mt_city_per_order_cost_median_month
@@ -122,7 +119,6 @@ mt_ele_daily_env:
 
     - name: mt_city_per_order_cost_median_forecast
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc

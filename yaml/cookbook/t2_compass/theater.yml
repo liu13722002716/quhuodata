@@ -27,7 +27,6 @@ compass_knight_form_snap_env:
   play:
 
     - name: compass_theater_team_knight_num
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -41,8 +40,7 @@ compass_knight_form_snap_env:
 
 
     # 处理大区基础数据
-    - name: compass_theater_label_base_front
-      keep_result: true
+    - name: compass_theater_label_cost_financial
       sync_result: true
       cooks:
         - use_df:
@@ -128,10 +126,14 @@ compass_knight_form_snap_env:
                 [招聘成本] = [招聘成本]/100
                 [意外成本] = [意外成本]/100
 
-        - push_dataset:
+#        - push_dataset:
+#            key: compass_theater_label_cost_financial
+
+    - name: compass_theater_label_base_front
+      sync_result: true
+      cooks:
+        - use_df:
             key: compass_theater_label_cost_financial
-
-
         - stash_push_df: []
         - use_df:
             key: compass_coach_label_chain
@@ -236,7 +238,6 @@ compass_knight_form_snap_env:
 
 
     - name: compass_theater_label_base
-      keep_result: true
       sync_result: true
       cooks:
         
@@ -463,7 +464,6 @@ compass_knight_form_snap_env:
 
 
     - name: compass_theater_label_invalid_theater
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -582,7 +582,6 @@ compass_knight_form_snap_env:
 
     # 与上月的大区结果做差值
     - name: compass_theater_label_chain
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -628,7 +627,6 @@ compass_knight_form_snap_env:
 
     # 罗盘无效团队
     - name: compass_invalid_team
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:

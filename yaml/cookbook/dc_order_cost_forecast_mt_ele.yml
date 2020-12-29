@@ -15,7 +15,6 @@ mt_ele_daily_env:
     # 本月有单商圈
     - name: have_order_dc_mt_ele
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_worker_order_common_kpi_by_monthly_t2
@@ -62,7 +61,6 @@ mt_ele_daily_env:
     # 测算美团单均成本(暂定取历史月份单成本)
 #     - name: mt_dc_cost_t2_by_dc_forecast
 #       sync_result: true
-#       keep_result: false
 #       cooks:
 #         - fetch_dataset:
 #             dataset_type_code: mt_dc_cost_t2_by_dc_month
@@ -82,7 +80,6 @@ mt_ele_daily_env:
     #### 利用上个月数据计算mt dc_id级别的工资单成本
     - name: mt_dc_cost_t2_by_dc_forecast
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc
@@ -146,7 +143,6 @@ mt_ele_daily_env:
     # 美团能在测算或计算中找到单成本的商圈
     - name: mt_dc_cost_t2_by_dc
       sync_result: true
-      keep_result: true
       cooks:
         # - use_df:
         #     key: mt_dc_cost_t2_by_dc_forecast
@@ -184,7 +180,6 @@ mt_ele_daily_env:
     # 美团在测算或计算中找不到单成本的商圈,替换城市单成本median
     - name: mt_dc_cost_t2_by_city
       sync_result: true
-      keep_result: true
       cooks:
         # - use_df:
         #     key: mt_dc_cost_t2_by_dc_forecast
@@ -244,7 +239,6 @@ mt_ele_daily_env:
     # 美团在测算或计算中找不到单成本的商圈,所在城市也属于新城市，替换为多有城市单成本median(暂时方案，后期优化)
     - name: mt_dc_cost_t2_by_all_city
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_dc_cost_t2_by_city
@@ -284,7 +278,6 @@ mt_ele_daily_env:
     # 本月完整美团商圈单成本
     - name: mt_dc_cost_t2_forecast
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_dc_cost_t2_by_dc
@@ -312,7 +305,6 @@ mt_ele_daily_env:
     # 变换表名称，供下次计算调用
     - name: mt_dc_cost_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_dc_cost_t2_forecast
@@ -330,7 +322,6 @@ mt_ele_daily_env:
     # 测算饿了么单均成本(暂定取历史月份单成本)
 #     - name: ele_dc_cost_t2_by_dc_forecast
 #       sync_result: true
-#       keep_result: false
 #       cooks:
 #         - fetch_dataset:
 #             dataset_type_code: ele_dc_cost_t2_by_dc_month
@@ -347,7 +338,6 @@ mt_ele_daily_env:
 #### 利用上个月数据计算ele dc_id级别的工资单成本
     - name: ele_dc_cost_t2_by_dc_forecast
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             dataset_type_code: cost_revenue_business_dc
@@ -410,7 +400,6 @@ mt_ele_daily_env:
     # 饿了么能在测算或计算中找到单成本的商圈
     - name: ele_dc_cost_t2_by_dc
       sync_result: true
-      keep_result: true
       cooks:
         # - use_df:
         #     key: ele_dc_cost_t2_by_dc_forecast
@@ -448,7 +437,6 @@ mt_ele_daily_env:
     # 饿了么在测算或计算中找不到单成本的商圈,替换城市单成本median
     - name: ele_dc_cost_t2_by_city
       sync_result: true
-      keep_result: true
       cooks:
         # - use_df:
         #     key: ele_dc_cost_t2_by_dc_forecast
@@ -509,7 +497,6 @@ mt_ele_daily_env:
     # 饿了么在测算或计算中找不到单成本的商圈,所在城市也属于新城市，替换为多有城市单成本median(暂时方案，后期优化)
     - name: ele_dc_cost_t2_by_all_city
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_dc_cost_t2_by_city
@@ -548,7 +535,6 @@ mt_ele_daily_env:
     # 饿了么本月完整美团商圈单成本
     - name: ele_dc_cost_t2_forecast
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_dc_cost_t2_by_dc
@@ -577,7 +563,6 @@ mt_ele_daily_env:
     # 变换表名称，供下次计算调用
     - name: ele_dc_cost_t2
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_dc_cost_t2_forecast

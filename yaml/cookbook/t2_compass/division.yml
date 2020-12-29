@@ -26,7 +26,6 @@ compass_knight_form_snap_env:
   play:
 
     - name: compass_division_team_knight_num
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -41,7 +40,6 @@ compass_knight_form_snap_env:
 
     # 处理分部基础数据
     - name: compass_division_label_base_front
-      keep_result: true
       sync_result: true
       cooks:
         # 加载分部新财报数据
@@ -215,7 +213,6 @@ compass_knight_form_snap_env:
 
 
     - name: compass_division_label_base
-      keep_result: true
       sync_result: true
       cooks:
         
@@ -445,7 +442,6 @@ compass_knight_form_snap_env:
 
     # 与上月的分部结果做差值
     - name: compass_division_label_chain
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:

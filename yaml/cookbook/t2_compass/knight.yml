@@ -23,7 +23,6 @@ compass_knight_form_snap_env:
     # elem骑手日数据
     - name: compass_ele_knight_day
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_worker_order_common_kpi_by_daily_t2
@@ -37,7 +36,6 @@ compass_knight_form_snap_env:
     # mt骑手日数据
     - name: compass_mt_knight_day
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_worker_order_common_kpi_by_daily_t2
@@ -68,7 +66,6 @@ compass_knight_form_snap_env:
 
     # ELEM 累计指标计算
     - name: compass_knight_label_ele
-      keep_result: true
       sync_result: true
       cooks:
         # 平台  站点ID  骑手ID  完成单量  有单天数  准时单量  五星好评单量  出勤天数
@@ -311,7 +308,6 @@ compass_knight_form_snap_env:
 
     # MT 累计指标计算
     - name: compass_knight_label_mt
-      keep_result: true
       sync_result: true
       cooks:
         # 平台  站点ID  骑手ID  完成单量  有单天数  准时单量  五星好评单量  出勤天数
@@ -549,7 +545,6 @@ compass_knight_form_snap_env:
 
     # 合并美团、饿了么累计指标数据
     - name: compass_knight_label
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:

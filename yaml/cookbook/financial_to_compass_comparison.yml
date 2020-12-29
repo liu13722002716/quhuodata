@@ -44,7 +44,6 @@ financial_compass_comparison_form_snap_env:
   play:
     # 关联罗盘与财报商圈级别数据，各项值作对比
     - name: comparison_compass_financial_dc_base
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -170,7 +169,6 @@ financial_compass_comparison_form_snap_env:
 
     # 统计每个团队下属部门的数量及自身成本
     - name: comparison_compass_financial_team_manage_num_cost
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -351,7 +349,6 @@ financial_compass_comparison_form_snap_env:
 
     # 统计无效商圈(罗盘中有，但新财报中没有的商圈),关联团队数量和成本信息
     - name: comparison_compass_financial_invalid_dc
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -439,7 +436,6 @@ financial_compass_comparison_form_snap_env:
 
     # 统计无效商圈条团队关系上的团队成本
     - name: comparison_compass_financial_invalid_dc_team_cost
-      keep_result: true
       sync_result: true
       cooks:
         # 业主团队无效商圈影响下没有进入罗盘的成本
@@ -598,7 +594,6 @@ financial_compass_comparison_form_snap_env:
 
     # 无下级团队明细表
     - name: comparison_compass_financial_no_subordinate_team_info
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -618,7 +613,6 @@ financial_compass_comparison_form_snap_env:
 
     # 计算无下级团队的各级团队成本
     - name: comparison_compass_financial_no_subordinate_team_cost
-      keep_result: true
       sync_result: true
       cooks:
         # 业主成本
@@ -766,7 +760,6 @@ financial_compass_comparison_form_snap_env:
 
     # 财报团队成本
     - name: comparison_compass_financial_financial_team_cost
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -853,7 +846,6 @@ financial_compass_comparison_form_snap_env:
 
     # 罗盘团队成本
     - name: comparison_compass_financial_compass_team_cost
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -927,7 +919,6 @@ financial_compass_comparison_form_snap_env:
 
     # 财报与罗盘对比结果
     - name: comparison_compass_financial_result
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:

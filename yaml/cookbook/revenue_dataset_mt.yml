@@ -29,7 +29,6 @@ mt_daily_env:
      #收入表和订单表拼接，以日期和商圈为索引
     - name: mt_day_4_std_single_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_4_std
@@ -100,7 +99,6 @@ mt_daily_env:
     #测算商圈一天的收入
     - name: mt_base_revenue_add_one_day
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_4_std_single_ext
@@ -121,7 +119,6 @@ mt_daily_env:
     #将收入订单表进行聚合
     - name: mt_day_4_std_ttl_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_4_std_single_ext
@@ -211,7 +208,6 @@ mt_daily_env:
     #餐损赔付
     - name: mt_day_5_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_5_std
@@ -259,7 +255,6 @@ mt_daily_env:
     #固定奖惩的明细
     - name: mt_day_12_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - fetch_dataset:
             columns: [订单ID, 骑手ID, 惩罚原因, 惩罚金额(元)]
@@ -327,7 +322,6 @@ mt_daily_env:
     #配送服务2.0违规扣款明细
     - name: mt_day_25_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_25_std
@@ -385,7 +379,6 @@ mt_daily_env:
     # 此表为通过上月月数据的中month_16(加盟站奖惩明细)形成的映射表
     - name: mt_day_13_std_lookup_map
       sync_result: true
-      keep_result: true
       cooks:
           - use_df:
               key: std_qplus_vendor_dc_map
@@ -432,7 +425,6 @@ mt_daily_env:
     # 依赖 mt_day_13_std_lookup_map
     - name: mt_day_13_std_ext
       sync_result: true
-      keep_result: true
       sync_result_from_cluster: true
       cooks:
           - use_df:
@@ -499,7 +491,6 @@ mt_daily_env:
     #星火履约罚单
     - name: mt_day_15_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_day_15_std
@@ -642,7 +633,6 @@ mt_month_env:
   play:
     - name: mt_month_7_std_single_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_7_std
@@ -712,7 +702,6 @@ mt_month_env:
 
     - name: mt_month_7_std_ttl_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_7_std_single_ext
@@ -760,7 +749,6 @@ mt_month_env:
 
     - name: mt_month_8_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_8_std
@@ -807,7 +795,6 @@ mt_month_env:
 
     - name: mt_month_17_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_17_std
@@ -855,7 +842,6 @@ mt_month_env:
 
     - name: mt_month_26_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_26_std
@@ -902,7 +888,6 @@ mt_month_env:
     
     - name: mt_month_27_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_27_std
@@ -938,7 +923,6 @@ mt_month_env:
     
     - name: mt_month_28_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_28_std
@@ -974,7 +958,6 @@ mt_month_env:
 
     - name: mt_month_29_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_29_std
@@ -1010,7 +993,6 @@ mt_month_env:
 
     - name: mt_month_16_std_ext
       sync_result: true
-      keep_result: true
       sync_result_from_cluster: true
       cooks:
           - use_df:
@@ -1056,7 +1038,6 @@ mt_month_env:
 
     - name: mt_month_14_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: mt_month_14_std

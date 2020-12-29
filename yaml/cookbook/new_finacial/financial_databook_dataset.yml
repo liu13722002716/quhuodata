@@ -28,7 +28,6 @@ new_financial_form_snap_env:
 
     # 增加有单骑手字段
     - name: cost_revenue_team_knight_num
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -59,7 +58,6 @@ new_financial_form_snap_env:
 
     # 新增商圈资产数
     - name: cost_revenue_team_dc_num
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -90,7 +88,6 @@ new_financial_form_snap_env:
 
     # 商圈团队提报数据处理
     - name: cost_revenue_team_dc
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -351,7 +348,6 @@ new_financial_form_snap_env:
 
     # 商圈科目，为关联到业主级别做处理
     - name: cost_revenue_dc_to_owner
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -1346,7 +1342,6 @@ new_financial_form_snap_env:
 
     # 业主团队提报数据处理
     - name: cost_revenue_team_owner
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -1822,7 +1817,6 @@ new_financial_form_snap_env:
 
     # 处理未打标签但成本归属到私教团队的数据
     - name: cost_revenue_team_coach_unlabeled
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -1842,7 +1836,6 @@ new_financial_form_snap_env:
 
     # 私教团队提报数据处理
     - name: cost_revenue_team_coach
-      keep_result: true
       sync_result: true
       cooks:
         # 将组织架构内的成本和未打标签的数据合并起来
@@ -2033,7 +2026,6 @@ new_financial_form_snap_env:
 
     # 私教汇总科目明细
     - name: cost_revenue_team_coach_summary_title_detail
-      keep_result: true
       sync_result: true
       cooks:
         - use_df: 
@@ -2318,7 +2310,6 @@ new_financial_form_snap_env:
 
     # 处理未打标签但成本归属到大区团队的数据
     - name: cost_revenue_team_theater_unlabeled
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -2339,7 +2330,6 @@ new_financial_form_snap_env:
 
     # 大区团队提报数据处理
     - name: cost_revenue_team_theater
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -2545,7 +2535,6 @@ new_financial_form_snap_env:
   
     # 大区汇总科目明细
     - name: cost_revenue_team_theater_summary_title_detail
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -2790,7 +2779,6 @@ new_financial_form_snap_env:
 
     # 处理未打标签但成本归属到分部团队的数据
     - name: cost_revenue_team_division_unlabeled
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -2810,7 +2798,6 @@ new_financial_form_snap_env:
 
     # 分部团队提报数据处理
     - name: cost_revenue_team_division
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -3020,7 +3007,6 @@ new_financial_form_snap_env:
 
    # 分部汇总科目明细
     - name: cost_revenue_team_division_summary_title_detail
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -3216,7 +3202,6 @@ new_financial_form_snap_env:
 
     # 处理未打标签但成本归属到分部团队的数据
     - name: cost_revenue_team_business_unlabeled
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -3236,7 +3221,6 @@ new_financial_form_snap_env:
 
     # 事业部团队提报数据处理
     - name: cost_revenue_team_business
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -3454,7 +3438,6 @@ new_financial_form_snap_env:
 
     # 事业部汇总科目明细
     - name: cost_revenue_team_business_summary_title_detail
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -3591,7 +3574,6 @@ new_financial_form_snap_env:
     # 商务维度处理
     # 筛选商圈数据
     - name: cost_revenue_business_dc
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -3835,7 +3817,6 @@ new_financial_form_snap_env:
 
     # 商圈聚合到商圈
     - name: cost_revenue_business_dc_agg_dc
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:

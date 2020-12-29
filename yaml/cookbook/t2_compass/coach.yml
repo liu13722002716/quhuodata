@@ -26,7 +26,6 @@ compass_knight_form_snap_env:
   play:
     # 计算团队数量及骑手数
     - name: compass_coach_team_knight_num
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -39,8 +38,7 @@ compass_knight_form_snap_env:
               result = df_owner
 
     # 处理私教基础数据
-    - name: compass_coach_label_base_front
-      keep_result: true
+    - name: compass_coach_label_cost_financial
       sync_result: true
       cooks:
         - use_df:
@@ -117,10 +115,13 @@ compass_knight_form_snap_env:
                 [招聘成本] = [招聘成本]/100
                 [意外成本] = [意外成本]/100
 
-        - push_dataset:
+
+
+    - name: compass_coach_label_base_front
+      sync_result: true
+      cooks:
+        - use_df:
             key: compass_coach_label_cost_financial
-
-
         - stash_push_df: []
 
         - use_df:
@@ -199,7 +200,6 @@ compass_knight_form_snap_env:
 
 
     - name: compass_coach_label_base
-      keep_result: true
       sync_result: true
       cooks:
 
@@ -446,7 +446,6 @@ compass_knight_form_snap_env:
 
 
     - name: compass_coach_label_invalid_coach
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -565,7 +564,6 @@ compass_knight_form_snap_env:
 
     # 与上月的私教结果做差值
     - name: compass_coach_label_chain
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:

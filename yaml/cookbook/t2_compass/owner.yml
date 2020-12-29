@@ -22,7 +22,6 @@ compass_knight_form_snap_env:
   play:
     # 团队关系表+骑手人数
     - name: team_knight_num_base
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -46,7 +45,6 @@ compass_knight_form_snap_env:
 
     # 计算团队数量及骑手数
     - name: compass_owner_team_knight_num
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -66,8 +64,7 @@ compass_knight_form_snap_env:
 
 
     # 处理美团收入形成dc基础表
-    - name: compass_owner_label_base_front
-      keep_result: true
+    - name: compass_owner_label_cost_financial
       sync_result: true
       cooks:
         # 获取业主新财报数据
@@ -147,9 +144,16 @@ compass_knight_form_snap_env:
                 [招聘成本] = [招聘成本]/100
                 [意外成本] = [意外成本]/100
 
-        - push_dataset:
-            key: compass_owner_label_cost_financial
+#        - push_dataset:
+#            key: compass_owner_label_cost_financial
 
+
+    - name: compass_owner_label_base_front
+      sync_result: true
+      cooks:
+        # 获取业主新财报数据
+        - use_df:
+            key: compass_owner_label_cost_financial
         - stash_push_df: []
 
         - use_df:
@@ -351,7 +355,6 @@ compass_knight_form_snap_env:
 
     # 二级业主荣耀标签
     - name: compass_owner_label_base
-      keep_result: true
       sync_result: true
       cooks:
 
@@ -502,7 +505,6 @@ compass_knight_form_snap_env:
 
     # TODO: 后期会通过商圈标签过滤，被优化掉
     - name: compass_owner_label_inf
-      keep_result: true
       sync_result: true
       cooks:
 
@@ -537,7 +539,6 @@ compass_knight_form_snap_env:
             drop_stash: True
 
     - name: compass_owner_label_invalid_owner
-      keep_result: true
       sync_result: true
       cooks:
         - use_df:
@@ -622,7 +623,6 @@ compass_knight_form_snap_env:
 
     # 与上月的业主结果做差值
     - name: compass_owner_label_chain
-      keep_result: true
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -703,7 +703,6 @@ compass_knight_form_snap_env:
 
     # 业主预警数据
     - name: compass_owner_label_early_warning
-      keep_result: true
       sync_result: true
       cooks:
         # 获取业主数据

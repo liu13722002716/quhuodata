@@ -54,7 +54,6 @@ ele_daily_env:
   play:
     - name: ele_teams_service_quality_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
       #配送原因取消单量
         - use_df:
@@ -174,7 +173,6 @@ ele_daily_env:
     # 违规送达率得分
     - name: ele_illegal_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 违规送达率得分 表格样式【dc_id, 违规送达率得分,违规送达率】
         - use_df:
@@ -225,7 +223,6 @@ ele_daily_env:
     # 坏单率得分
     - name: ele_bad_order_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 坏单率率得分 表格样式【dc_id, 坏单率率得分,坏单率]
         - use_df:
@@ -276,7 +273,6 @@ ele_daily_env:
     # 超时率得分
     - name: ele_timeout_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 超时率得分 表格样式【dc_id, 超时率,超时率得分]
         - use_df:
@@ -327,7 +323,6 @@ ele_daily_env:
     # 虚假配送单率得分
     - name: ele_sham_delivery_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 虚假配送单率得分 表格样式【dc_id, 虚假配送单率得分,虚假配送单率]
         - use_df:
@@ -378,7 +373,6 @@ ele_daily_env:
     # 骑手T12超时率得分
     - name: ele_t12_timeout_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 骑手T12超时率得分 表格样式【dc_id, 骑手T12超时率得分,骑手T12超时率]
         - use_df:
@@ -429,7 +423,6 @@ ele_daily_env:
     # 配送原因取消率得分
     - name: ele_cancel_delivery_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 配送原因取消率得分 表格样式【dc_id, 配送原因取消率得分,配送原因取消率]
         - use_df:
@@ -480,7 +473,6 @@ ele_daily_env:
     # merge
     - name: ele_dc_parts_score_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 形成表格样式【dc_id,违规送达率得分,坏单率得分,超时率得分,虚假配送单率得分,骑手T12超时率得分,配送原因取消率得分,服务质量分】
         - use_df:
@@ -609,7 +601,6 @@ ele_month_env:
   play:
     - name: ele_teams_service_quality_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
       #配送原因取消单量
         - use_df:
@@ -729,7 +720,6 @@ ele_month_env:
     # 违规送达率得分
     - name: ele_illegal_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 违规送达率得分 表格样式【dc_id, 违规送达率得分,违规送达率】
         - use_df:
@@ -780,7 +770,6 @@ ele_month_env:
     # 坏单率得分
     - name: ele_bad_order_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 坏单率率得分 表格样式【dc_id, 坏单率率得分,坏单率]
         - use_df:
@@ -831,7 +820,6 @@ ele_month_env:
     # 超时率得分
     - name: ele_timeout_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 超时率得分 表格样式【dc_id, 超时率,超时率得分]
         - use_df:
@@ -882,7 +870,6 @@ ele_month_env:
     # 虚假配送单率得分
     - name: ele_sham_delivery_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 虚假配送单率得分 表格样式【dc_id, 虚假配送单率得分,虚假配送单率]
         - use_df:
@@ -933,7 +920,6 @@ ele_month_env:
     # 骑手T12超时率得分
     - name: ele_t12_timeout_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 骑手T12超时率得分 表格样式【dc_id, 骑手T12超时率得分,骑手T12超时率]
         - use_df:
@@ -984,7 +970,6 @@ ele_month_env:
     # 配送原因取消率得分
     - name: ele_cancel_delivery_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 配送原因取消率得分 表格样式【dc_id, 配送原因取消率得分,配送原因取消率]
         - use_df:
@@ -1035,7 +1020,6 @@ ele_month_env:
     # merge
     - name: ele_dc_parts_score_by_monthly_month
       sync_result: true
-      keep_result: true
       cooks:
         # 形成表格样式【dc_id,违规送达率得分,坏单率得分,超时率得分,虚假配送单率得分,骑手T12超时率得分,配送原因取消率得分,服务质量分】
         - use_df:

@@ -21,7 +21,6 @@ ele_daily_env:
   play:
     - name: ele_day_13_std_ext
       sync_result: true
-      keep_result: true
       cooks:
         - use_df:
             key: ele_day_13_std
@@ -78,7 +77,6 @@ ele_daily_env:
 
     - name: ele_worker_order_common_kpi_by_daily_t2
       sync_result: true
-      keep_result: true
       cooks:
         # 虚假配送单、配送原因取消单
         - use_df:
@@ -214,7 +212,6 @@ ele_month_env:
   play:
     - name: ele_worker_order_common_kpi_by_daily_month
       sync_result: true
-      keep_result: true
       cooks:
         # 虚假配送单,配送原因取消单
         - use_df:
