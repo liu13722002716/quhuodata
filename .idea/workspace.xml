@@ -27,30 +27,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32174e61-ef0f-443a-9acb-842f497da758" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_ele.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_mt.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/adjust_data_with_new_finacial_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/adjust_data_with_new_finacial_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/adjust_data_with_new_finacial_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/adjust_data_with_new_finacial_mt.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/city_order_cost_actual_mt_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/city_order_cost_actual_mt_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/city_order_cost_forecast_mt_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/city_order_cost_forecast_mt_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/compass_monitor.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/compass_monitor.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/dc_cost_dataset_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/dc_cost_dataset_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/dc_cost_dataset_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/dc_cost_dataset_mt.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/dc_order_cost_actual_mt_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/dc_order_cost_actual_mt_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/dc_order_cost_forecast_mt_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/dc_order_cost_forecast_mt_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/ele_salarykit_report.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/ele_salarykit_report.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/financial_databook_dataset.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/financial_databook_dataset.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/financial_to_compass_comparison.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/financial_to_compass_comparison.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/monitor_std_data.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/monitor_std_data.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/new_finacial/financial_databook_dataset.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/new_finacial/financial_databook_dataset.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/qc_dataset_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/qc_dataset_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/qc_dataset_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/qc_dataset_mt.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/revenue_dataset_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/revenue_dataset_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/revenue_dataset_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/revenue_dataset_mt.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_ele.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_mt.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yaml/cookbook/ele_salarykit_report的副本.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +67,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.github.ui.GithubSettingsConfigurable" />
-    <property name="two.files.diff.last.used.file" value="$USER_HOME$/work/草稿/00_datakit_dataset_mt.yml" />
+    <property name="two.files.diff.last.used.file" value="$USER_HOME$/work/草稿/salarykit_dataset_ele.yml" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -142,10 +122,10 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="100" y="123" width="1240" height="677" key="DiffContextDialog" timestamp="1609239100566">
+    <state x="100" y="123" width="1240" height="677" key="DiffContextDialog" timestamp="1609297589097">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="100" y="123" width="1240" height="677" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1609239100566" />
+    <state x="100" y="123" width="1240" height="677" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1609297589097" />
     <state x="221" y="100" key="SettingsEditor" timestamp="1608107669670">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
@@ -154,9 +134,9 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="518" y="382" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1440.877@0.23.1440.877" timestamp="1607935423204" />
-    <state x="418" y="217" width="604" height="554" key="find.popup" timestamp="1609241244435">
+    <state x="418" y="217" width="604" height="554" key="find.popup" timestamp="1609297557772">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="418" y="217" width="604" height="554" key="find.popup/0.23.1440.877@0.23.1440.877" timestamp="1609241244435" />
+    <state x="418" y="217" width="604" height="554" key="find.popup/0.23.1440.877@0.23.1440.877" timestamp="1609297557772" />
   </component>
 </project>
