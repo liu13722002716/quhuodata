@@ -295,17 +295,11 @@ ele_month_env:
             - p1: [配送原因取消, 骑手T+12超时,坏单,超时,虚假配送,违规送达]
         - drop_duplicates:
             - [运单号, 问题单类型]
-        #        - dask_persist_compute:
-        #            sync_compute: true
-        #            chunk_size: 3000
         - push_dataset:
             key: ele_month_33_std_tmp
         - use_df:
             key: ele_month_35_std_lookup_map
             columns: [账单时间, 骑手ID, 站点ID, 运单号]
-        #        - dask_persist_compute:
-        #            sync_compute: true
-        #            chunk_size: 3000
         - drop_duplicates:
             - [账单时间, 骑手ID, 站点ID, 运单号]
         - push_dataset:
@@ -317,7 +311,7 @@ ele_month_env:
               key: ele_month_35_std_lookup_map_mini
             on: 运单号
             how: left
-            force_rebuild_dask: true
+            # force_rebuild_dask: true
         - df_reset_index: []
         - push_dataset:
             key: ele_month_33_std_tmp
@@ -399,7 +393,7 @@ ele_month_env:
             how: outer
             fillna: 0
             drop_stash: true
-            force_rebuild_dask: true
+            # force_rebuild_dask: true
             dtypes:
               虚假配送单量: int64
               配送原因取消单量: int64
@@ -415,7 +409,7 @@ ele_month_env:
 # 新增运单详情月账单 0927
     - name: ele_month_57_std
       sync_result: true
-      keep_result: true
+      # keep_result: true
       cooks:
         - fetch_dataset:
             datakit_pull_way: last_day
