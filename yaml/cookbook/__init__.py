@@ -8,3 +8,6 @@ cookbook_path = partial(os.path.join, BLITZ_COOKBOOK_DEFAULT_DIR)
 
 
 print('test')
+
+def main():
+    pass
