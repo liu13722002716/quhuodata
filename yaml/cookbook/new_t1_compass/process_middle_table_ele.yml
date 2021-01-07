@@ -33,20 +33,22 @@ ele_daily_env:
         - fetch_dataset:
             template_code: ele_day_60
             dataset_cate: raw
-            columns: [ 城市,团队ID]
+            columns: [ 城市,团队ID,团队名称 ]
             ignore_null_error: true
             empty_df_record:
               城市: '-'
               团队ID: '-'
+              团队名称: '-'
             rename:
               城市: coach_team_name
               团队ID: vendor_dc_id
+              团队名称: dc_name
         - drop_duplicates:
             subset: [ coach_team_name,vendor_dc_id ]
         - stash_push_df: []
         - use_df:
             key: std_qplus_dc_copy
-            columns: [ platform_code,supplier_id,vendor_dc_id]
+            columns: [ platform_code,supplier_id,supplier_name,vendor_dc_id]
         - stash_push_df: []
         - stash_join_df:
             on: [ vendor_dc_id ]
@@ -63,7 +65,7 @@ ele_daily_env:
             condition: '[platform_code] == "meituan"'
             val: 美团
         - fetch_cols:
-            columns: [ platform,supplier_id,coach_team_name ]
+            columns: [ platform_code,platform,supplier_id,supplier_name,coach_team_name,vendor_dc_id,dc_name ]
         - set_meta_month_column:
             - month
 
@@ -921,6 +923,10 @@ ele_daily_env:
               全量单: single_daily_order
               城市: coach_team_name
               meta_day: book_day
+        - df_to_float:
+            - single_daily_knight
+        - df_to_float:
+            - single_daily_order
         - df_groupby:
             by: [coach_team_name,book_day]
         - df_sum:
@@ -1306,20 +1312,40 @@ ele_daily_env:
       sync_result: true
       cooks:
         - fetch_dataset:
-            template_code:  ele_day_69   #清退预警--东战
+            template_code: ele_day_60
             dataset_cate: raw
             datakit_pull_way: last_day
-            columns: [ 城市,站点ID,站点名称,预警]
+            columns: [ 城市,团队ID,团队名称 ]
             ignore_null_error: true
             empty_df_record:
               城市: '-'
+              团队ID: '-'
+              团队名称: '-'
+            rename:
+              城市: coach_team_name
+              团队ID: vendor_dc_id
+              团队名称: dc_name
+        - run_py:
+            - |
+              df = df[df['vendor_dc_id'].notnull()]
+              result = df
+        - drop_duplicates:
+            subset: [ coach_team_name,vendor_dc_id ]
+        - push_dataset:
+            key: coach_vendor_dc_id_map
+
+
+        - fetch_dataset:
+            template_code:  ele_day_69   #清退预警--东战
+            dataset_cate: raw
+            datakit_pull_way: last_day
+            columns: [ 站点ID,预警]
+            ignore_null_error: true
+            empty_df_record:
               站点ID: '-'
-              站点名称: '-'
               预警: '-'
         - df_rename_columns:
-            - 城市: city_name
-              站点ID: vendor_dc_id
-              站点名称: dc_name
+            - 站点ID: vendor_dc_id
               预警: stimulate_replenish_rectify
         - run_py:
             - |
@@ -1349,7 +1375,7 @@ ele_daily_env:
 
         - stash_join_df:
             on: [ vendor_dc_id ]
-            how: right
+            how: outer
             drop_stash: true
         - stash_push_df: []
 
@@ -1373,7 +1399,7 @@ ele_daily_env:
         - stash_push_df: []
         - stash_join_df:
             on: [ vendor_dc_id ]
-            how: right
+            how: outer
             drop_stash: true
         - stash_push_df: []
 
@@ -1398,7 +1424,15 @@ ele_daily_env:
 
         - stash_join_df:
             on: [vendor_dc_id ]
-            how: right
+            how: outer
+            drop_stash: true
+        - stash_push_df: []
+        - use_df:
+            key: coach_vendor_dc_id_map
+        - stash_push_df: []
+        - stash_join_df:
+            on: vendor_dc_id
+            how: inner
             drop_stash: true
 
     - name: clear_warning_dc
@@ -1508,7 +1542,7 @@ ele_daily_env:
             key: clear_warning_mini_std
 
         - df_groupby:
-            by: [ city_name ]
+            by: [ coach_team_name ]
         - df_max:
             column: [ stimulate_replenish_rectify_level_value,abnormal_dc_cover_level_value,sh_dc_optimize_level_value,cq_dc_rectify_level_value]
         - df_reset_index: [ ]
@@ -1522,7 +1556,7 @@ ele_daily_env:
             key: clear_warning_mini_std
         - stash_push_df: []
         - stash_join_df:
-            on: [city_name]
+            on: [coach_team_name]
             how: inner
             drop_stash: true
 
@@ -1537,25 +1571,25 @@ ele_daily_env:
             - '[stimulate_replenish_rectify_level_value] == [srrlv]'
 
         - fetch_cols:
-            columns: [city_name,dc_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level]
+            columns: [coach_team_name,dc_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'srrlv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'srrlv_dc_list'})
               result = to_dd(need)
         - stash_push_df: []
         - stash_join_df:
-            on: [city_name]
+            on: [coach_team_name]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
 
         - fetch_cols:
-            columns: [city_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level,srrlv_dc_list]
+            columns: [coach_team_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level,srrlv_dc_list]
 
         - push_dataset:
             key: clear_warning_city_stimulate_replenish_rectify
@@ -1566,24 +1600,24 @@ ele_daily_env:
         - df_select:
             - '[abnormal_dc_cover_level_value] == [adclv]'
         - fetch_cols:
-            columns: [ city_name,dc_name, abnormal_dc_cover,abnormal_dc_cover_level]
+            columns: [ coach_team_name,dc_name, abnormal_dc_cover,abnormal_dc_cover_level]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'adclv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'adclv_dc_list'})
               result = to_dd(need)
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
         - fetch_cols:
-            columns: [ city_name, abnormal_dc_cover,abnormal_dc_cover_level,adclv_dc_list]
+            columns: [ coach_team_name, abnormal_dc_cover,abnormal_dc_cover_level,adclv_dc_list]
         - push_dataset:
             key: clear_warning_city_abnormal_dc_cover
 
@@ -1593,24 +1627,24 @@ ele_daily_env:
         - df_select:
             - '[sh_dc_optimize_level_value] == [sdolv]'
         - fetch_cols:
-            columns: [ city_name,dc_name,sh_dc_optimize,sh_dc_optimize_level ]
+            columns: [ coach_team_name,dc_name,sh_dc_optimize,sh_dc_optimize_level ]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'sdolv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'sdolv_dc_list'})
               result = to_dd(need)
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
         - fetch_cols:
-            columns: [ city_name,sh_dc_optimize,sh_dc_optimize_level,sdolv_dc_list]
+            columns: [ coach_team_name,sh_dc_optimize,sh_dc_optimize_level,sdolv_dc_list]
 
         - push_dataset:
             key: clear_warning_sh_dc_optimize
@@ -1621,31 +1655,31 @@ ele_daily_env:
         - df_select:
             - '[cq_dc_rectify_level_value] == [cdrlv]'
         - fetch_cols:
-            columns: [ city_name,dc_name,cq_dc_rectify,cq_dc_rectify_level ]
+            columns: [ coach_team_name,dc_name,cq_dc_rectify,cq_dc_rectify_level ]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'cdrlv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'cdrlv_dc_list'})
               result = to_dd(need)
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
         - fetch_cols:
-            columns: [ city_name,cq_dc_rectify,cq_dc_rectify_level,cdrlv_dc_list ]
+            columns: [ coach_team_name,cq_dc_rectify,cq_dc_rectify_level,cdrlv_dc_list ]
         - stash_push_df: []
 
         - use_df:
             key: clear_warning_city_stimulate_replenish_rectify
         - stash_push_df: []
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: inner
             drop_stash: true
         - stash_push_df: []
@@ -1654,7 +1688,7 @@ ele_daily_env:
             key: clear_warning_city_abnormal_dc_cover
         - stash_push_df: []
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: inner
             drop_stash: true
         - stash_push_df: []
@@ -1663,7 +1697,7 @@ ele_daily_env:
         - stash_push_df: [ ]
 
         - stash_join_df:
-            on: [ city_name]
+            on: [ coach_team_name]
             how: inner
             drop_stash: true
 
@@ -1674,7 +1708,7 @@ ele_daily_env:
             key: clear_warning_city_mini
         ### 上海
         - df_py_select:
-            - 'df["city_name"].str.contains(u"上海")'
+            - 'df["coach_team_name"].str.contains(u"上海")'
         - run_py:
             - |
               df = to_df(df)
@@ -1687,7 +1721,7 @@ ele_daily_env:
         - use_df:
             key: clear_warning_city_mini
         - df_py_select:
-            - 'df["city_name"].str.contains(u"重庆")'
+            - 'df["coach_team_name"].str.contains(u"重庆")'
         - run_py:
             - |
               df = to_df(df)
@@ -1700,7 +1734,7 @@ ele_daily_env:
         - use_df:
             key: clear_warning_city_mini
         - df_py_select:
-            - '~((df["city_name"].str.contains(u"重庆")) | (df["city_name"].str.contains(u"上海")))'
+            - '~((df["coach_team_name"].str.contains(u"重庆")) | (df["coach_team_name"].str.contains(u"上海")))'
 
         - run_py:
             - |
@@ -1714,30 +1748,49 @@ ele_daily_env:
             drop_stash: true
 
         - fetch_cols:
-            columns: [city_name,col_val_dict]
+            columns: [coach_team_name,col_val_dict]
         - add_cols:
             - dimension: 'C'
         - stash_push_df: []
+        - use_df:
+            key: ele_day_60_dc_std
+            columns: [supplier_id,城市]
+        - df_rename_columns:
+            - 城市: coach_team_name
+        - drop_duplicates:
+            subset: [supplier_id,coach_team_name]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [coach_team_name]
+            how: right
+            drop_stash: true
+        - push_dataset:
+            key: clear_warning_coach
 
         - use_df:
             key: clear_warning_dc
         - fetch_cols:
-            columns: [city_name,col_val_dict,vendor_dc_id]
+            columns: [coach_team_name,col_val_dict,vendor_dc_id]
         - add_cols:
             - dimension: 'D'
+        - stash_push_df: []
+        - use_df:
+            key: std_qplus_dc_copy
+            columns: [supplier_id,vendor_dc_id]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [vendor_dc_id]
+            how: inner
+            drop_stash: true
+        - stash_push_df: []
+        - use_df:
+            key: clear_warning_coach
         - stash_push_df: []
         - stash_concat_df:
             drop_stash: true
         - set_meta_month_column:
             - book_month
-        - stash_push_df: []
-        - use_df:
-            key: city_coach_map
-        - stash_push_df: []
-        - stash_join_df:
-            on: [city_name]
-            how: inner
-            drop_stash: true
+
 
 ####other
     - name: team_coach_team_name
@@ -2725,20 +2778,22 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_60
             dataset_cate: raw
-            columns: [ 城市,团队ID]
+            columns: [ 城市,团队ID,团队名称 ]
             ignore_null_error: true
             empty_df_record:
               城市: '-'
               团队ID: '-'
+              团队名称: '-'
             rename:
               城市: coach_team_name
               团队ID: vendor_dc_id
+              团队名称: dc_name
         - drop_duplicates:
             subset: [ coach_team_name,vendor_dc_id ]
         - stash_push_df: []
         - use_df:
             key: std_qplus_dc_copy
-            columns: [ platform_code,supplier_id,vendor_dc_id]
+            columns: [ platform_code,supplier_id,supplier_name,vendor_dc_id]
         - stash_push_df: []
         - stash_join_df:
             on: [ vendor_dc_id ]
@@ -2755,7 +2810,7 @@ ele_month_env:
             condition: '[platform_code] == "meituan"'
             val: 美团
         - fetch_cols:
-            columns: [ platform,supplier_id,coach_team_name ]
+            columns: [ platform_code,platform,supplier_id,supplier_name,coach_team_name,vendor_dc_id,dc_name ]
         - set_meta_month_column:
             - month
 
@@ -3620,6 +3675,10 @@ ele_month_env:
               全量单: single_daily_order
               城市: coach_team_name
               meta_day: book_day
+        - df_to_float:
+            - single_daily_knight
+        - df_to_float:
+            - single_daily_order
         - df_groupby:
             by: [ coach_team_name,book_day ]
         - df_sum:
@@ -4009,21 +4068,40 @@ ele_month_env:
       sync_result: true
       cooks:
         - fetch_dataset:
-            template_code:  ele_day_69   #清退预警--东战
+            template_code: ele_day_60
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
-            columns: [ 城市,站点ID,站点名称,预警]
+            columns: [ 城市,团队ID,团队名称 ]
             ignore_null_error: true
             empty_df_record:
               城市: '-'
+              团队ID: '-'
+              团队名称: '-'
+            rename:
+              城市: coach_team_name
+              团队ID: vendor_dc_id
+              团队名称: dc_name
+        - run_py:
+            - |
+              df = df[df['vendor_dc_id'].notnull()]
+              result = df
+        - drop_duplicates:
+            subset: [ coach_team_name,vendor_dc_id ]
+        - push_dataset:
+            key: coach_vendor_dc_id_map
+
+
+        - fetch_dataset:
+            template_code:  ele_day_69   #清退预警--东战
+            dataset_cate: raw
+            datakit_pull_way: last_day
+            columns: [ 站点ID,预警]
+            ignore_null_error: true
+            empty_df_record:
               站点ID: '-'
-              站点名称: '-'
               预警: '-'
         - df_rename_columns:
-            - 城市: city_name
-              站点ID: vendor_dc_id
-              站点名称: dc_name
+            - 站点ID: vendor_dc_id
               预警: stimulate_replenish_rectify
         - run_py:
             - |
@@ -4035,7 +4113,6 @@ ele_month_env:
         - fetch_dataset:
             template_code:  ele_day_70    # 清退预警---运力覆盖
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [站点ID,异常站点运力覆盖]
             ignore_null_error: true
@@ -4054,14 +4131,13 @@ ele_month_env:
 
         - stash_join_df:
             on: [ vendor_dc_id ]
-            how: right
+            how: outer
             drop_stash: true
         - stash_push_df: []
 
         - fetch_dataset:
             template_code: ele_day_71   # 清退预警--重庆（隔一日更新）
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [ 站点ID,考核结果预估]
             ignore_null_error: true
@@ -4079,14 +4155,13 @@ ele_month_env:
         - stash_push_df: []
         - stash_join_df:
             on: [ vendor_dc_id ]
-            how: right
+            how: outer
             drop_stash: true
         - stash_push_df: []
 
         - fetch_dataset:
             template_code:  ele_day_72   # 清退预警--上海（隔一日更新）
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [ 团队ID,是否触碰清退]
             ignore_null_error: true
@@ -4105,7 +4180,15 @@ ele_month_env:
 
         - stash_join_df:
             on: [vendor_dc_id ]
-            how: right
+            how: outer
+            drop_stash: true
+        - stash_push_df: []
+        - use_df:
+            key: coach_vendor_dc_id_map
+        - stash_push_df: []
+        - stash_join_df:
+            on: vendor_dc_id
+            how: inner
             drop_stash: true
 
     - name: clear_warning_dc
@@ -4215,7 +4298,7 @@ ele_month_env:
             key: clear_warning_mini_std
 
         - df_groupby:
-            by: [ city_name ]
+            by: [ coach_team_name ]
         - df_max:
             column: [ stimulate_replenish_rectify_level_value,abnormal_dc_cover_level_value,sh_dc_optimize_level_value,cq_dc_rectify_level_value]
         - df_reset_index: [ ]
@@ -4229,7 +4312,7 @@ ele_month_env:
             key: clear_warning_mini_std
         - stash_push_df: []
         - stash_join_df:
-            on: [city_name]
+            on: [coach_team_name]
             how: inner
             drop_stash: true
 
@@ -4244,25 +4327,25 @@ ele_month_env:
             - '[stimulate_replenish_rectify_level_value] == [srrlv]'
 
         - fetch_cols:
-            columns: [city_name,dc_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level]
+            columns: [coach_team_name,dc_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'srrlv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'srrlv_dc_list'})
               result = to_dd(need)
         - stash_push_df: []
         - stash_join_df:
-            on: [city_name]
+            on: [coach_team_name]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
 
         - fetch_cols:
-            columns: [city_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level,srrlv_dc_list]
+            columns: [coach_team_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level,srrlv_dc_list]
 
         - push_dataset:
             key: clear_warning_city_stimulate_replenish_rectify
@@ -4273,24 +4356,24 @@ ele_month_env:
         - df_select:
             - '[abnormal_dc_cover_level_value] == [adclv]'
         - fetch_cols:
-            columns: [ city_name,dc_name, abnormal_dc_cover,abnormal_dc_cover_level]
+            columns: [ coach_team_name,dc_name, abnormal_dc_cover,abnormal_dc_cover_level]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'adclv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'adclv_dc_list'})
               result = to_dd(need)
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
         - fetch_cols:
-            columns: [ city_name, abnormal_dc_cover,abnormal_dc_cover_level,adclv_dc_list]
+            columns: [ coach_team_name, abnormal_dc_cover,abnormal_dc_cover_level,adclv_dc_list]
         - push_dataset:
             key: clear_warning_city_abnormal_dc_cover
 
@@ -4300,24 +4383,24 @@ ele_month_env:
         - df_select:
             - '[sh_dc_optimize_level_value] == [sdolv]'
         - fetch_cols:
-            columns: [ city_name,dc_name,sh_dc_optimize,sh_dc_optimize_level ]
+            columns: [ coach_team_name,dc_name,sh_dc_optimize,sh_dc_optimize_level ]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'sdolv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'sdolv_dc_list'})
               result = to_dd(need)
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
         - fetch_cols:
-            columns: [ city_name,sh_dc_optimize,sh_dc_optimize_level,sdolv_dc_list]
+            columns: [ coach_team_name,sh_dc_optimize,sh_dc_optimize_level,sdolv_dc_list]
 
         - push_dataset:
             key: clear_warning_sh_dc_optimize
@@ -4328,31 +4411,31 @@ ele_month_env:
         - df_select:
             - '[cq_dc_rectify_level_value] == [cdrlv]'
         - fetch_cols:
-            columns: [ city_name,dc_name,cq_dc_rectify,cq_dc_rectify_level ]
+            columns: [ coach_team_name,dc_name,cq_dc_rectify,cq_dc_rectify_level ]
         - stash_push_df: []
 
         - run_py:
             - |
               df = to_df(df)
               f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('city_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'cdrlv_dc_list'})
+              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'cdrlv_dc_list'})
               result = to_dd(need)
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: right
             drop_stash: true
         - drop_duplicates:
-            - [ city_name ]
+            - [ coach_team_name ]
         - fetch_cols:
-            columns: [ city_name,cq_dc_rectify,cq_dc_rectify_level,cdrlv_dc_list ]
+            columns: [ coach_team_name,cq_dc_rectify,cq_dc_rectify_level,cdrlv_dc_list ]
         - stash_push_df: []
 
         - use_df:
             key: clear_warning_city_stimulate_replenish_rectify
         - stash_push_df: []
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: inner
             drop_stash: true
         - stash_push_df: []
@@ -4361,7 +4444,7 @@ ele_month_env:
             key: clear_warning_city_abnormal_dc_cover
         - stash_push_df: []
         - stash_join_df:
-            on: [ city_name ]
+            on: [ coach_team_name ]
             how: inner
             drop_stash: true
         - stash_push_df: []
@@ -4370,7 +4453,7 @@ ele_month_env:
         - stash_push_df: [ ]
 
         - stash_join_df:
-            on: [ city_name]
+            on: [ coach_team_name]
             how: inner
             drop_stash: true
 
@@ -4381,7 +4464,7 @@ ele_month_env:
             key: clear_warning_city_mini
         ### 上海
         - df_py_select:
-            - 'df["city_name"].str.contains(u"上海")'
+            - 'df["coach_team_name"].str.contains(u"上海")'
         - run_py:
             - |
               df = to_df(df)
@@ -4394,7 +4477,7 @@ ele_month_env:
         - use_df:
             key: clear_warning_city_mini
         - df_py_select:
-            - 'df["city_name"].str.contains(u"重庆")'
+            - 'df["coach_team_name"].str.contains(u"重庆")'
         - run_py:
             - |
               df = to_df(df)
@@ -4407,7 +4490,7 @@ ele_month_env:
         - use_df:
             key: clear_warning_city_mini
         - df_py_select:
-            - '~((df["city_name"].str.contains(u"重庆")) | (df["city_name"].str.contains(u"上海")))'
+            - '~((df["coach_team_name"].str.contains(u"重庆")) | (df["coach_team_name"].str.contains(u"上海")))'
 
         - run_py:
             - |
@@ -4421,30 +4504,48 @@ ele_month_env:
             drop_stash: true
 
         - fetch_cols:
-            columns: [city_name,col_val_dict]
+            columns: [coach_team_name,col_val_dict]
         - add_cols:
             - dimension: 'C'
         - stash_push_df: []
+        - use_df:
+            key: ele_day_60_dc_std
+            columns: [supplier_id,城市]
+        - df_rename_columns:
+            - 城市: coach_team_name
+        - drop_duplicates:
+            subset: [supplier_id,coach_team_name]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [coach_team_name]
+            how: right
+            drop_stash: true
+        - push_dataset:
+            key: clear_warning_coach
 
         - use_df:
             key: clear_warning_dc
         - fetch_cols:
-            columns: [city_name,col_val_dict,vendor_dc_id]
+            columns: [coach_team_name,col_val_dict,vendor_dc_id]
         - add_cols:
             - dimension: 'D'
+        - stash_push_df: []
+        - use_df:
+            key: std_qplus_dc_copy
+            columns: [supplier_id,vendor_dc_id]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [vendor_dc_id]
+            how: inner
+            drop_stash: true
+        - stash_push_df: []
+        - use_df:
+            key: clear_warning_coach
         - stash_push_df: []
         - stash_concat_df:
             drop_stash: true
         - set_meta_month_column:
             - book_month
-        - stash_push_df: []
-        - use_df:
-            key: city_coach_map
-        - stash_push_df: []
-        - stash_join_df:
-            on: [city_name]
-            how: inner
-            drop_stash: true
 
 ####other
     - name: team_coach_team_name
