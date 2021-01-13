@@ -401,7 +401,7 @@ mt_daily_env:
             columns:
               - 日期
               - 骑手ID
-              - 全天在线时长(不含忙碌)
+              - 全天在线时长(含忙碌)
             dataset_cate: raw
             template_code: mt_day_6
         - df_to_int:
