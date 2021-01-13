@@ -183,11 +183,47 @@ ele_month_env:
               高价金额: high_price_money
               高价溢价: high_price_premium
               单溢价: single_premium
+
+        - set_meta_month_column:
+            - book_month
+#        - add_cols:
+#            - dimension: 'D'
+        - run_py:
+            - |
+              df=to_df(df)
+              df['book_month']=[u'%s' % i for i in df[u'book_month']]
+              result=to_dd(df)
+        - run_py:
+            - |
+              df=to_df(df)
+              df['book_year']=df['book_month'].str[:4]
+              result=to_dd(df)
+        - push_dataset:
+            key: ele_month_78_mini
+        - use_df:
+            key:  ele_month_78_mini
+        - run_py:
+            - |
+              result=df[df[u'vendor_dc_id'].isnull()]
+        - add_cols:
+            - dimension: 'C'
+        - stash_push_df: []
+        - use_df:
+            key:  ele_month_78_mini
+        - run_py:
+            - |
+              result=df[df[u'vendor_dc_id'].notnull()]
+        - add_cols:
+            - dimension: 'D'
+        - stash_push_df: []
+        - stash_concat_df:
+            drop_stash: True
         - run_py:
             - |
               df=to_df(df)
               df['vendor_dc_id']=[u'%s' % i for i in df[u'vendor_dc_id']]
               result=to_dd(df)
+
         - stash_push_df: []
         ### 使用主体匹配表
         - use_df:
