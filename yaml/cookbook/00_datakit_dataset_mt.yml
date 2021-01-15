@@ -398,12 +398,21 @@ mt_daily_env:
       sync_result: true
       cooks:
         - fetch_dataset:
-            columns:
-              - 日期
-              - 骑手ID
-              - 全天在线时长(含忙碌)
             dataset_cate: raw
             template_code: mt_day_6
+        - pad_cols:
+            columns: [全天在线时长(含忙碌),全天在线时长(不含忙碌)]
+            default_value: 0
+        - df_to_int:
+            - 全天在线时长(含忙碌)
+        - df_to_int:
+            - 全天在线时长(不含忙碌)
+        - df_sum_with_columns:
+            init_value: 0
+            dest_column: 全天在线时长
+            src_columns: [全天在线时长(含忙碌),全天在线时长(不含忙碌)]
+        - fetch_cols:
+            columns: [日期,骑手ID,全天在线时长]
         - df_to_int:
             - 日期
         - set_meta_month_column:
