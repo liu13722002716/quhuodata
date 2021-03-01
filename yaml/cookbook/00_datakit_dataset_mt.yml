@@ -353,10 +353,18 @@ mt_daily_env:
               - 配送准时单量
               - 配送准时率
               - meta_day
+              - 骑手
+              - 站点
+              - 骑手接单量
+              - 注册日期
+              - 总加盟商
+              - 总加盟商ID
             dataset_cate: raw
             template_code: mt_day_18
         - rename_cols:
           - meta_day: 日期
+            总加盟商: 主体
+            总加盟商ID: 主体ID
         - parse_number_cols:
           - 完成单量
         - parse_number_cols:
@@ -383,14 +391,14 @@ mt_daily_env:
       cooks:
         - use_df:
             key: mt_day_18_std
-            columns: [骑手ID, 站点ID, 完成单量, 用户评价配送五分单量, 配送准时单量, 配送准时率, 日期]
+            columns: [骑手ID, 站点ID, 完成单量, 用户评价配送五分单量, 配送准时单量, 配送准时率, 日期, 骑手, 站点, 骑手接单量, 注册日期, 主体ID, 主体]
         - df_select:
             - '[骑手ID] != @p1'
             - p1: 合计
         - df_groupby:
-            by: [骑手ID,站点ID]
+            by: [骑手ID,站点ID, 骑手, 站点, 注册日期, 主体ID, 主体]
         - df_sum:
-            column: 完成单量
+            column: [完成单量, 骑手接单量]
         - df_reset_index: []
         - set_meta_month_column:
             - month
