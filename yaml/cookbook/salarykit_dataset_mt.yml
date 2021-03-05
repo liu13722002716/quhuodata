@@ -162,14 +162,6 @@ mt_month_env:
       sync_result: true
       cooks:
         - use_df:
-            key: mt_month_21_std
-            columns: [日期, 骑手ID, 站点ID, 完成单量, 用户评价配送五分单量, 配送准时单量]
-            rename:
-              完成单量: 平台完成单量
-              用户评价配送五分单量: 好评单量
-              配送准时单量: 准时单量
-        - stash_push_df: []
-        - use_df:
             key: mt_worker_order_common_kpi_by_daily_t2
             columns: [日期, 骑手ID, 站点ID, 跑腿完成单量, 众包完成单量,外单单量]
         - df_groupby:
@@ -177,9 +169,29 @@ mt_month_env:
         - df_sum:
             column: [跑腿完成单量, 众包完成单量,外单单量]
         - df_reset_index: []
+        - add_cols:
+            - 出勤天数: 1
+        - df_reset_index: []
+        - df_groupby:
+            by: [骑手ID, 站点ID]
+        - df_sum:
+            column:
+                - 出勤天数
+                - 跑腿完成单量
+                - 众包完成单量
+                - 外单单量
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df:
+            key: mt_month_21_std
+            columns: [日期, 骑手ID, 站点ID, 完成单量, 用户评价配送五分单量, 配送准时单量]
+            rename:
+              完成单量: 平台完成单量
+              用户评价配送五分单量: 好评单量
+              配送准时单量: 准时单量
         - stash_push_df: []
         - stash_join_df:
-            on: [日期, 站点ID,骑手ID]
+            on: [站点ID,骑手ID]
             how: outer
             fillna: 0
             drop_stash: true
@@ -191,24 +203,7 @@ mt_month_env:
             init_value: 0.0
             dest_column: 总完成单量
             src_columns: [平台完成单量,跑腿完成单量,众包完成单量,外单单量]
-        - add_cols:
-            - 出勤天数: 1
-        - df_reset_index: []
-        - df_groupby:
-            by: [骑手ID, 站点ID]
-        - df_sum:
-            column:
-                - 出勤天数
-                - 平台完成单量
-                - 跑腿完成单量
-                - 众包完成单量
-                - 完成单量
-                - 外单单量
-                - 总完成单量
-                - 准时单量
-                - 好评单量
-        - df_reset_index: []
-        - push_dataset: 
+        - push_dataset:
             key: mt_worker_order_common_kpi_by_monthly_month_mini
         - use_df:
             key: std_qplus_vendor_dc_map

@@ -23,21 +23,16 @@ ele_month_env:
     # 违规扣款与申诉返款账单
     - ele_day_36_std
 
-  # 本期饿了么薪资中间表测试运行有两个目的：
-    #1 测试程序方案的使用，为1号提供数据做准备
-    #2 构建团队关系，填充boss id信息，为后端测试系统使用
-    #3 为后续自动下载做准备
 
-
-    #给薪资组提供的中间表如下：
-    #ele_order_num_allowance_monthly
-    #ele_order_time_monthly
-    #ele_comment_good_order_monthly
-    #ele_orderdetails_good_order_monthly
-    #ele_overtime_order_monthly
-    #ele_bad_order_monthly
-    #ele_forfeit_order_monthly
-    #ele_refund_order_monthly
+    # 给薪资组提供的中间表如下：
+    # ele_order_num_allowance_monthly 订单数量
+    # ele_order_time_monthly 时段单量
+    # ele_comment_good_order_monthly 服务奖惩评价好评（备注：有时差）
+    # ele_orderdetails_good_order_monthly 运单详好评（备注：有时差）
+    # ele_bad_order_monthly 差评单汇总（服务奖惩，配送费，KPI管理问题单）
+    # ele_overtime_order_monthly 超时单汇总（运单详情，配送费，KPI管理问题单）
+    # ele_forfeit_order_monthly 违规扣款
+    # ele_refund_order_monthly 申诉返款
   play:
     # ===== 创建欺诈单表 -> 20201111
     # 2020.12.24 由于月数据是每个月3日才有，所以采用日累计的数据源生成欺诈单
@@ -323,15 +318,21 @@ ele_month_env:
         - run_py:
             - |
               df[u'评价间隔_dt'] = df[u'评价日期'] - df[u'运单送达时间']
-              df[u'评价间隔_res'] = df[u'评价间隔_dt'].dt.days * 24 + df[u'评价间隔_dt'].dt.seconds / 3600
+              df[u'评价间隔(小时)'] = df[u'评价间隔_dt'].dt.days * 24 + df[u'评价间隔_dt'].dt.seconds / 3600
               result = df
-        # ====== 改时区
+       # 2021/2/22优化，为解决自动导出时的bug，对时区计算做了一些修改。同时，规定了输出的字段和顺序
+        - convert_month_day_time_column:
+            src_column: 运单送达时间
+            day_column: 运单送达日期
+            time_column: 运单送达时间
+        - convert_month_day_time_column:
+            src_column: 评价日期
+            day_column: 运单评价日期
+            time_column: 运单评价时间
         - run_py:
             - |
-              df = to_df(df)
-              df[u'评价日期'] = df[u'评价日期'].dt.tz_localize('UTC').dt.tz_convert('PRC')
-              df[u'运单送达时间'] = df[u'运单送达时间'].dt.tz_localize('UTC').dt.tz_convert('PRC')
-              result = to_dd(df)
+              df[u'评价间隔(天)'] = df[u'运单评价日期'] - df[u'运单送达日期']
+              result = df
         # ======匹配欺诈单 -> 20201110
         - stash_push_df: []
         - use_df:
@@ -353,6 +354,11 @@ ele_month_env:
             on: 下载城市
             how: right
             drop_stash: true
+        - push_dataset:
+            key: middle
+        - use_df:
+            key: middle
+            columns: [supplier_id,加盟商ID,city_code,下载城市,运单号,骑手ID, 骑手信息,团队,评价等级, 评价来源, 申述状态, 判定状态, 评价间隔(小时),评价间隔(天)]
 
 
 
@@ -366,23 +372,22 @@ ele_month_env:
         - df_select:
             - '[用户评价状态] == @p1'
             - p1: 非常满意
+         # 2021/2/22修改 为解决解决自动导出的问题
+        - convert_month_day_time_column:
+            src_column: 运单送达时间
+            day_column: 运单送达日期
+            time_column: 运单送达时间
         - stash_push_df: []
         #暂时不用
 #        - use_df:
 #            key: ele_month_57_std_last_month_two_days
 #            columns: [站点ID, 骑手ID,运单号, 运单送达时间, 用户评价状态,下载城市,是否T+2用户评价]
-#            rename:
-#              下载城市: 城市
 #        - df_select:
 #            - '[用户评价状态] == @p1'
 #            - p1: 非常满意
 #        - stash_push_df: []
-#
 #        - stash_concat_df:
 #            drop_stash: true
-#        - dask_persist_compute:
-#            sync_compute: true
-#            chunk_size: 5000
 #        - stash_push_df: []
         # ======匹配欺诈单 -> 20201110
         - use_df:
@@ -393,13 +398,7 @@ ele_month_env:
             how: right
             drop_stash: true
         # 匹配欺诈单 end ======
-        # ====== 改时区
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'运单送达时间'] = df[u'运单送达时间'].dt.tz_localize('UTC').dt.tz_convert('PRC')
-              result = to_dd(df)
-        #关联团队关系表2020.12.24，用于后端调用使用，暂时采用原表测试。之后需要重新构建团队关系表
+
         #关联团队关系表2020.12.24，用于后端调用使用
         - stash_push_df: []
         - use_df:
@@ -520,7 +519,7 @@ ele_month_env:
             how: right
             drop_stash: true
 
-
+       #运单详情超时
     - name: ele_deliverydetails_overtime_order_monthly
       sync_result: true
       cooks:
@@ -546,37 +545,7 @@ ele_month_env:
             how: right
             drop_stash: true
 
-    # 超时单详情
-    - name: ele_overtime_order_monthly
-      sync_result: true
-      cooks:
-        # 配送费中的超时单量
-        - use_df:
-            key: ele_deliveryfee_overtime_order_monthly
-        - stash_push_df: []
-        # KPI管理问题单T+12超时
-        - use_df:
-            key: ele_KPI_overtime_order_monthly
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        - stash_push_df: []
-        # 运单详情中的超时时长
-        - use_df:
-            key: ele_deliverydetails_overtime_order_monthly
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        # ======匹配欺诈单 -> 20201110
-        - stash_push_df: []
-        - use_df:
-            key: ele_month_37_std_cheat
-        - stash_push_df: []
-        - stash_join_df:
-            on: 运单号
-            how: right
-            drop_stash: true
-        # 匹配欺诈单 end ======
+
 
 
     # 差评单三个路径之一；KPI差评
@@ -605,7 +574,7 @@ ele_month_env:
             how: right
             drop_stash: true
 
-    # 差评单三个路径之一；配送费差评（很多时候为0）
+    # 差评单三个路径之一；配送费差评（很多时候无数据，不生成表格）
     - name: ele_deliveryfee_bad_order_monthly
       sync_result: true
       cooks:
@@ -669,11 +638,22 @@ ele_month_env:
         - run_py:
             - |
               df[u'评价间隔_dt'] = df[u'评价日期'] - df[u'运单送达时间']
-              df[u'评价间隔_res'] = df[u'评价间隔_dt'].dt.days * 24 + df[u'评价间隔_dt'].dt.seconds / 3600
-              df[u'运单送达时间'] = df[u'运单送达时间'].dt.tz_localize('UTC').dt.tz_convert('PRC')
-              df[u'评价日期'] = df[u'评价日期'].dt.tz_localize('UTC').dt.tz_convert('PRC')
+              df[u'评价间隔(小时)'] = df[u'评价间隔_dt'].dt.days * 24 + df[u'评价间隔_dt'].dt.seconds / 3600
               result = df
-          #关联团队关系表2020.12.25，用于后端调用使用
+        # 2021/2/22优化，为解决自动导出时的bug，对时区计算做了一些修改。同时，规定了输出的字段和顺序
+        - convert_month_day_time_column:
+            src_column: 运单送达时间
+            day_column: 运单送达日期
+            time_column: 运单送达时间
+        - convert_month_day_time_column:
+            src_column: 评价日期
+            day_column: 运单评价日期
+            time_column: 运单评价时间
+        - run_py:
+            - |
+              df[u'评价间隔(天)'] = df[u'运单评价日期'] - df[u'运单送达日期']
+              result = df
+        #关联团队关系表2020.12.25，用于后端调用使用
         - stash_push_df: []
         - use_df:
             key: std_qplus_dc_ele_revenue
@@ -685,8 +665,49 @@ ele_month_env:
             on: 下载城市
             how: right
             drop_stash: true
+        #关联团队关系表2020.12.25，用于后端调用使用，结束
+        - push_dataset:
+            key: middle
+        - use_df:
+            key: middle
+            columns: [supplier_id,加盟商ID,city_code,下载城市,运单号,骑手ID, 骑手信息,团队,站点ID, 服务奖惩评价_吐槽, 评价来源, 申述状态, 判定状态, 评价间隔(小时),评价间隔(天)]
+    # 2021/2/22优化，为解决自动导出时的bug，对时区计算做了一些修改。同时，规定了输出的字段和顺序。结束
 
-    # 差评单详情concat合并
+
+
+   # 超时单详情汇总
+    - name: ele_overtime_order_monthly
+      sync_result: true
+      cooks:
+        # 配送费中的超时单量
+        - use_df:
+            key: ele_deliveryfee_overtime_order_monthly
+        - stash_push_df: []
+        # KPI管理问题单T+12超时
+        - use_df:
+            key: ele_KPI_overtime_order_monthly
+        - stash_push_df: []
+        - stash_concat_df:
+            drop_stash: true
+        - stash_push_df: []
+        # 运单详情中的超时时长
+        - use_df:
+            key: ele_deliverydetails_overtime_order_monthly
+        - stash_push_df: []
+        - stash_concat_df:
+            drop_stash: true
+        # ======匹配欺诈单 -> 20201110
+        - stash_push_df: []
+        - use_df:
+            key: ele_month_37_std_cheat
+        - stash_push_df: []
+        - stash_join_df:
+            on: 运单号
+            how: right
+            drop_stash: true
+        # 匹配欺诈单 end ======
+
+    # 差评单详情concat汇总
     - name: ele_bad_order_monthly
       sync_result: true
       cooks:
@@ -715,3 +736,4 @@ ele_month_env:
             how: right
             drop_stash: true
         # 匹配欺诈单 end ======
+

@@ -25,6 +25,17 @@ mt_daily_env:
               - 导航距离
             dataset_cate: raw
             template_code: mt_day_1
+            ignore_null_error: true
+            empty_df_record:
+              订单号: 0
+              骑手: 0
+              骑手ID: 0
+              站点ID: 0
+              状态: 0
+              商家推单时间: 0
+              下单时间: 0
+              调度时间: 0
+              导航距离: 0
         - convert_month_day_time_column:
             src_column: 下单时间
             day_column: 日期
@@ -39,7 +50,6 @@ mt_daily_env:
             - 订单号: 订单ID
         - df_select:
             - '[日期] != 0'
-
     - name: mt_day_1_dc_qs_order_std_lookup_map
       sync_result: true
       cooks:
@@ -65,6 +75,16 @@ mt_daily_env:
               - 导航距离
             dataset_cate: raw
             template_code: mt_day_2
+            ignore_null_error: true
+            empty_df_record:
+              订单号: 0
+              骑手ID: 0
+              站点ID: 0
+              状态: 0
+              商家推单时间: 0
+              下单时间: 0
+              调度时间: 0
+              导航距离: 0
         - convert_month_day_time_column:
             src_column: 下单时间
             day_column: 日期
@@ -95,6 +115,16 @@ mt_daily_env:
               - 导航距离
             dataset_cate: raw
             template_code: mt_day_3
+            ignore_null_error: true
+            empty_df_record:
+              订单号: 0
+              骑手ID: 0
+              站点ID: 0
+              状态: 0
+              商家推单时间: 0
+              下单时间: 0
+              调度时间: 0
+              导航距离: 0
         - convert_month_day_time_column:
             src_column: 下单时间
             day_column: 日期
@@ -151,6 +181,17 @@ mt_daily_env:
               - 导航距离
             dataset_cate: raw
             template_code: mt_day_30
+            ignore_null_error: true
+            empty_df_record:
+              订单号: 0
+              骑手: 0
+              骑手ID: 0
+              站点ID: 0
+              状态: 0
+              商家推单时间: 0
+              下单时间: 0
+              调度时间: 0
+              导航距离: 0
         - convert_month_day_time_column:
             src_column: 下单时间
             day_column: 日期
@@ -189,6 +230,11 @@ mt_daily_env:
               - 收入小计
             dataset_cate: raw
             template_code: mt_day_4
+            ignore_null_error: true
+            empty_df_record:
+              订单ID: 0
+              实付金额: 0
+              收入小计: 0
     - name: mt_day_5_std
       sync_result: true
       cooks:
@@ -199,6 +245,10 @@ mt_daily_env:
               - 餐损赔付金额(元)
             dataset_cate: raw
             template_code: mt_day_5
+            ignore_null_error: true
+            empty_df_record:
+              订单ID: 0
+              餐损赔付金额(元): 0
     - name: mt_day_10_std
       sync_result: true
       cooks:
@@ -211,6 +261,12 @@ mt_daily_env:
               - 是否异常单剔除
             dataset_cate: raw
             template_code: mt_day_10
+            ignore_null_error: true
+            empty_df_record:
+              骑手ID: 0
+              订单号: 0
+              是否配送原因未完成: 0
+              是否异常单剔除: 0
         - rename_cols:
             - 订单号: 订单ID
     - name: mt_day_12_std
@@ -226,6 +282,13 @@ mt_daily_env:
               - 下单时间
             dataset_cate: raw
             template_code: mt_day_12
+            ignore_null_error: true
+            empty_df_record:
+              订单ID: 0
+              骑手ID: 0
+              惩罚原因: 0
+              惩罚金额(元): 0
+              下单时间: 0
     - name: mt_day_13_std
       sync_result: true
 #      keep_result: true
@@ -247,6 +310,20 @@ mt_daily_env:
               - 15分钟超时订单占比
             dataset_cate: raw
             template_code: mt_day_13
+            ignore_null_error: true
+            empty_df_record:
+              加盟站ID: 0
+              完成单(未剔除异常单): 0
+              得分: 0
+              星级: 0
+              评星奖惩单量: 0
+              奖惩总额(元): 0
+              评星奖惩总额(元): 0
+              不满意率: '-'
+              复合准时率（考核）: '-'
+              提前点送达率(复合): '-'
+              配送原因未完成率: '-'
+              15分钟超时订单占比: '-'
         - rename_cols:
             - 加盟站ID: 站点ID
               复合准时率（考核）: 复合准时率考核
@@ -309,6 +386,10 @@ mt_daily_env:
               - 金额
             dataset_cate: raw
             template_code: mt_day_15
+            ignore_null_error: true
+            empty_df_record:
+              站点ID: 0
+              金额: 0
     - name: mt_day_24_std
       sync_result: true
       cooks:
@@ -323,6 +404,14 @@ mt_daily_env:
               - 加盟站ID
             dataset_cate: raw
             template_code: mt_day_24
+            ignore_null_error: true
+            empty_df_record:
+              骑手: 0
+              骑手名称: 0
+              身份证号: 0
+              手机号: 0
+              月份: 0
+              加盟站ID: 0
         - df_to_int:
             - 月份
         - rename_cols:
@@ -340,6 +429,10 @@ mt_daily_env:
               - 配送服务2.0违规扣款(元)
             dataset_cate: raw
             template_code: mt_day_25
+            ignore_null_error: true
+            empty_df_record:
+              订单ID: 0
+              配送服务2.0违规扣款(元): 0
     - name: mt_day_18_std
       sync_result: true
 #      keep_result: true
@@ -361,6 +454,21 @@ mt_daily_env:
               - 总加盟商ID
             dataset_cate: raw
             template_code: mt_day_18
+            ignore_null_error: true
+            empty_df_record:
+              骑手ID: 0
+              站点ID: 0
+              完成单量: 0
+              用户评价配送五分单量: 0
+              配送准时单量: 0
+              配送准时率: '-'
+              meta_day: 0
+              骑手: 0
+              站点: 0
+              骑手接单量: 0
+              注册日期: 0
+              总加盟商: 0
+              总加盟商ID: 0
         - rename_cols:
           - meta_day: 日期
             总加盟商: 主体
@@ -408,6 +516,7 @@ mt_daily_env:
         - fetch_dataset:
             dataset_cate: raw
             template_code: mt_day_6
+            ignore_null_error: true
         - pad_cols:
             columns: [全天在线时长(含忙碌),全天在线时长(不含忙碌)]
             default_value: 0
@@ -436,6 +545,12 @@ mt_daily_env:
               - 开始日期
             dataset_cate: raw
             template_code: mt_day_23
+            ignore_null_error: true
+            empty_df_record:
+              骑手ID: 0
+              姓名: 0
+              考核正常天数: 0
+              开始日期: 0
         - set_meta_month_column:
             - month
 
