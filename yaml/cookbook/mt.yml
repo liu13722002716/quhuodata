@@ -1,0 +1,346 @@
+cookbook: true
+ele_daily_env:
+  context_defaults:
+    delay_compute: true
+    sync_result_from_cluster: true
+    play_on_dask_cluster: true
+    platform_code: elem
+    dask_client_set_as_default: true
+    cluster_client_address: tcp://172.31.54.193:8786
+
+
+
+  play:
+    - name: mt_kpi_detail
+      sync_result: true
+      cooks:
+        - fetch_dataset:
+            template_code: downloadFranchiseeGrade
+            dataset_cate: raw
+            datakit_pull_way: last_day
+            ignore_null_error: true
+            empty_df_record:
+              加盟站ID: '-'
+              站点名称: '-'
+              完成单(未剔除异常单): 0
+              星级: 0
+              得分: 0
+              提前点送达订单数: 0
+              15分钟超时订单数: 0
+              不满意订单数: 0
+              配送原因未完成数: 0
+              一般超时单量(考核): 0
+              严重超时单量(考核): 0
+              提前点送达率(复合): 0
+              提前点送达率(复合): 0
+              15分钟超时订单占比: 0
+              不满意率: 0
+              配送原因未完成率: 0
+              复合准时率（考核）: 0
+              meta_day: 0
+            columns:
+              - 加盟站ID
+              - 站点名称
+              - 完成单(未剔除异常单)
+              - 星级
+              - 得分
+              - 提前点送达订单数
+              - 15分钟超时订单数
+              - 不满意订单数
+              - 配送原因未完成数
+              - 一般超时单量(考核)
+              - 严重超时单量(考核)
+              - 提前点送达率(复合)
+              - 提前点送达率(复合)
+              - 15分钟超时订单占比
+              - 不满意率
+              - 配送原因未完成率
+              - 复合准时率（考核）
+              - meta_day
+            rename:
+              加盟站ID: vendor_dc_id
+              站点名称: dc_name
+              完成单(未剔除异常单): total_order
+              星级: star_level
+              得分: total_score
+              提前点送达订单数: advance_delivery_orders
+              15分钟超时订单数: over_15_orders
+              不满意订单数: dissatisfy_orders
+              配送原因未完成数: unfinished_orders
+              一般超时单量(考核): ordinary_over_time_orders
+              严重超时单量(考核): serious_over_time_orders
+              提前点送达率(复合): serious_over_time_orders
+              提前点送达率(复合): advance_delivery_ratio
+              15分钟超时订单占比: over_15_ratio
+              不满意率: dissatisfy_ratio
+              配送原因未完成率: unfinished_ratio
+              复合准时率（考核）: punctuality_ratio
+        - add_cols:
+            - advance_delivery_score: 0
+            - over_15_ratio_score: 0
+            - dissatisfy_ratio_score: 0
+            - unfinished_ratio_score: 0
+            - punctuality_ratio_score: 0
+            - avg_daily_order: 0
+            - punctuality_contains: 0
+            - punctuality_surplus: 0
+            - advance_delivery_contains: 0
+            - advance_delivery_surplus: 0
+            - over_15_contains: 0
+            - over_15_surplus: 0
+            - dissatisfy_contains: 0
+            - dissatisfy_surplus: 0
+            - unfinished_contains: 0
+            - unfinished_surplus: 0
+        - stash_push_df: []
+        - fetch_dataset:
+            template_code: kaohemingxi
+            dataset_cate: raw
+            datakit_pull_way: last_day
+            ignore_null_error: true
+            empty_df_record:
+              加盟站ID: '-'
+              复合准时率X: 0
+              复合准时率Y: 0
+              复合准时率Z: 0
+              配送原因未完成率X: 0
+              配送原因未完成率Y: 0
+              配送原因未完成率Z: 0
+              不满意率X: 0
+              不满意率Y: 0
+              不满意率Z: 0
+              提前点送达率X: 0
+              提前点送达率Y: 0
+              提前点送达率Z: 0
+              15分钟超时订单占比X: 0
+              15分钟超时订单占比Y: 0
+              15分钟超时订单占比Z: 0
+            columns:
+              - 加盟站ID
+              - 加盟站ID
+              - 复合准时率X
+              - 复合准时率Y
+              - 复合准时率Z
+              - 配送原因未完成率X
+              - 配送原因未完成率Y
+              - 配送原因未完成率Z
+              - 不满意率X
+              - 不满意率Y
+              - 不满意率Z
+              - 提前点送达率X
+              - 提前点送达率Y
+              - 提前点送达率Z
+              - 15分钟超时订单占比X
+              - 15分钟超时订单占比Y
+              - 15分钟超时订单占比Z
+            rename:
+              加盟站ID: vendor_dc_id
+              复合准时率X: X1
+              复合准时率Y: Y1
+              复合准时率Z: Z1
+              配送原因未完成率X: X2
+              配送原因未完成率Y: Y2
+              配送原因未完成率Z: Z2
+              不满意率X: X3
+              不满意率Y: Y3
+              不满意率Z: Z3
+              提前点送达率X: X4
+              提前点送达率Y: Y4
+              提前点送达率Z: Z4
+              15分钟超时订单占比X: X5
+              15分钟超时订单占比Y: Y5
+              15分钟超时订单占比Z: Z5
+        - stash_push_df: []
+        - stash_join_df:
+            how: right
+            on: dc_id
+            drop_stash: True
+        - set_meta_days_column:
+            - 当月总天数
+        - run_py:
+            - |
+                df['days'] = df['meta_day'].map(str).str[6:].map(int)
+                result = df
+        - push_dataset:
+            key: mt_kpi_detail_mini
+###提前点送达得分
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] >= [X4]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 0'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [X4] & [advance_delivery_ratio] >= [Y4]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X4])/([Y4]-[X4])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Y4] & [advance_delivery_ratio] >= [Z4]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y4])/([Z4]-[Y4])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Z4]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 120'
+        - df_reset_index: []
+        - stash_push_df: []
+        - stash_concat_df:
+            stash_drop: True
+        - push_dataset:
+            key: mt_kpi_detail_mini
+###15分钟超时占比得分
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] >= [X5]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 0'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [X5] & [advance_delivery_ratio] >= [Y5]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X5])/([Y5]-[X5])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Y5] & [advance_delivery_ratio] >= [Z5]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y5])/([Z5]-[Y5])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Z5]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 120'
+        - df_reset_index: []
+        - stash_push_df: []
+        - stash_concat_df:
+            stash_drop: True
+        - push_dataset:
+            key: mt_kpi_detail_mini
+
+###不满意率得分
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] >= [X3]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 0'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [X3] & [advance_delivery_ratio] >= [Y3]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X3])/([Y3]-[X3])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Y3] & [advance_delivery_ratio] >= [Z3]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y3])/([Z3]-[Y3])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Z3]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 120'
+        - df_reset_index: []
+        - stash_push_df: []
+        - stash_concat_df:
+            stash_drop: True
+        - push_dataset:
+            key: mt_kpi_detail_mini
+###配送原因未完成率得分
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] >= [X2]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 0'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [X2] & [advance_delivery_ratio] >= [Y2]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X2])/([Y2]-[X2])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Y2] & [advance_delivery_ratio] >= [Z2]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y2])/([Z2]-[Y2])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] < [Z2]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 120'
+        - df_reset_index: []
+        - stash_push_df: []
+        - stash_concat_df:
+            stash_drop: True
+        - push_dataset:
+            key: mt_kpi_detail_mini
+
+###复合准时率得分
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] <= [X1]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 0'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] > [X1] & [advance_delivery_ratio] <= [Y1]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X1])/([Y1]-[X1])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] > [Y1] & [advance_delivery_ratio] <= [Z1]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y1])/([Z1]-[Y1])'
+        - df_reset_index: []
+        - stash_push_df: []
+        - use_df: mt_kpi_detail_mini
+        - df_select:
+            - '[advance_delivery_ratio] > [Z1]'
+        - df_eval:
+            - '[oadvance_delivery_score] = 120'
+        - df_reset_index: []
+        - stash_push_df: []
+        - stash_concat_df:
+            stash_drop: True
+###日均单
+        - df_eval:
+            - '[vg_daily_order] = [total_order]/[days]'
+###复合配送准时（容错值）& 复合配送准时（余量）
+        - df_eval:
+            - '[punctuality_contains] = [vg_daily_order]*[当月总天数]*[Z1]'
+        - df_eval:
+            - '[punctuality_surplus] = [punctuality_contains] - 1*[ordinary_over_time_orders] - 5*[serious_over_time_orders]'
+###提前点送达单量（容错值）& 提前点送达单量（余量）
+        - df_eval:
+            - '[advance_delivery_contains] = [vg_daily_order]*[当月总天数]*[Z4]'
+        - df_eval:
+            - '[advance_delivery_surplus] = [advance_delivery_contains] - 1*[advance_delivery_orders]'
+
+
+
