@@ -639,7 +639,8 @@ ele_daily_env:
             template_code: ele_day_34
             rename:
               团队ID: 站点ID
-              团队名称: 站点名称
+              团队名称: 站点
+              骑手名称: 骑手
         - set_meta_month_column:
             - month
         - str_strip_column:
@@ -649,11 +650,17 @@ ele_daily_env:
             - p1: 配送收入
               p2: [差评,完成单,完成单-超时]
         - df_groupby:
-            by: [站点ID,站点名称, 骑手ID, 骑手名称]
+            by: [站点ID,站点, 骑手ID, 骑手]
         - df_count:
             column: 订单号
             rename: 完成单量
         - df_reset_index: []
+        - add_cols:
+            - 注册日期:
+        - add_cols:
+            - 骑手接单量:
+        - set_meta_month_column:
+            - month
       sync_result: true
       name: ele_day_34_std_ext
     - cooks:
