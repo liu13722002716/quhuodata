@@ -579,7 +579,83 @@ mt_daily_env:
         - df_reset_index: []
         - set_meta_month_column:
             - month
-
+    - name: mt_day_57_std
+      sync_result: true
+      cooks:
+        - fetch_dataset:
+            datakit_pull_way: last_day
+            columns:
+              - 加盟商名称
+              - 被邀请人档位1奖励金额
+              - 邀请人档位3打款日期
+              - 站点名称
+              - 活动名称
+              - 被邀请人档位1打款日期
+              - 活动结束日期
+              - 被邀请人单量
+              - 邀请人奖金
+              - 被邀请者姓名
+              - 被邀请者ID
+              - 活动ID
+              - 活动开始日期
+              - 被邀请者注册日期
+              - 邀请人档位2奖励金额
+              - 邀请者姓名
+              - 被邀请人档位2奖励金额
+              - 站点ID
+              - 邀请人档位1打款日期
+              - 邀请人档位1奖励金额
+              - 邀请人档位2打款日期
+              - 被邀请人档位3打款日期
+              - 加盟商ID
+              - 城市
+              - 被邀请人档位3奖励金额
+              - 被邀请者入职日期
+              - 邀请人档位3奖励金额
+              - 被邀请人档位2打款日期
+              - 邀请者ID
+              - 被邀请人奖金
+            dataset_cate: raw
+            template_code: mt_day_57
+            ignore_null_error: true
+        - set_meta_month_column:
+            - month
+    - name: mt_day_57_std_ext
+      sync_result: true
+      cooks:
+        - use_df:
+            key: salarysheet-std
+            columns: [name,staff_id,vendor_worker_id]
+            rename:
+              vendor_worker_id: 被邀请者ID
+              staff_id: 被邀请者BOSS_ID
+              name: 被邀请者姓名
+        - stash_push_df: []
+        - use_df:
+            key: mt_day_57_std
+        - stash_push_df: []
+        - stash_join_df:
+            on: [被邀请者ID,被邀请者姓名]
+            how: left
+            drop_stash: true
+        - push_dataset:
+            key: middle
+        # 被邀请者和邀请者BOSS信息补充
+        - use_df:
+            key: salarysheet-std
+            columns: [name,staff_id,vendor_worker_id]
+            rename:
+              vendor_worker_id: 邀请者ID
+              staff_id: 邀请者BOSS_ID
+              name: 邀请者姓名
+        - stash_push_df: []
+        - use_df:
+            key: middle
+        - stash_push_df: []
+        - stash_join_df:
+            on: [邀请者ID,邀请者姓名]
+            how: left
+            drop_stash: true
 mt_month_env:
   context_defaults:
     delay_compute: true
