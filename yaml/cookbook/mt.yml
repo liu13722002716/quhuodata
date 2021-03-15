@@ -108,6 +108,49 @@ ele_daily_env:
             - unfinished_contains: 0
         - add_cols:
             - unfinished_surplus: 0
+        - df_to_float:
+            - advance_delivery_score
+        - df_to_float:
+            - over_15_ratio_score
+        - df_to_float:
+            - dissatisfy_ratio_score
+        - df_to_float:
+            - unfinished_ratio_score
+        - df_to_float:
+            - punctuality_ratio_score
+        - df_to_float:
+            - avg_daily_order
+        - df_to_float:
+            - punctuality_contains
+        - df_to_float:
+            - punctuality_surplus
+        - df_to_float:
+            - advance_delivery_contains
+        - df_to_float:
+            - advance_delivery_surplus
+        - df_to_float:
+            - over_15_contains
+        - df_to_float:
+            - over_15_surplus
+        - df_to_float:
+            - dissatisfy_contains
+        - df_to_float:
+            - dissatisfy_surplus
+        - df_to_float:
+            - unfinished_contains
+        - df_to_float:
+            - unfinished_surplus
+        - df_to_float:
+            - advance_delivery_ratio
+        - df_to_float:
+            - over_15_ratio
+        - df_to_float:
+            - dissatisfy_ratio
+        - df_to_float:
+            - unfinished_ratio
+        - df_to_float:
+            - punctuality_ratio
+
         - stash_push_df: []
         - fetch_dataset:
             template_code: mt_month_62
@@ -169,7 +212,8 @@ ele_daily_env:
         - stash_push_df: []
         - stash_join_df:
             how: right
-            on: dc_id
+            on: vendor_dc_id
+            fillna: 0
             drop_stash: True
         - set_meta_days_column:
             - 当月总天数
@@ -187,7 +231,6 @@ ele_daily_env:
             - '[advance_delivery_ratio] >= [X4]'
         - df_eval:
             - '[oadvance_delivery_score] = 0'
-        - df_reset_index: []
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
@@ -195,7 +238,6 @@ ele_daily_env:
             - '[advance_delivery_ratio] < [X4] & [advance_delivery_ratio] >= [Y4]'
         - df_eval:
             - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X4])/([Y4]-[X4])'
-        - df_reset_index: []
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
@@ -203,7 +245,6 @@ ele_daily_env:
             - '[advance_delivery_ratio] < [Y4] & [advance_delivery_ratio] >= [Z4]'
         - df_eval:
             - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y4])/([Z4]-[Y4])'
-        - df_reset_index: []
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
@@ -211,7 +252,6 @@ ele_daily_env:
             - '[advance_delivery_ratio] < [Z4]'
         - df_eval:
             - '[oadvance_delivery_score] = 120'
-        - df_reset_index: []
         - stash_push_df: []
         - stash_concat_df:
             stash_drop: True
@@ -221,34 +261,30 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] >= [X5]'
+            - '[over_15_ratio] >= [X5]'
         - df_eval:
-            - '[oadvance_delivery_score] = 0'
-        - df_reset_index: []
+            - '[over_15_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [X5] & [advance_delivery_ratio] >= [Y5]'
+            - '[over_15_ratio] < [X5] & [over_15_ratio] >= [Y5]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X5])/([Y5]-[X5])'
-        - df_reset_index: []
+            - '[over_15_ratio_score] = 100* ([over_15_ratio]-[X5])/([Y5]-[X5])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Y5] & [advance_delivery_ratio] >= [Z5]'
+            - '[over_15_ratio] < [Y5] & [over_15_ratio] >= [Z5]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y5])/([Z5]-[Y5])'
-        - df_reset_index: []
+            - '[over_15_ratio_score] = 100+20* ([over_15_ratio]-[Y5])/([Z5]-[Y5])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Z5]'
+            - '[over_15_ratio] < [Z5]'
         - df_eval:
-            - '[oadvance_delivery_score] = 120'
-        - df_reset_index: []
+            - '[over_15_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
             stash_drop: True
@@ -259,34 +295,30 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] >= [X3]'
+            - '[dissatisfy_ratio] >= [X3]'
         - df_eval:
-            - '[oadvance_delivery_score] = 0'
-        - df_reset_index: []
+            - '[dissatisfy_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [X3] & [advance_delivery_ratio] >= [Y3]'
+            - '[dissatisfy_ratio] < [X3] & [dissatisfy_ratio] >= [Y3]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X3])/([Y3]-[X3])'
-        - df_reset_index: []
+            - '[dissatisfy_ratio_score] = 100* ([dissatisfy_ratio]-[X3])/([Y3]-[X3])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Y3] & [advance_delivery_ratio] >= [Z3]'
+            - '[dissatisfy_ratio] < [Y3] & [dissatisfy_ratio] >= [Z3]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y3])/([Z3]-[Y3])'
-        - df_reset_index: []
+            - '[dissatisfy_ratio_score] = 100+20* ([dissatisfy_ratio]-[Y3])/([Z3]-[Y3])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Z3]'
+            - '[dissatisfy_ratio] < [Z3]'
         - df_eval:
-            - '[oadvance_delivery_score] = 120'
-        - df_reset_index: []
+            - '[dissatisfy_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
             stash_drop: True
@@ -296,34 +328,30 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] >= [X2]'
+            - '[unfinished_ratio] >= [X2]'
         - df_eval:
-            - '[oadvance_delivery_score] = 0'
-        - df_reset_index: []
+            - '[unfinished_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [X2] & [advance_delivery_ratio] >= [Y2]'
+            - '[unfinished_ratio] < [X2] & [unfinished_ratio] >= [Y2]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X2])/([Y2]-[X2])'
-        - df_reset_index: []
+            - '[unfinished_ratio_score] = 100* ([unfinished_ratio]-[X2])/([Y2]-[X2])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Y2] & [advance_delivery_ratio] >= [Z2]'
+            - '[unfinished_ratio] < [Y2] & [unfinished_ratio] >= [Z2]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y2])/([Z2]-[Y2])'
-        - df_reset_index: []
+            - '[unfinished_ratio_score] = 100+20* ([unfinished_ratio]-[Y2])/([Z2]-[Y2])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Z2]'
+            - '[unfinished_ratio] < [Z2]'
         - df_eval:
-            - '[oadvance_delivery_score] = 120'
-        - df_reset_index: []
+            - '[unfinished_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
             stash_drop: True
@@ -334,34 +362,30 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] <= [X1]'
+            - '[punctuality_ratio] <= [X1]'
         - df_eval:
-            - '[oadvance_delivery_score] = 0'
-        - df_reset_index: []
+            - '[punctuality_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] > [X1] & [advance_delivery_ratio] <= [Y1]'
+            - '[punctuality_ratio] > [X1] & [punctuality_ratio] <= [Y1]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X1])/([Y1]-[X1])'
-        - df_reset_index: []
+            - '[punctuality_ratio_score] = 100* ([punctuality_ratio]-[X1])/([Y1]-[X1])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] > [Y1] & [advance_delivery_ratio] <= [Z1]'
+            - '[punctuality_ratio] > [Y1] & [punctuality_ratio] <= [Z1]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y1])/([Z1]-[Y1])'
-        - df_reset_index: []
+            - '[punctuality_ratio_score] = 100+20* ([punctuality_ratio]-[Y1])/([Z1]-[Y1])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] > [Z1]'
+            - '[punctuality_ratio] > [Z1]'
         - df_eval:
-            - '[oadvance_delivery_score] = 120'
-        - df_reset_index: []
+            - '[punctuality_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
             stash_drop: True
