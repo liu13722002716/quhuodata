@@ -28,6 +28,8 @@
   <component name="ChangeListManager">
     <list default="true" id="32174e61-ef0f-443a-9acb-842f497da758" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yaml/cookbook/mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/mt.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yaml/cookbook/tset.yml" beforeDir="false" afterPath="$PROJECT_DIR$/yaml/cookbook/tset.yml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -45,11 +47,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/yaml/cookbook/mt.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="14" selection-start-line="14" selection-end-line="16" selection-end-column="12" />
+            <state relative-caret-position="6240">
+              <caret line="416" column="41" selection-start-line="416" selection-start-column="41" selection-end-line="416" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/yaml/cookbook/tset.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="758">
+              <caret line="400" selection-start-line="400" selection-end-line="400" />
             </state>
           </provider>
         </entry>
@@ -65,36 +76,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>#暂时不用</find>
+      <find>stash</find>
+      <find>satsh_join_df</find>
+      <find>satsh_join_d</find>
+      <find>f_reset_inde</find>
+      <find>tash_join_df</find>
+      <find>18</find>
+      <find>ele_day_34_std_ext</find>
+      <find>clea</find>
+      <find>mt_day_57_std_ext</find>
+      <find>replace</find>
+      <find>df_select</find>
+      <find>where</find>
+      <find>stash_join_df</find>
+      <find>df_to_float</find>
+      <find>- df_to_float</find>
       <find>add_cols</find>
-      <find>pad_cols</find>
-      <find>-10201</find>
-      <find>Q-10201</find>
-      <find>Q-10202</find>
-      <find>Q-10203</find>
-      <find>Q-1010102</find>
-      <find>Q-202</find>
-      <find>Q-102</find>
-      <find>QS-10101014</find>
-      <find>出勤天数</find>
-      <find>dimission_tendency_analysis_dc</find>
-      <find>- df_not_nan_inf:</find>
-      <find>eam_coach_team_name</find>
-      <find>ele_month_33_std</find>
-      <find>ele_month_37_std</find>
-      <find>离职率趋势分析</find>
-      <find>supplier_vendor_dc</find>
-      <find>city_coach_map</find>
-      <find>离职率</find>
-      <find>mt_day_18_std_ext</find>
-      <find>清退</find>
-      <find>fetch_</find>
-      <find>mt_day_13</find>
-      <find>fetch_dataset</find>
-      <find>复合准时率（考核</find>
-      <find>empty_df_record</find>
-      <find>fetch</find>
-      <find>str_strip_column</find>
+      <find>dc_id</find>
+      <find>month</find>
+      <find>key: mt_kpi_detail_mini</find>
+      <find>advance_delivery_ratio</find>
+      <find>df_rese</find>
+      <find>unfinished_contains</find>
+      <find>unfinished_surplus</find>
+      <find>ordinary_over_time_orders</find>
+      <find>erious_over_time_orders</find>
+      <find>drop_duplicate</find>
+      <find>ele_worker_order_common_kpi_by_monthly_t2</find>
+      <find>pivot</find>
+      <find>dvance_delivery_orders</find>
+      <find>vg_daily_order</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -105,7 +116,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_ele.yml" />
         <option value="$PROJECT_DIR$/../Desktop/yaml/test.yaml" />
         <option value="$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_mt.yml" />
         <option value="$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/project.yml" />
@@ -127,14 +137,19 @@
         <option value="$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_mt.yml" />
         <option value="$PROJECT_DIR$/yaml/cookbook/test.yml" />
         <option value="$PROJECT_DIR$/../Desktop/yaml/提交/00_datakit_dataset_mt.yml" />
+        <option value="$PROJECT_DIR$/yaml/__init__.py" />
+        <option value="$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_ele.yml" />
         <option value="$PROJECT_DIR$/yaml/cookbook/mt.yml" />
+        <option value="$PROJECT_DIR$/yaml/cookbook/tset.yml" />
+        <option value="$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/logistics/city.yml" />
+        <option value="$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/e8d03c515a9caf14965f6c59a2225c1a/File/city.yml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1280" />
-    <option name="height" value="706" />
+    <option name="height" value="705" />
   </component>
   <component name="ProjectId" id="1lJ6g3Mek67MFDPq7sdZMHbAfn0" />
   <component name="ProjectView">
@@ -174,7 +189,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/../Desktop/yaml/提交/00_datakit_dataset_mt.yml" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/logistics/city.yml" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -280,12 +295,14 @@
       <workItem from="1614673575491" duration="2305000" />
       <workItem from="1614737978237" duration="4731000" />
       <workItem from="1614822556466" duration="11206000" />
-      <workItem from="1614922198647" duration="1984000" />
+      <workItem from="1614922198647" duration="47281000" />
+      <workItem from="1615441040087" duration="29500000" />
+      <workItem from="1615858945897" duration="214000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="159906000" />
+    <option name="totallyTimeSpent" value="234929000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -297,9 +314,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="706" extended-state="0" />
+    <frame x="0" y="23" width="1280" height="705" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4987715" visible="true" weight="0.3578352" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4987715" visible="true" weight="0.36914378" />
       <window_info id="Structure" order="1" sideWeight="0.5012285" side_tool="true" weight="0.34087238" />
       <window_info id="Favorites" order="2" sideWeight="0.5012285" side_tool="true" weight="0.34087238" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -313,7 +330,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32838285" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50080776" side_tool="true" weight="0.32838285" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32736155" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32626426" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.32838285" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -412,282 +429,6 @@
     <state x="418" y="217" width="604" height="554" key="find.popup/0.23.1440.877@0.23.1440.877" timestamp="1610619583139" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/summary/group_team.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="163" selection-start-line="163" selection-end-line="200" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/summary/company_team.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="159" selection-start-line="159" selection-end-line="195" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/team/team.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1390">
-          <caret line="142" selection-start-line="142" selection-end-line="153" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/team/division.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2096" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/team/business.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2022" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/city.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="230" column="51" selection-start-line="230" selection-start-column="44" selection-end-line="230" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/code.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="230" column="35" selection-start-line="230" selection-start-column="35" selection-end-line="230" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/project.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="230" column="51" selection-start-line="230" selection-start-column="44" selection-end-line="230" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/region.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="230" column="24" lean-forward="true" selection-start-line="230" selection-start-column="24" selection-end-line="230" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/supplier.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1465">
-          <caret line="498" column="21" lean-forward="true" selection-start-line="498" selection-start-column="21" selection-end-line="498" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/order_num_daily.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="811">
-          <caret line="92" column="84" selection-start-line="92" selection-start-column="46" selection-end-line="92" selection-end-column="84" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/transfer_month_to_day_dataset_mt.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="70" column="29" selection-start-line="70" selection-start-column="12" selection-end-line="70" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/dc_order_cost_actual_mt_ele.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="110" column="17" selection-start-line="110" selection-start-column="17" selection-end-line="110" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/dc_cost_dataset_ele.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="17" column="20" lean-forward="true" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/new_finacial/financial_databook_dataset.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="20" column="46" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/dc_order_cost_forecast_mt_ele.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="982">
-          <caret line="543" column="43" selection-start-line="543" selection-start-column="17" selection-end-line="543" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/daily_cook_t2_datasets(1).py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="65" column="65" selection-start-line="65" selection-start-column="43" selection-end-line="65" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_mt.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="160" column="12" selection-start-line="160" selection-start-column="12" selection-end-line="160" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/revenue_dataset_mt.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-714">
-          <caret line="33" column="29" lean-forward="true" selection-start-line="33" selection-start-column="17" selection-end-line="33" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/9cfdd4ab990551608b7c3ab102e24e1a/File/ele_salarykit_report(2).yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-900">
-          <caret line="70" column="43" lean-forward="true" selection-start-line="70" selection-start-column="43" selection-end-line="70" selection-end-column="43" />
-          <folding>
-            <element signature="e#2346#3177#0" />
-            <element signature="e#3314#3871#0" />
-            <element signature="e#3970#5103#0" />
-            <element signature="e#5200#6736#0" />
-            <element signature="e#6872#8994#0" />
-            <element signature="e#9086#11415#0" />
-            <element signature="e#11497#12901#0" />
-            <element signature="e#13021#13627#0" />
-            <element signature="e#13696#14305#0" />
-            <element signature="e#14390#15121#0" />
-            <element signature="e#15196#15948#0" />
-            <element signature="e#16034#16711#0" />
-            <element signature="e#16806#17452#0" />
-            <element signature="e#17567#18241#0" />
-            <element signature="e#18345#20570#0" />
-            <element signature="e#20717#21503#0" />
-            <element signature="e#20754#20817#1" />
-            <element signature="e#21589#22310#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/summary/ac.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="977">
-          <caret line="160" column="40" selection-start-line="160" selection-start-column="33" selection-end-line="160" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/summary/org_business.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="25" column="15" lean-forward="true" selection-start-line="25" selection-start-column="15" selection-end-line="25" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/9cfdd4ab990551608b7c3ab102e24e1a/File/ele_salarykit_report(3).yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="173" column="20" lean-forward="true" selection-start-line="173" selection-start-column="20" selection-end-line="173" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/finance_template.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="698">
-          <caret line="435" column="21" lean-forward="true" selection-start-line="435" selection-start-column="21" selection-end-line="435" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/datakit_cooks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-454">
-          <caret line="301" column="12" lean-forward="true" selection-start-line="301" selection-start-column="4" selection-end-line="301" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/clean_chengtu/code.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="151" column="44" lean-forward="true" selection-start-line="151" selection-start-column="44" selection-end-line="151" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/clean_chengtu/supplier.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="152" column="35" lean-forward="true" selection-start-line="152" selection-start-column="35" selection-end-line="152" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/clean_chengtu/region.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="150" column="18" selection-start-line="150" selection-start-column="18" selection-end-line="150" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/clean_lailai/city.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-173">
-          <caret line="127" column="13" selection-start-line="127" selection-start-column="8" selection-end-line="127" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/clean_chengtu/city.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="149" column="29" lean-forward="true" selection-start-line="149" selection-start-column="18" selection-end-line="149" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/clean_chengtu/project.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="149" column="33" lean-forward="true" selection-start-line="149" selection-start-column="33" selection-end-line="149" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_ele.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="37" column="39" lean-forward="true" selection-start-line="37" selection-start-column="27" selection-end-line="37" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/ele_salarykit_report.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="219" column="89" selection-start-line="219" selection-start-column="85" selection-end-line="219" selection-end-column="89" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/5c4839e8f9efc46c981b8e915cfd9fbb/OpenData/process_middle_table_ele(8).yml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/5c4839e8f9efc46c981b8e915cfd9fbb/File/process_middle_table_ele(25).yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="24" lean-forward="true" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/ea49182b2344bdd1805720b42ebde0ad/OpenData/process_middle_table_ele(7).yml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/new_t1_compass/test2.yaml" />
-    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/ea49182b2344bdd1805720b42ebde0ad/File/test.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="680" column="19" selection-start-line="680" selection-start-column="19" selection-end-line="680" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/t2_compass/dc.yml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/t2_compass/group.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1598" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/yaml/cookbook/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -701,13 +442,6 @@
     <entry file="file://$PROJECT_DIR$/yaml/cookbook/compass_monitor.yml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/new_t1_compass/transfer_month_city_analysis_ele.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="126" column="21" lean-forward="true" selection-start-line="126" selection-start-column="21" selection-end-line="126" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../Desktop/yaml/process_middle_table_ele.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-810">
@@ -715,20 +449,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_mt.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1161">
-          <caret line="227" column="36" lean-forward="true" selection-start-line="227" selection-start-column="27" selection-end-line="227" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Desktop/yaml/提交/ele_salarykit_report(2).yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="959">
-          <caret line="69" column="23" selection-start-line="69" selection-start-column="23" selection-end-line="69" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/yaml/提交/ele_salarykit_report(2).yml" />
     <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/ea49182b2344bdd1805720b42ebde0ad/File/00_datakit_dataset_mt(3).yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -743,24 +464,274 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/test.yml">
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/test.yml" />
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/ea49182b2344bdd1805720b42ebde0ad/OpenData/00_datakit_dataset_mt(2).yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="412">
-          <caret line="392" column="10" selection-start-line="392" selection-start-column="10" selection-end-line="392" selection-end-column="10" />
+        <state relative-caret-position="108">
+          <caret line="271" column="25" selection-start-line="271" selection-start-column="12" selection-end-line="271" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/yaml/cookbook/mt.yml">
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/e8d03c515a9caf14965f6c59a2225c1a/File/salaryflow_biz.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="12" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
+        <state relative-caret-position="1058">
+          <caret line="423" column="77" selection-start-line="423" selection-start-column="34" selection-end-line="423" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/monitor_std_data.yml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/new_finacial/financial_databook_dataset.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="46" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/region.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3450">
+          <caret line="230" column="24" lean-forward="true" selection-start-line="230" selection-start-column="24" selection-end-line="230" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/qc_dataset_mt.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="727" selection-start-line="727" selection-end-line="728" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/team/division.yml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/other/supplier.yml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/e8d03c515a9caf14965f6c59a2225c1a/File/finance_template.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-10115" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/team/team.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" column="20" lean-forward="true" selection-start-line="22" selection-start-column="20" selection-end-line="22" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/9cfdd4ab990551608b7c3ab102e24e1a/OpenData/knight_order_daily(1).py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/transfer_month_to_day_dataset_mt.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="70" column="12" selection-start-line="70" selection-start-column="12" selection-end-line="70" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/9cfdd4ab990551608b7c3ab102e24e1a/OpenData/salaryflow_biz.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-378">
+          <caret line="201" column="75" selection-start-line="201" selection-start-column="34" selection-end-line="201" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/t2_compass/theater.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="95" column="10" selection-start-line="95" selection-start-column="10" selection-end-line="95" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/revenue_dataset_mt.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="738" selection-start-line="738" selection-end-line="738" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_mt.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-836">
+          <caret line="18" column="15" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/qc_dataset_ele.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5063" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/t2_compass/knight.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="685">
+          <caret line="75" column="16" selection-start-line="75" selection-start-column="16" selection-end-line="75" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/t2_compass/business.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="116" column="28" lean-forward="true" selection-start-line="116" selection-start-column="10" selection-end-line="116" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/datakit_cooks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="317" column="18" selection-start-line="317" selection-start-column="8" selection-end-line="317" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/t2_compass/owner.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="666" column="10" selection-start-line="666" selection-start-column="10" selection-end-line="666" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/new_t1_compass/transfer_month_city_analysis_ele.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="207" column="18" selection-start-line="207" selection-start-column="10" selection-end-line="207" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/9cfdd4ab990551608b7c3ab102e24e1a/File/00_datakit_dataset_mt(1).yml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/9cfdd4ab990551608b7c3ab102e24e1a/File/00_datakit_dataset_mt(2).yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-9229" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/t2_compass/division.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1865">
+          <caret line="153" column="10" selection-start-line="153" selection-start-column="10" selection-end-line="153" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_mt.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="556" column="48" lean-forward="true" selection-start-line="556" selection-start-column="12" selection-end-line="556" selection-end-column="48" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="14" selection-start-line="14" selection-end-line="16" selection-end-column="12" />
+        <state relative-caret-position="46">
+          <caret line="1428" column="35" lean-forward="true" selection-start-line="1428" selection-start-column="35" selection-end-line="1428" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_taxi/project.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1084">
+          <caret line="185" column="16" lean-forward="true" selection-start-line="185" selection-start-column="16" selection-end-line="185" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/salarykit_dataset_ele.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="299" column="53" selection-start-line="299" selection-start-column="53" selection-end-line="299" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/logistics/supplier.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="31" column="65" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/summary/org_team.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3408">
+          <caret line="26" column="15" lean-forward="true" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/finance_template.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-665">
+          <caret line="738" column="43" lean-forward="true" selection-start-line="738" selection-start-column="22" selection-end-line="738" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/b072e85fe758e109629a690eb8fa159d/OpenData/salaryflow_biz.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="203" column="78" lean-forward="true" selection-start-line="203" selection-start-column="34" selection-end-line="203" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/00_datakit_dataset_ele.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="12" selection-start-line="3" selection-start-column="12" selection-end-line="6" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/revenue_dataset_ele.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="917">
+          <caret line="692" column="10" selection-start-line="692" selection-start-column="10" selection-end-line="692" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_bicycle/city.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-639" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/e8d03c515a9caf14965f6c59a2225c1a/OpenData/city.yml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/logistics/city.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="98" column="16" lean-forward="true" selection-start-line="98" selection-start-column="16" selection-end-line="98" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Desktop/马洪涛/21年财报20210206/cookbook/code/travel_bicycle/project.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="5" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/e8d03c515a9caf14965f6c59a2225c1a/OpenData/city(2).yml" />
+    <entry file="file://$PROJECT_DIR$/../Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/70365efdd10a636046b3906675128b0d/Message/MessageTemp/e8d03c515a9caf14965f6c59a2225c1a/File/city.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="508">
+          <caret line="433" column="21" selection-start-line="433" selection-start-column="21" selection-end-line="433" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/mt.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6240">
+          <caret line="416" column="41" selection-start-line="416" selection-start-column="41" selection-end-line="416" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yaml/cookbook/tset.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="758">
+          <caret line="400" selection-start-line="400" selection-end-line="400" />
         </state>
       </provider>
     </entry>
