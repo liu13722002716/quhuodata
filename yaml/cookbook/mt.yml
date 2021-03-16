@@ -464,8 +464,31 @@ ele_daily_env:
               df['col_surplus_dict'] = '0'
               df['col_surplus_dict'] = [u'[{"name":"复核配送准时（余量）","surplus": "%s"},{"name":"提前点送达单量（余量）","surplus": "%s"},{"name":"15分钟超时单量（余量）","surplus": "%s"},{"name":"不满意单量（余量）","surplus": "%s"},{"name":"配送原因未完成单量（余量）","surplus": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['punctuality_surplus','advance_delivery_surplus','over_15_surplus','dissatisfy_surplus','dissatisfy_surplus']].to_dict(orient='split')['data'] ]
               result = df
-
-
+        - stash_push_df: []
+        - fetch_dataset:
+            dataset_type_code: std_qplus_dc
+            dataset_cate: std
+            ignore_null_error: true
+            columns:
+              - supplier_id
+              - vendor_dc_id
+              - city_name
+        - when_empty_fetch_dataset:
+            dataset_type_code: std_qplus_dc
+            dataset_cate: std
+            month_offset: -1
+            ignore_null_error: true
+            columns:
+              - supplier_id
+              - vendor_dc_id
+              - city_name
+        - drop_duplicates:
+            subset: [ supplier_id,vendor_dc_id ,city_name ]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [ vendor_dc_id ]
+            how: right
+            drop_stash: true
 
 
     - name: knight_detail
@@ -520,10 +543,35 @@ ele_daily_env:
                 result = to_dd(df)
         - push_dataset:
             key: mt_day_18_knight_detail
-###骑手出勤率
         - use_df:
             key: mt_day_18_knight_detail
         - stash_push_df: []
+        - fetch_dataset:
+            dataset_type_code: std_qplus_dc
+            dataset_cate: std
+            ignore_null_error: true
+            columns:
+              - supplier_id
+              - vendor_dc_id
+              - city_name
+        - when_empty_fetch_dataset:
+            dataset_type_code: std_qplus_dc
+            dataset_cate: std
+            month_offset: -1
+            ignore_null_error: true
+            columns:
+              - supplier_id
+              - vendor_dc_id
+              - city_name
+        - drop_duplicates:
+            subset: [ supplier_id,vendor_dc_id ,city_name ]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [ vendor_dc_id ]
+            how: right
+            drop_stash: true
+        - stash_push_df: []
+###骑手出勤率
         - use_df:
             key: mt_day_18_knight_detail
         - add_cols:
