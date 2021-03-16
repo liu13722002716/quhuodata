@@ -150,7 +150,6 @@ ele_daily_env:
             - unfinished_ratio
         - df_to_float:
             - punctuality_ratio
-
         - stash_push_df: []
         - fetch_dataset:
             template_code: mt_month_62
@@ -224,6 +223,7 @@ ele_daily_env:
                 result = to_dd(df)
         - push_dataset:
             key: mt_kpi_detail_mini
+
 ###提前点送达得分
         - use_df:
             key: mt_kpi_detail_mini
@@ -257,6 +257,7 @@ ele_daily_env:
             stash_drop: True
         - push_dataset:
             key: mt_kpi_detail_mini
+
 ###15分钟超时占比得分
         - use_df:
             key: mt_kpi_detail_mini
@@ -324,6 +325,7 @@ ele_daily_env:
             stash_drop: True
         - push_dataset:
             key: mt_kpi_detail_mini
+
 ###配送原因未完成率得分
         - use_df:
             key: mt_kpi_detail_mini
@@ -392,6 +394,7 @@ ele_daily_env:
 ###日均单
         - df_eval:
             - '[avg_daily_order] = [total_order]/[days]'
+
 ###复合配送准时（容错值）& 复合配送准时（余量）
         - df_to_int:
             - ordinary_over_time_orders
@@ -401,6 +404,7 @@ ele_daily_env:
             - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*[Z1]'
         - df_eval:
             - '[punctuality_surplus] = [punctuality_contains] - 1*[ordinary_over_time_orders] - 5*[serious_over_time_orders]'
+
 ###提前点送达单量（容错值）& 提前点送达单量（余量）
         - df_to_int:
             - advance_delivery_orders
@@ -408,6 +412,7 @@ ele_daily_env:
             - '[advance_delivery_contains] = [avg_daily_order]*[当月总天数]*[Z4]'
         - df_eval:
             - '[advance_delivery_surplus] = [advance_delivery_contains] - [advance_delivery_orders]'
+
 ###15分钟超时单量（容错值）& 15分钟超时单量（余量）
         - df_to_int:
             - over_15_orders
@@ -422,6 +427,7 @@ ele_daily_env:
             - '[dissatisfy_contains] = [avg_daily_order]*[当月总天数]*[Z3]'
         - df_eval:
             - '[dissatisfy_surplus] = [dissatisfy_contains] - [dissatisfy_orders]'
+
 ###配送原因未完成单量（容错值）& 配送原因未完成单量（余量）
         - df_to_int:
             - unfinished_orders
@@ -436,6 +442,7 @@ ele_daily_env:
               df['col_score_dict'] = '0'
               df['col_score_dict'] = [u'[{"name":"提前点送达得分","score": "%s"},{"name":"15分钟超时占比得分","score": "%s"},{"name":"不满意率得分","score": "%s"},{"name":"配送原因未完成率得分","score": "%s"},{"name":"复核准时率得分","score": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['advance_delivery_score','over_15_ratio_score','dissatisfy_ratio_score','unfinished_ratio_score','punctuality_ratio_score']].to_dict(orient='split')['data'] ]
               result = df
+
 ### 考核得分
         - run_py:
             - |
@@ -443,6 +450,7 @@ ele_daily_env:
               df['col_orders_dict'] = '0'
               df['col_orders_dict'] = [u'[{"name":"提前点送达单量","orders": "%s"},{"name":"15分钟超时单量","orders": "%s"},{"name":"不满意单量","orders": "%s"},{"name":"配送原因未完成单量","orders": "%s"},{"name":"一般超时单量","orders": "%s"},{"name":"严重超时单量","orders": "%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['advance_delivery_orders','over_15_orders','dissatisfy_orders','unfinished_orders','ordinary_over_time_orders','serious_over_time_orders']].to_dict(orient='split')['data'] ]
               result = df
+
 ### 比率
         - run_py:
             - |
@@ -450,6 +458,7 @@ ele_daily_env:
               df['col_ratio_dict'] = '0'
               df['col_ratio_dict'] = [u'[{"name":"提前点送达率","ratio": "%s"},{"name":"15分钟超时率","ratio": "%s"},{"name":"不满意率","ratio": "%s"},{"name":"配送原因未完成率","ratio": "%s"},{"name":"复核准时率","ratio": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['advance_delivery_ratio','over_15_ratio','dissatisfy_ratio','unfinished_ratio','punctuality_ratio']].to_dict(orient='split')['data'] ]
               result = df
+
 ### 容错值
         - run_py:
             - |
@@ -457,6 +466,7 @@ ele_daily_env:
               df['col_contains_dict'] = '0'
               df['col_contains_dict'] = [u'[{"name":"复核配送准时（容错值）","contains": "%s"},{"name":"提前点送达单量（容错值）","contains": "%s"},{"name":"15分钟超时单量（容错值）","contains": "%s"},{"name":"不满意单量（容错值）","contains": "%s"},{"name":"配送原因未完成单量（容错值）","contains": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['punctuality_contains','advance_delivery_contains','over_15_contains','dissatisfy_contains','unfinished_contains']].to_dict(orient='split')['data'] ]
               result = df
+
 ### 余量
         - run_py:
             - |
@@ -473,6 +483,7 @@ ele_daily_env:
               - supplier_id
               - vendor_dc_id
               - city_name
+              - supplier_name
         - when_empty_fetch_dataset:
             dataset_type_code: std_qplus_dc
             dataset_cate: std
@@ -482,6 +493,7 @@ ele_daily_env:
               - supplier_id
               - vendor_dc_id
               - city_name
+              - supplier_name
         - drop_duplicates:
             subset: [ supplier_id,vendor_dc_id ,city_name ]
         - stash_push_df: []
@@ -554,6 +566,7 @@ ele_daily_env:
               - supplier_id
               - vendor_dc_id
               - city_name
+              - supplier_name
         - when_empty_fetch_dataset:
             dataset_type_code: std_qplus_dc
             dataset_cate: std
@@ -563,6 +576,7 @@ ele_daily_env:
               - supplier_id
               - vendor_dc_id
               - city_name
+              - supplier_name
         - drop_duplicates:
             subset: [ supplier_id,vendor_dc_id ,city_name ]
         - stash_push_df: []
@@ -571,6 +585,7 @@ ele_daily_env:
             how: right
             drop_stash: true
         - stash_push_df: []
+
 ###骑手出勤率
         - use_df:
             key: mt_day_18_knight_detail
