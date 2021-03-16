@@ -393,26 +393,38 @@ ele_daily_env:
         - df_eval:
             - '[avg_daily_order] = [total_order]/[days]'
 ###复合配送准时（容错值）& 复合配送准时（余量）
+        - df_to_int:
+            - ordinary_over_time_orders
+        - df_to_int:
+            - serious_over_time_orders
         - df_eval:
             - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*[Z1]'
         - df_eval:
             - '[punctuality_surplus] = [punctuality_contains] - 1*[ordinary_over_time_orders] - 5*[serious_over_time_orders]'
 ###提前点送达单量（容错值）& 提前点送达单量（余量）
+        - df_to_int:
+            - advance_delivery_orders
         - df_eval:
             - '[advance_delivery_contains] = [avg_daily_order]*[当月总天数]*[Z4]'
         - df_eval:
             - '[advance_delivery_surplus] = [advance_delivery_contains] - [advance_delivery_orders]'
 ###15分钟超时单量（容错值）& 15分钟超时单量（余量）
+        - df_to_int:
+            - over_15_orders
         - df_eval:
             - '[over_15_contains] = [avg_daily_order]*[当月总天数]*[Z5]'
         - df_eval:
             - '[over_15_surplus] = [over_15_contains] - [over_15_orders]'
 ###不满意单量（容错值）& 不满意单量（余量）
+        - df_to_int:
+            - dissatisfy_orders
         - df_eval:
             - '[dissatisfy_contains] = [avg_daily_order]*[当月总天数]*[Z3]'
         - df_eval:
             - '[dissatisfy_surplus] = [dissatisfy_contains] - [dissatisfy_orders]'
 ###配送原因未完成单量（容错值）& 配送原因未完成单量（余量）
+        - df_to_int:
+            - unfinished_orders
         - df_eval:
             - '[unfinished_contains] = [avg_daily_order]*[当月总天数]*[Z2]'
         - df_eval:
