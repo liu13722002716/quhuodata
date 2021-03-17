@@ -20,12 +20,12 @@ ele_daily_env:
             datakit_pull_way: last_day
             ignore_null_error: true
             empty_df_record:
-              加盟站ID: '-'
+              加盟站ID: 0
               加盟站名称: '-'
               完成单(未剔除异常单): 0
               星级: 0
               得分: 0
-              提前点送达订单数: 0
+              提前点送达(复合)订单数: 0
               15分钟超时订单数: 0
               不满意订单数: 0
               配送原因未完成数: 0
@@ -44,7 +44,7 @@ ele_daily_env:
               - 完成单(未剔除异常单)
               - 星级
               - 得分
-              - 提前点送达订单数
+              - 提前点送达(复合)订单数
               - 15分钟超时订单数
               - 不满意订单数
               - 配送原因未完成数
@@ -63,7 +63,7 @@ ele_daily_env:
               完成单(未剔除异常单): total_order
               星级: star_level
               得分: total_score
-              提前点送达订单数: advance_delivery_orders
+              提前点送达(复合)订单数: advance_delivery_orders
               15分钟超时订单数: over_15_orders
               不满意订单数: dissatisfy_orders
               配送原因未完成数: unfinished_orders
@@ -140,24 +140,56 @@ ele_daily_env:
             - unfinished_contains
         - df_to_float:
             - unfinished_surplus
+        - str_strip_column:
+            column: advance_delivery_ratio
+            char: '%'
         - df_to_float:
             - advance_delivery_ratio
+        - df_eval:
+            - '[advance_delivery_ratio] = [advance_delivery_ratio] / 100'
+        - str_strip_column:
+            column: over_15_ratio
+            char: '%'
         - df_to_float:
             - over_15_ratio
+        - df_eval:
+            - '[over_15_ratio] = [over_15_ratio] / 100'
+        - str_strip_column:
+            column: dissatisfy_ratio
+            char: '%'
         - df_to_float:
             - dissatisfy_ratio
+        - df_eval:
+            - '[dissatisfy_ratio] = [dissatisfy_ratio] / 100'
+        - str_strip_column:
+            column: unfinished_ratio
+            char: '%'
         - df_to_float:
             - unfinished_ratio
+        - df_eval:
+            - '[unfinished_ratio] = [unfinished_ratio] / 100'
+        - str_strip_column:
+            column: punctuality_ratio
+            char: '%'
         - df_to_float:
             - punctuality_ratio
+        - df_eval:
+            - '[punctuality_ratio] = [punctuality_ratio] / 100'
+        - df_to_int:
+            - vendor_dc_id
+        - run_py:
+            - |
+              df=to_df(df)
+              df['vendor_dc_id']=[u'%s' % i for i in df[u'vendor_dc_id']]
+              result=to_dd(df)
         - stash_push_df: []
         - fetch_dataset:
-            template_code: mt_month_62
+            template_code: mt_month_60
             dataset_cate: raw
             datakit_pull_way: last_day
             ignore_null_error: true
             empty_df_record:
-              加盟站ID: '-'
+              站点ID: '-'
               复合准时率X: 0
               复合准时率Y: 0
               复合准时率Z: 0
@@ -174,8 +206,7 @@ ele_daily_env:
               15分钟超时订单占比Y: 0
               15分钟超时订单占比Z: 0
             columns:
-              - 加盟站ID
-              - 加盟站ID
+              - 站点ID
               - 复合准时率X
               - 复合准时率Y
               - 复合准时率Z
@@ -192,7 +223,7 @@ ele_daily_env:
               - 15分钟超时订单占比Y
               - 15分钟超时订单占比Z
             rename:
-              加盟站ID: vendor_dc_id
+              站点ID: vendor_dc_id
               复合准时率X: X1
               复合准时率Y: Y1
               复合准时率Z: Z1
@@ -208,6 +239,13 @@ ele_daily_env:
               15分钟超时订单占比X: X5
               15分钟超时订单占比Y: Y5
               15分钟超时订单占比Z: Z5
+        - df_to_int:
+            - vendor_dc_id
+        - run_py:
+            - |
+              df=to_df(df)
+              df['vendor_dc_id']=[u'%s' % i for i in df[u'vendor_dc_id']]
+              result=to_dd(df)
         - stash_push_df: []
         - stash_join_df:
             how: right
@@ -221,6 +259,111 @@ ele_daily_env:
                 df=to_df(df)
                 df['days'] = df['book_day'].map(str).str[6:].map(int)
                 result = to_dd(df)
+        - str_strip_column:
+            column: X1
+            char: '%'
+        - df_to_float:
+            - X1
+        - df_eval:
+            - '[X1] = [X1] / 100'
+        - str_strip_column:
+            column: Y1
+            char: '%'
+        - df_to_float:
+            - Y1
+        - df_eval:
+            - '[Y1] = [Y1] / 100'
+        - str_strip_column:
+            column: Z1
+            char: '%'
+        - df_to_float:
+            - Z1
+        - df_eval:
+            - '[Z1] = [Z1] / 100'
+        - str_strip_column:
+            column: X2
+            char: '%'
+        - df_to_float:
+            - X2
+        - df_eval:
+            - '[X2] = [X2] / 100'
+        - str_strip_column:
+            column: Y2
+            char: '%'
+        - df_to_float:
+            - Y2
+        - df_eval:
+            - '[Y2] = [Y2] / 100'
+        - str_strip_column:
+            column: Z2
+            char: '%'
+        - df_to_float:
+            - Z2
+        - df_eval:
+            - '[Z2] = [Z2] / 100'
+        - str_strip_column:
+            column: X3
+            char: '%'
+        - df_to_float:
+            - X3
+        - df_eval:
+            - '[X3] = [X3] / 100'
+        - str_strip_column:
+            column: Y3
+            char: '%'
+        - df_to_float:
+            - Y3
+        - df_eval:
+            - '[Y3] = [Y3] / 100'
+        - str_strip_column:
+            column: Z3
+            char: '%'
+        - df_to_float:
+            - Z3
+        - df_eval:
+            - '[Z3] = [Z3] / 100'
+        - str_strip_column:
+            column: X4
+            char: '%'
+        - df_to_float:
+            - X4
+        - df_eval:
+            - '[X4] = [X4] / 100'
+        - str_strip_column:
+            column: Y4
+            char: '%'
+        - df_to_float:
+            - Y4
+        - df_eval:
+            - '[Y4] = [Y4] / 100'
+        - str_strip_column:
+            column: Z4
+            char: '%'
+        - df_to_float:
+            - Z4
+        - df_eval:
+            - '[Z4] = [Z4] / 100'
+        - str_strip_column:
+            column: X5
+            char: '%'
+        - df_to_float:
+            - X5
+        - df_eval:
+            - '[X5] = [X5] / 100'
+        - str_strip_column:
+            column: Y5
+            char: '%'
+        - df_to_float:
+            - Y5
+        - df_eval:
+            - '[Y5] = [Y5] / 100'
+        - str_strip_column:
+            column: Z5
+            char: '%'
+        - df_to_float:
+            - Z5
+        - df_eval:
+            - '[Z5] = [Z5] / 100'
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -228,30 +371,30 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] >= [X4]'
+            - '[advance_delivery_ratio] > [X4]'
         - df_eval:
-            - '[oadvance_delivery_score] = 0'
+            - '[advance_delivery_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [X4] & [advance_delivery_ratio] >= [Y4]'
+            - '[advance_delivery_ratio] <= [X4] & [advance_delivery_ratio] > [Y4]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100* ([advance_delivery_ratio]-[X4])/([Y4]-[X4])'
+            - '[advance_delivery_score] = 100* ([advance_delivery_ratio]-[X4])/([Y4]-[X4])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Y4] & [advance_delivery_ratio] >= [Z4]'
+            - '[advance_delivery_ratio] <= [Y4] & [advance_delivery_ratio] > [Z4]'
         - df_eval:
-            - '[oadvance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y4])/([Z4]-[Y4])'
+            - '[advance_delivery_score] = 100+20* ([advance_delivery_ratio]-[Y4])/([Z4]-[Y4])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[advance_delivery_ratio] < [Z4]'
+            - '[advance_delivery_ratio] <= [Z4]'
         - df_eval:
-            - '[oadvance_delivery_score] = 120'
+            - '[advance_delivery_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
             stash_drop: True
@@ -262,28 +405,28 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[over_15_ratio] >= [X5]'
+            - '[over_15_ratio] > [X5]'
         - df_eval:
             - '[over_15_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[over_15_ratio] < [X5] & [over_15_ratio] >= [Y5]'
+            - '[over_15_ratio] <= [X5] & [over_15_ratio] > [Y5]'
         - df_eval:
             - '[over_15_ratio_score] = 100* ([over_15_ratio]-[X5])/([Y5]-[X5])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[over_15_ratio] < [Y5] & [over_15_ratio] >= [Z5]'
+            - '[over_15_ratio] <= [Y5] & [over_15_ratio] > [Z5]'
         - df_eval:
             - '[over_15_ratio_score] = 100+20* ([over_15_ratio]-[Y5])/([Z5]-[Y5])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[over_15_ratio] < [Z5]'
+            - '[over_15_ratio] <= [Z5]'
         - df_eval:
             - '[over_15_ratio_score] = 120'
         - stash_push_df: []
@@ -296,28 +439,28 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[dissatisfy_ratio] >= [X3]'
+            - '[dissatisfy_ratio] > [X3]'
         - df_eval:
             - '[dissatisfy_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[dissatisfy_ratio] < [X3] & [dissatisfy_ratio] >= [Y3]'
+            - '[dissatisfy_ratio] <= [X3] & [dissatisfy_ratio] > [Y3]'
         - df_eval:
             - '[dissatisfy_ratio_score] = 100* ([dissatisfy_ratio]-[X3])/([Y3]-[X3])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[dissatisfy_ratio] < [Y3] & [dissatisfy_ratio] >= [Z3]'
+            - '[dissatisfy_ratio] <= [Y3] & [dissatisfy_ratio] > [Z3]'
         - df_eval:
             - '[dissatisfy_ratio_score] = 100+20* ([dissatisfy_ratio]-[Y3])/([Z3]-[Y3])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[dissatisfy_ratio] < [Z3]'
+            - '[dissatisfy_ratio] <= [Z3]'
         - df_eval:
             - '[dissatisfy_ratio_score] = 120'
         - stash_push_df: []
@@ -330,28 +473,28 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[unfinished_ratio] >= [X2]'
+            - '[unfinished_ratio] > [X2]'
         - df_eval:
             - '[unfinished_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[unfinished_ratio] < [X2] & [unfinished_ratio] >= [Y2]'
+            - '[unfinished_ratio] <= [X2] & [unfinished_ratio] > [Y2]'
         - df_eval:
             - '[unfinished_ratio_score] = 100* ([unfinished_ratio]-[X2])/([Y2]-[X2])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[unfinished_ratio] < [Y2] & [unfinished_ratio] >= [Z2]'
+            - '[unfinished_ratio] <= [Y2] & [unfinished_ratio] > [Z2]'
         - df_eval:
             - '[unfinished_ratio_score] = 100+20* ([unfinished_ratio]-[Y2])/([Z2]-[Y2])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[unfinished_ratio] < [Z2]'
+            - '[unfinished_ratio] <= [Z2]'
         - df_eval:
             - '[unfinished_ratio_score] = 120'
         - stash_push_df: []
@@ -364,28 +507,28 @@ ele_daily_env:
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[punctuality_ratio] <= [X1]'
+            - '[punctuality_ratio] < [X1]'
         - df_eval:
             - '[punctuality_ratio_score] = 0'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[punctuality_ratio] > [X1] & [punctuality_ratio] <= [Y1]'
+            - '[punctuality_ratio] >= [X1] & [punctuality_ratio] < [Y1]'
         - df_eval:
             - '[punctuality_ratio_score] = 100* ([punctuality_ratio]-[X1])/([Y1]-[X1])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[punctuality_ratio] > [Y1] & [punctuality_ratio] <= [Z1]'
+            - '[punctuality_ratio] >= [Y1] & [punctuality_ratio] < [Z1]'
         - df_eval:
             - '[punctuality_ratio_score] = 100+20* ([punctuality_ratio]-[Y1])/([Z1]-[Y1])'
         - stash_push_df: []
         - use_df:
             key: mt_kpi_detail_mini
         - df_select:
-            - '[punctuality_ratio] > [Z1]'
+            - '[punctuality_ratio] >= [Z1]'
         - df_eval:
             - '[punctuality_ratio_score] = 120'
         - stash_push_df: []
