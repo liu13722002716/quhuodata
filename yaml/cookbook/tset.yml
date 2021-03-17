@@ -1,8 +1,5 @@
 
 
-
-
-
 - fetch_dataset:
     template_code: mt_day_35        #单日站点数据
     dataset_cate: raw
@@ -48,6 +45,7 @@
 
 - push_dataset:
     key: mt_dc_cum_month
+
 
 
 - fetch_dataset:
@@ -481,6 +479,7 @@
     key: mt_city_cum_month
 
 
+
 - fetch_dataset:
     template_code: mt_day_58          #单日城市数据
     dataset_cate: raw
@@ -632,6 +631,7 @@
 
 - push_dataset:
     key: mt_total_details_city_median
+
 
 
 - use_df:
@@ -829,7 +829,6 @@
 - push_dataset:
     key: mt_total_details_city
 
-
 ## 总体详情
 
 - use_df:
@@ -872,9 +871,9 @@
 - stash_concat_df:
     drop_stash: true
 
-
 - push_dataset:
     key: mt_star_level_and_kpi_tendency
+
 
 ### 骑手影响站点分布
 
@@ -973,7 +972,6 @@
 - add_cols:
     - dimension: 'D'
 
-
 - push_dataset:
     key: mt_knight_affect_dc_score
 
@@ -994,10 +992,6 @@
     subset: [vendor_dc_id, meta_month]
 - fetch_cols:
     columns: [ vendor_dc_id,meta_month]
-
-
-- push_dataset:
-    key: mt_authority_raw_data
 
 
 - fetch_dataset:
