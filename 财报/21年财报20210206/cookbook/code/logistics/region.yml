@@ -155,7 +155,10 @@ dataset_pipeline:
         C-508: 0
         C-101: 0
         C-102: 0
-
+        Q-2010101: 0
+        Q-2010102: 0
+        C-10101: 0
+        C-10102: 0
   - df_fillna:
       value: 0.0
 
@@ -166,6 +169,9 @@ dataset_pipeline:
 
   - row_eval_by_index:
       exp_str: |
+                {{C-10102}}={{C-101}} - {{C-10101}}
+                {{QAO-2010101}}={{Q-2010101}} / {{C-10101}}
+                {{Q-20101}}={{Q-20101}} + {{Q-2010101}} + {{Q-2010102}}
                 {{CAD-101}} = {{C-101}} / {{month_days}}
                 {{Q-202}} = {{Q-20201}} + {{Q-20202}} + {{Q-20203}} + {{Q-20204}}
                 {{Q-205}} = {{Q-20501}} + {{Q-20502}}
@@ -203,6 +209,9 @@ dataset_pipeline:
                 {{CPQS-2017}} = {{QS-2017}} / {{QS-10101014}}
                 {{QS-1}} = {{QS-10101014}} + {{Q-701}} - {{QS-2017}}
                 {{IPQS-1}} = {{QS-1}} / {{QS-10101014}}
+                {{QAO-2010102}} = {{Q-2010102}} / {{C-10102}}
+                {{CPQ-2010102}} = {{Q-2010102}} / {{Q-20101}}
+
       index_col: ac_code
       exclude_cols: [ac_name]
       target_rows:
@@ -389,6 +398,27 @@ dataset_pipeline:
         - index: C-104
           cols:
             ac_name: 外部招聘人数
+        - index: Q-2010101
+          cols:
+            ac_name: 全职
+        - index: C-10101
+          cols:
+            ac_name: 全职单量
+        - index: QAO-2010101
+          cols:
+            ac_name: 全职单均成本
+        - index: Q-2010102
+          cols:
+            ac_name: 兼职
+        - index: C-10102
+          cols:
+            ac_name: 兼职单量
+        - index: QAO-2010102
+          cols:
+            ac_name: 兼职单均成本
+        - index: CPQ-2010102
+          cols:
+            ac_name: 兼职占一线服务费比
 
   - sort_by_columns:
       sort_list: [ac_code, ac_name, 合计]
@@ -398,8 +428,8 @@ dataset_pipeline:
         C-101, CAD-101,
         QS-10101014, QSAO-10101014, Q-1010101, QAO-1010101, Q-1010102, QAO-1010102,
         Q-1010103, QAO-1010103, Q-1010104, QAO-1010104, Q-701,
-        QS-2017, CPQS-2017, Q-20101, C-102, QAO-20101, QAH-20101, IPQ-20101, CPQ-20101,
-        Q-202, QAH-202, IPQ-202, CPQ-202, Q-20201, QAH-20201, Q-20202, QAH-20202,
+        QS-2017, CPQS-2017, Q-20101, C-102, QAO-20101, QAH-20101, IPQ-20101, CPQ-20101,Q-2010101,C-10101,QAO-2010101,Q-2010102,C-10102,
+        QAO-2010102,CPQ-2010102,Q-202, QAH-202, IPQ-202, CPQ-202, Q-20201, QAH-20201, Q-20202, QAH-20202,
         Q-20203, QAH-20203, Q-20204, QAH-20204, Q-205, IPQ-205, CPQ-205, Q-20501, Q-20502,
         Q-206, IPQ-206, CPQ-206, Q-20601, Q-20604, Q-20605,
         Q-207, CS-1034, QAH-207, IPQ-207, CPQ-207, Q-20701, C-103, QAH-20701, Q-20702,
@@ -407,7 +437,7 @@ dataset_pipeline:
       ]
 
   - row_int_format_by_index:
-      index_rows: [C-101, C-102, C-103, C-104]
+      index_rows: [C-101, C-102, C-103, C-104,C-10101,C-10102]
 
   - row_money_format_by_index:
       index_rows: [
@@ -418,11 +448,11 @@ dataset_pipeline:
         Q-207, Q-20701, Q-20702, Q-701,
         QSAO-10101014, QAO-1010101, QAO-1010102, QAO-1010103, QAO-1010104,
         QAO-20101, QAH-20101, QAH-202,QAH-20201, QAH-20202, QAH-20203, QAH-20204,
-        QAH-207, QAH-20701, QAH-20702, QS-10101014, QS-2017, QS-1
+        QAH-207, QAH-20701, QAH-20702, QS-10101014, QS-2017, QS-1,Q-2010101,QAO-2010101,Q-2010102,QAO-2010102
       ]
 
   - row_pct_format_by_index:
-      index_rows: [CPQS-2017,IPQ-20101,CPQ-20101,IPQ-202,CPQ-202,IPQ-205,CPQ-205,IPQ-206,CPQ-206,IPQ-207,CPQ-207,IPQS-1]
+      index_rows: [CPQS-2017,IPQ-20101,CPQ-20101,IPQ-202,CPQ-202,IPQ-205,CPQ-205,IPQ-206,CPQ-206,IPQ-207,CPQ-207,IPQS-1,CPQ-2010102]
 
   - row_float_format_by_index:
       index_rows: [CAD-101]

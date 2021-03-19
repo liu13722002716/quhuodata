@@ -163,12 +163,15 @@ dataset_pipeline:
         C-602: 0
         C-603: 0
         C-205: 0
+        Q-2010101: 0
+        Q-2010102: 0
 
   - df_fillna:
       value: 0.0
 
   - row_eval_by_index:
       exp_str: |
+                {{Q-20101}} = {{Q-20101}} + {{Q-2010101}} + {{Q-2010102}}
                 {{QS-103012}} = {{Q-10301}} + {{Q-10302}}
                 {{QSAO-103012}} = {{QS-103012}} / ({{C-201}} + {{C-202}})
                 {{QAO-10301}} = {{Q-10301}} / {{C-201}}
@@ -364,7 +367,12 @@ dataset_pipeline:
         - index: C-205
           cols:
             ac_name: 外部招聘人数
-
+        - index: Q-2010101
+          cols:
+            ac_name: 全职
+        - index: Q-2010102
+          cols:
+            ac_name: 兼职
   - df_fillna:
       value: 0
 
@@ -372,7 +380,7 @@ dataset_pipeline:
       sort_list: [ ac_code, ac_name, 合计 ]
 
   - sort_by_index:
-      sort_list: [QS-103012,QSAO-103012,Q-10301,C-201,QAO-10301,Q-10302,C-202,QAO-10302,Q-701,QS-2017,IPQS-2017,Q-20101,C-203,QAO-20101,QAH-20101,IPQ-20101,CPQ-20101,Q-202,QAH-202,IPQ-202,CPQ-202,Q-20201,QAH-20201,Q-20202,QAH-20202,Q-20203,QAH-20203,Q-20204,QAH-20204,Q-206,IPQ-206,CPQ-206,Q-20602,Q-20603,Q-20605,Q-207,CS-2045,QAH-207,IPQ-207,CPQ-207,Q-20701,C-204,QAH-20701,Q-20702,C-205,QAH-20702,QS-1,IPQS-1]
+      sort_list: [QS-103012,QSAO-103012,Q-10301,C-201,QAO-10301,Q-10302,C-202,QAO-10302,Q-701,QS-2017,IPQS-2017,Q-20101,C-203,QAO-20101,QAH-20101,IPQ-20101,CPQ-20101,Q-2010101,Q-2010102,Q-202,QAH-202,IPQ-202,CPQ-202,Q-20201,QAH-20201,Q-20202,QAH-20202,Q-20203,QAH-20203,Q-20204,QAH-20204,Q-206,IPQ-206,CPQ-206,Q-20602,Q-20603,Q-20605,Q-207,CS-2045,QAH-207,IPQ-207,CPQ-207,Q-20701,C-204,QAH-20701,Q-20702,C-205,QAH-20702,QS-1,IPQS-1]
 
   - row_int_format_by_index:
       index_rows: [C-201, C-202, C-203, CS-2045, C-204, C-205]
@@ -384,7 +392,7 @@ dataset_pipeline:
       index_rows: [
           QS-103012, QSAO-103012, Q-10301, QAO-10301, Q-10302, QAO-10302, Q-701, QS-2017, Q-20101, QAO-20101,
           QAH-20101, Q-202, QAH-202, Q-20201, QAH-20201, Q-20202, QAH-20202, Q-20203, QAH-20203, Q-20204, QAH-20204,
-          Q-206, Q-20602, Q-20603, Q-20605, Q-207, QAH-207, Q-20701, QAH-20701, Q-20702, QAH-20702, QS-1
+          Q-206, Q-20602, Q-20603, Q-20605, Q-207, QAH-207, Q-20701, QAH-20701, Q-20702, QAH-20702, QS-1,Q-2010101,Q-2010102
       ]
 
   - row_float_format_by_index:
