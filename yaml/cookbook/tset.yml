@@ -1,5 +1,4 @@
 
-
 - fetch_dataset:
     template_code: mt_day_35        #单日站点数据
     dataset_cate: raw
@@ -45,7 +44,6 @@
 
 - push_dataset:
     key: mt_dc_cum_month
-
 
 
 - fetch_dataset:
@@ -108,7 +106,7 @@
       得分: 0.0
       星级: 0.0
       完成单(未剔除异常单): 0
-      meta_day: '-'
+      meta_day: 99999999
     rename:
       加盟站ID: vendor_dc_id
       得分: kpi_score
@@ -125,25 +123,6 @@
     on: [vendor_dc_id,meta_day]
     how: outer
     drop_stash: true
-- stash_push_df: []
-
-- fetch_dataset:
-    template_code: mt_day_59     # AA站点难度等级明细
-    dataset_cate: raw
-    columns: [站点ID,难度等级,meta_day]
-    ignore_null_error: true
-    empth_df_record:
-      站点ID: '-'
-      难度等级: '-'
-      meta_day: '-'
-    rename:
-      站点ID: vendor_dc_id
-      难度等级: difficulty_level
-- stash_join_df:
-    on: [vendor_dc_id,meta_day]
-    how: outer
-    drop_stash: true
-
 - df_eval:
     - |
       [have_order_ratio] = [have_order_knight] / [register_knight]
@@ -151,6 +130,25 @@
       [leave_ratio] = [leave_knight] / [register_knight]
       [total_entry_ratio] = [total_entry_knight] /  [total_register_knight]
       [total_leave_ratio] = [total_leave_knight] / [total_register_knight]
+- stash_push_df: []
+
+- fetch_dataset:
+    template_code: mt_day_59     # AA站点难度等级明细
+    dataset_cate: raw
+    columns: [站点ID,难度等级]
+    ignore_null_error: true
+    empth_df_record:
+      站点ID: '-'
+      难度等级: '-'
+    rename:
+      站点ID: vendor_dc_id
+      难度等级: difficulty_level
+- stash_push_df:  []
+- stash_join_df:
+    on: [vendor_dc_id]
+    how: outer
+    drop_stash: true
+
 - run_py:
     - |
       df = to_df(df)
@@ -195,8 +193,8 @@
 - run_py:
     - |
       df = to_df(df)
-      total_dc = df.groupby(by=['meta_day']).size().reset_index().rename(columns={0:'total_join_rank_count'})
-      df = pd.merge(df,total_dc,on=['meta_day'],how='left',sort=False)
+      total_rank_count = df[["total_order","single_daily_order","avg_daily_order","avg_daily_knight","single_utility","total_utility","meta_day"]].groupby(by=['meta_day']).count().reset_index().rename(columns={"total_order":"total_order_join_rank_count","single_daily_order":"single_daily_order_join_rank_count","avg_daily_order":"avg_daily_order_join_rank_count","avg_daily_knight":"avg_daily_knight_join_rank_count","single_utility":"single_utility_join_rank_count","total_utility":"total_utility_join_rank_count"})
+      df = pd.merge(df,total_rank_count,on=['meta_day'],how='left',sort=False)
       df['total_order_rank'] = df.groupby(by=['meta_day'])['total_order'].rank(method='min',ascending=False)
       df['single_daily_order_rank'] = df.groupby(by=['meta_day'])['single_daily_order'].rank(method='min',ascending=False)
       df['avg_daily_order_rank'] = df.groupby(by=['meta_day'])['avg_daily_order'].rank(method='min',ascending=False)
@@ -221,8 +219,8 @@
 - run_py:
     - |
       df = to_df(df)
-      total_dc = df.groupby(by=['meta_day']).size().reset_index().rename(columns={0:'total_join_rank_count'})
-      df = pd.merge(df,total_dc,on=['meta_day'],how='left',sort=False)
+      total_rank_count = df[["total_order","single_daily_order","avg_daily_order","avg_daily_knight","single_utility","total_utility","meta_day"]].groupby(by=['meta_day']).count().reset_index().rename(columns={"total_order":"total_order_join_rank_count","single_daily_order":"single_daily_order_join_rank_count","avg_daily_order":"avg_daily_order_join_rank_count","avg_daily_knight":"avg_daily_knight_join_rank_count","single_utility":"single_utility_join_rank_count","total_utility":"total_utility_join_rank_count"})
+      df = pd.merge(df,total_rank_count,on=['meta_day'],how='left',sort=False)
       df['total_order_rank'] = df.groupby(by=['meta_day'])['total_order'].rank(method='min',ascending=False)
       df['single_daily_order_rank'] = df.groupby(by=['meta_day'])['single_daily_order'].rank(method='min',ascending=False)
       df['avg_daily_order_rank'] = df.groupby(by=['meta_day'])['avg_daily_order'].rank(method='min',ascending=False)
@@ -432,7 +430,7 @@
     val: 'equal'
 
 - fetch_cols:
-    columns: [supplier_id,supplier_name,city_name,vendor_dc_id,dc_name,alliance_id,meta_day,dimension,total_join_rank_count,dc_count,total_order,single_daily_order,single_daily_order_rank,single_daily_order_rank_status,total_order_rank,total_order_rank_status,avg_daily_order,avg_daily_order_rank,avg_daily_order_rank_status,avg_daily_order_year_ratio,avg_daily_order_year_ratio_status,avg_daily_knight,avg_daily_knight_rank,avg_daily_knight_rank_status,avg_daily_knight_year_ratio,avg_daily_knight_year_ratio_status,single_utility,single_utility_rank,single_utility_rank_status,single_utility_year_ratio,total_utility,total_utility_year_ratio,total_utility_year_ratio_status,total_utility_rank,total_utility_rank_status,single_utility_year_ratio_status,have_order_knight,have_order_ratio,entry_knight,entry_ratio,leave_knight,leave_ratio,kpi_score,star_level,kpi_score_rank,difficulty_level,star_level_rank,daily_stay_ratio_rank,daily_stay_ratio,over_order_no_sub,total_leave_ratio,total_entry_ratio,total_entry_knight,total_leave_knight]
+    columns: [supplier_id,supplier_name,city_name,vendor_dc_id,dc_name,alliance_id,meta_day,dimension,total_join_rank_count,dc_count,total_order,single_daily_order,single_daily_order_rank,single_daily_order_rank_status,total_order_rank,total_order_rank_status,avg_daily_order,avg_daily_order_rank,avg_daily_order_rank_status,avg_daily_order_year_ratio,avg_daily_order_year_ratio_status,avg_daily_knight,avg_daily_knight_rank,avg_daily_knight_rank_status,avg_daily_knight_year_ratio,avg_daily_knight_year_ratio_status,single_utility,single_utility_rank,single_utility_rank_status,single_utility_year_ratio,total_utility,total_utility_year_ratio,total_utility_year_ratio_status,total_utility_rank,total_utility_rank_status,single_utility_year_ratio_status,have_order_knight,have_order_ratio,entry_knight,entry_ratio,leave_knight,leave_ratio,kpi_score,star_level,kpi_score_rank,difficulty_level,star_level_rank,daily_stay_ratio_rank,daily_stay_ratio,over_order_no_sub,total_leave_ratio,total_entry_ratio,total_entry_knight,total_leave_knight,total_order_join_rank_count,single_daily_order_join_rank_count,avg_daily_order_join_rank_count,avg_daily_knight_join_rank_count,single_utility_join_rank_count,total_utility_join_rank_count]
 - set_meta_month_column:
     - book_month
 
@@ -477,7 +475,6 @@
 
 - push_dataset:
     key: mt_city_cum_month
-
 
 
 - fetch_dataset:
@@ -586,8 +583,8 @@
 - run_py:
     - |
       df = to_df(df)
-      total_dc = df.groupby(by=['meta_day']).size().reset_index().rename(columns={0:'total_join_rank_count'})
-      df = pd.merge(df,total_dc,on=['meta_day'],how='left',sort=False)
+      total_rank_count = df[["total_order","single_daily_order","avg_daily_order","avg_daily_knight","single_utility","total_utility","meta_day"]].groupby(by=['meta_day']).count().reset_index().rename(columns={"total_order":"total_order_join_rank_count","single_daily_order":"single_daily_order_join_rank_count","avg_daily_order":"avg_daily_order_join_rank_count","avg_daily_knight":"avg_daily_knight_join_rank_count","single_utility":"single_utility_join_rank_count","total_utility":"total_utility_join_rank_count"})
+      df = pd.merge(df,total_rank_count,on=['meta_day'],how='left',sort=False)
       df['total_order_rank'] = df.groupby(by=['meta_day'])['total_order'].rank(method='min',ascending=False)
       df['single_daily_order_rank'] = df.groupby(by=['meta_day'])['single_daily_order'].rank(method='min',ascending=False)
       df['avg_daily_order_rank'] = df.groupby(by=['meta_day'])['avg_daily_order'].rank(method='min',ascending=False)
@@ -611,8 +608,8 @@
 - run_py:
     - |
       df = to_df(df)
-      total_dc = df.groupby(by=['meta_day']).size().reset_index().rename(columns={0:'total_join_rank_count'})
-      df = pd.merge(df,total_dc,on=['meta_day'],how='left',sort=False)
+      total_rank_count = df[["total_order","single_daily_order","avg_daily_order","avg_daily_knight","single_utility","total_utility","meta_day"]].groupby(by=['meta_day']).count().reset_index().rename(columns={"total_order":"total_order_join_rank_count","single_daily_order":"single_daily_order_join_rank_count","avg_daily_order":"avg_daily_order_join_rank_count","avg_daily_knight":"avg_daily_knight_join_rank_count","single_utility":"single_utility_join_rank_count","total_utility":"total_utility_join_rank_count"})
+      df = pd.merge(df,total_rank_count,on=['meta_day'],how='left',sort=False)
       df['total_order_rank'] = df.groupby(by=['meta_day'])['total_order'].rank(method='min',ascending=False)
       df['single_daily_order_rank'] = df.groupby(by=['meta_day'])['single_daily_order'].rank(method='min',ascending=False)
       df['avg_daily_order_rank'] = df.groupby(by=['meta_day'])['avg_daily_order'].rank(method='min',ascending=False)
@@ -631,7 +628,6 @@
 
 - push_dataset:
     key: mt_total_details_city_median
-
 
 
 - use_df:
@@ -822,7 +818,7 @@
     val: 'equal'
 
 - fetch_cols:
-    columns: [supplier_id,supplier_name,city_name,alliance_id,meta_day,dimension,total_join_rank_count,dc_count,total_order,single_daily_order,single_daily_order_rank,single_daily_order_rank_status,total_order_rank,total_order_rank_status,avg_daily_order,avg_daily_order_rank,avg_daily_order_rank_status,avg_daily_order_year_ratio,avg_daily_order_year_ratio_status,avg_daily_knight,avg_daily_knight_rank,avg_daily_knight_rank_status,avg_daily_knight_year_ratio,avg_daily_knight_year_ratio_status,single_utility,single_utility_rank,single_utility_rank_status,single_utility_year_ratio,total_utility,total_utility_year_ratio,total_utility_year_ratio_status,total_utility_rank,total_utility_rank_status,single_utility_year_ratio_status,have_order_knight,have_order_ratio,entry_knight,entry_ratio,leave_knight,leave_ratio,star_level,star_level_rank,daily_stay_ratio_rank,daily_stay_ratio,total_leave_ratio,total_entry_ratio]
+    columns: [supplier_id,supplier_name,city_name,alliance_id,meta_day,dimension,total_join_rank_count,dc_count,total_order,single_daily_order,single_daily_order_rank,single_daily_order_rank_status,total_order_rank,total_order_rank_status,avg_daily_order,avg_daily_order_rank,avg_daily_order_rank_status,avg_daily_order_year_ratio,avg_daily_order_year_ratio_status,avg_daily_knight,avg_daily_knight_rank,avg_daily_knight_rank_status,avg_daily_knight_year_ratio,avg_daily_knight_year_ratio_status,single_utility,single_utility_rank,single_utility_rank_status,single_utility_year_ratio,total_utility,total_utility_year_ratio,total_utility_year_ratio_status,total_utility_rank,total_utility_rank_status,single_utility_year_ratio_status,have_order_knight,have_order_ratio,entry_knight,entry_ratio,leave_knight,leave_ratio,star_level,star_level_rank,daily_stay_ratio_rank,daily_stay_ratio,total_leave_ratio,total_entry_ratio,total_order_join_rank_count,single_daily_order_join_rank_count,avg_daily_order_join_rank_count,avg_daily_knight_join_rank_count,single_utility_join_rank_count,total_utility_join_rank_count]
 - set_meta_month_column:
     - book_month
 
@@ -843,7 +839,6 @@
     drop_stash: true
 - df_rename_columns:
     - meta_day: book_day
-
 
 - push_dataset:
     key: mt_total_details
@@ -874,23 +869,24 @@
 - push_dataset:
     key: mt_star_level_and_kpi_tendency
 
-
 ### 骑手影响站点分布
 
 - fetch_dataset:
     template_code: mt_day_18      #单日骑手数据
     dataset_cate: raw
-    columns: [ 骑手ID,站点ID,完成单量,在岗时长,meta_day]
+    columns: [ 骑手ID,站点ID,站点,完成单量,在岗时长,meta_day]
     ignore_null_error: true
     empty_df_record:
       骑手ID: '-'
       站点ID: '-'
+      站点: '-'
       完成单量: 0
       在岗时长: 0.0
       meta_day: '-'
     rename:
       骑手ID: knight_id
       站点ID: vendor_dc_id
+      站点: dc_name
       完成单量: single_daily_order
       在岗时长: on_guard_time
 - add_cols:
@@ -905,7 +901,7 @@
       df = to_df(df)
       need = df.groupby(by=['vendor_dc_id','knight_id'])['attendance'].sum().reset_index()
       max_day = df['meta_day'].max()
-      df_max_day = df[df['meta_day'] == max_day ][['vendor_dc_id','knight_id','single_daily_order','on_guard_time','meta_day']]
+      df_max_day = df[df['meta_day'] == max_day ][['vendor_dc_id','dc_name','knight_id','single_daily_order','on_guard_time','meta_day']]
       df = pd.merge(df_max_day,need,on=['vendor_dc_id','knight_id'],how='left',sort=False)
       df['days'] = df['meta_day'].map(str).str[6:].map(int)
       df['attendance_ratio'] = df['attendance'] / df['days']
@@ -937,7 +933,7 @@
     val: 1
     else_val: 0
 - df_groupby:
-    by: [ vendor_dc_id,meta_day]
+    by: [ vendor_dc_id,dc_name,meta_day]
 - df_sum:
     column: [daily_order_not_standard_count,on_guard_time_not_standard_count,attendance_not_standard_count,get_standard_count,total_knight]
 - df_reset_index: []
@@ -992,6 +988,9 @@
     subset: [vendor_dc_id, meta_month]
 - fetch_cols:
     columns: [ vendor_dc_id,meta_month]
+
+- push_dataset:
+    key: mt_authority_raw_data
 
 
 - fetch_dataset:
@@ -1625,6 +1624,8 @@
     how: right
     drop_stash: true
 
+- push_dataset:
+    key: mt_kpi_detail
 
 
 - fetch_dataset:
@@ -1726,59 +1727,9 @@
     drop_stash: true
 - df_eval:
     - '[attendance] = [出勤天数] / [days]'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- run_py:
+    - |
+        df = to_df(df)
+        df=df[df['book_day']==df['book_day'].max()]
+        result = to_dd(df)
 
