@@ -1563,45 +1563,6 @@ mt_daily_env:
             - '[unfinished_contains] = [avg_daily_order]*[当月总天数]*[Z2]'
         - df_eval:
             - '[unfinished_surplus] = [unfinished_contains] - [unfinished_orders]'
-### 得分
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_score_dict'] = '0'
-              df['col_score_dict'] = [u'[{"name":"提前点送达得分","score": "%s"},{"name":"15分钟超时占比得分","score": "%s"},{"name":"不满意率得分","score": "%s"},{"name":"配送原因未完成率得分","score": "%s"},{"name":"复核准时率得分","score": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['advance_delivery_score','over_15_ratio_score','dissatisfy_ratio_score','unfinished_ratio_score','punctuality_ratio_score']].to_dict(orient='split')['data'] ]
-              result = df
-
-### 考核得分
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_orders_dict'] = '0'
-              df['col_orders_dict'] = [u'[{"name":"提前点送达单量","orders": "%s"},{"name":"15分钟超时单量","orders": "%s"},{"name":"不满意单量","orders": "%s"},{"name":"配送原因未完成单量","orders": "%s"},{"name":"一般超时单量","orders": "%s"},{"name":"严重超时单量","orders": "%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['advance_delivery_orders','over_15_orders','dissatisfy_orders','unfinished_orders','ordinary_over_time_orders','serious_over_time_orders']].to_dict(orient='split')['data'] ]
-              result = df
-
-### 比率
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_ratio_dict'] = '0'
-              df['col_ratio_dict'] = [u'[{"name":"提前点送达率","ratio": "%s"},{"name":"15分钟超时率","ratio": "%s"},{"name":"不满意率","ratio": "%s"},{"name":"配送原因未完成率","ratio": "%s"},{"name":"复核准时率","ratio": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['advance_delivery_ratio','over_15_ratio','dissatisfy_ratio','unfinished_ratio','punctuality_ratio']].to_dict(orient='split')['data'] ]
-              result = df
-
-### 容错值
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_contains_dict'] = '0'
-              df['col_contains_dict'] = [u'[{"name":"复核配送准时（容错值）","contains": "%s"},{"name":"提前点送达单量（容错值）","contains": "%s"},{"name":"15分钟超时单量（容错值）","contains": "%s"},{"name":"不满意单量（容错值）","contains": "%s"},{"name":"配送原因未完成单量（容错值）","contains": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['punctuality_contains','advance_delivery_contains','over_15_contains','dissatisfy_contains','unfinished_contains']].to_dict(orient='split')['data'] ]
-              result = df
-
-### 余量
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_surplus_dict'] = '0'
-              df['col_surplus_dict'] = [u'[{"name":"复核配送准时（余量）","surplus": "%s"},{"name":"提前点送达单量（余量）","surplus": "%s"},{"name":"15分钟超时单量（余量）","surplus": "%s"},{"name":"不满意单量（余量）","surplus": "%s"},{"name":"配送原因未完成单量（余量）","surplus": "%s"}]' % (a,b,c,d,e) for a,b,c,d,e in  df[['punctuality_surplus','advance_delivery_surplus','over_15_surplus','dissatisfy_surplus','dissatisfy_surplus']].to_dict(orient='split')['data'] ]
-              result = df
         - stash_push_df: []
         - fetch_dataset:
             dataset_type_code: std_qplus_dc
@@ -1629,6 +1590,126 @@ mt_daily_env:
             on: [ vendor_dc_id ]
             how: right
             drop_stash: true
+### score
+    - name: mt_kpi_detail_score
+      sync_result: true
+      cooks:
+        - use_df:
+            key: mt_kpi_detail
+            columns:
+              - supplier_name
+              - supplier_id
+              - city_name
+              - dc_name
+              - vendor_dc_id
+              - book_month
+              - book_day
+              - star_level
+              - total_score
+              - advance_delivery_score
+              - over_15_ratio_score
+              - dissatisfy_ratio_score
+              - unfinished_ratio_score
+              - punctuality_ratio_score
+            rename:
+              star_level: 星级结果
+              total_score: 总分
+              advance_delivery_score: 提前点送达得分
+              over_15_ratio_score: 15分钟超时占比得分
+              dissatisfy_ratio_score: 不满意率得分
+              unfinished_ratio_score: 配送原因未完成率得分
+              punctuality_ratio_score: 复核准时率得分
+
+### orders
+    - name: mt_kpi_detail_orders
+      sync_result: true
+      cooks:
+        - use_df:
+            key: mt_kpi_detail
+            columns:
+              - supplier_name
+              - supplier_id
+              - city_name
+              - dc_name
+              - vendor_dc_id
+              - book_month
+              - book_day
+              - advance_delivery_orders
+              - over_15_orders
+              - dissatisfy_orders
+              - unfinished_orders
+              - ordinary_over_time_orders
+              - serious_over_time_orders
+            rename:
+              advance_delivery_orders: 提前点送达单量
+              over_15_orders: 15分钟超时单量
+              dissatisfy_orders: 不满意单量
+              unfinished_orders: 配送原因未完成单量
+              ordinary_over_time_orders: 一般超时单量
+              serious_over_time_orders: 严重超时单量
+
+### ratio
+    - name: mt_kpi_detail_ratio
+      sync_result: true
+      cooks:
+        - use_df:
+            key: mt_kpi_detail
+            columns:
+              - supplier_name
+              - supplier_id
+              - city_name
+              - dc_name
+              - vendor_dc_id
+              - book_month
+              - book_day
+              - advance_delivery_ratio
+              - over_15_ratio
+              - dissatisfy_ratio
+              - unfinished_ratio
+              - punctuality_ratio
+            rename:
+              advance_delivery_ratio: 提前点送达率
+              over_15_ratio: 15分钟超时率
+              dissatisfy_ratio: 不满意率
+              unfinished_ratio: 配送原因未完成率
+              punctuality_ratio: 复核准时率
+
+### contains
+    - name: mt_kpi_detail_contains
+      sync_result: true
+      cooks:
+        - use_df:
+            key: mt_kpi_detail
+            columns:
+              - supplier_name
+              - supplier_id
+              - city_name
+              - dc_name
+              - vendor_dc_id
+              - book_month
+              - book_day
+              - punctuality_contains
+              - punctuality_surplus
+              - advance_delivery_contains
+              - advance_delivery_surplus
+              - over_15_contains
+              - over_15_surplus
+              - dissatisfy_contains
+              - dissatisfy_surplus
+              - unfinished_contains
+              - unfinished_surplus
+
+            rename:
+              punctuality_contains: 复核配送准时（容错值）
+              punctuality_surplus: 复核配送准时（余量）
+              advance_delivery_contains: 提前点送达单量（容错值）
+              advance_delivery_surplus: 提前点送达单量（余量）
+              over_15_contains: 15分钟超时单量（容错值）
+              over_15_surplus: 15分钟超时单量（余量）
+              dissatisfy_contains: 不满意单量（容错值）
+              dissatisfy_surplus: 不满意单量（余量）
+              unfinished_contains: 配送原因未完成单量（容错值）
+              unfinished_surplus: 配送原因未完成单量（余量）
 
 
     - name: mt_knight_detail
