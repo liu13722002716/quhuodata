@@ -1,5 +1,4 @@
 #### 清退预警
-
 - fetch_dataset:
     template_code: ele_day_60
     dataset_cate: raw

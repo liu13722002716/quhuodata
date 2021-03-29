@@ -1935,8 +1935,9 @@ ele_daily_env:
             - |
               df = to_df(df)
               df['col_val_dict'] = '0'
+              df = df.applymap(lambda x: u'%s' % x)
               df['col_val_dict'] = [u'[{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"}]' % (a,b,c,d,e,f,g,h) for a,b,c,d,e,f,g,h in  df[['evaluate_one','evaluate_one_level','evaluate_two','evaluate_two_level','evaluate_three','evaluate_three_level','evaluate_four','evaluate_four_level']].to_dict(orient='split')['data'] ]
-              result = df
+              result = to_dd(df)
 
 
     - name: clear_warning_mini_ext
@@ -4917,8 +4918,9 @@ ele_month_env:
             - |
               df = to_df(df)
               df['col_val_dict'] = '0'
+              df = df.applymap(lambda x: u'%s' % x)
               df['col_val_dict'] = [u'[{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"}]' % (a,b,c,d,e,f,g,h) for a,b,c,d,e,f,g,h in  df[['evaluate_one','evaluate_one_level','evaluate_two','evaluate_two_level','evaluate_three','evaluate_three_level','evaluate_four','evaluate_four_level']].to_dict(orient='split')['data'] ]
-              result = df
+              result = to_dd(df)
 
 
     - name: clear_warning_mini_ext
