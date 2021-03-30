@@ -56,7 +56,7 @@ dataset_pipeline:
 
   - use_df:
       key: mini
-  - df_groupby:
+  - df_groupby:、
       by: [platform_name, project_name, supplier_name, region_name, city_name, book_month]
   - df_median:
       column: month_days

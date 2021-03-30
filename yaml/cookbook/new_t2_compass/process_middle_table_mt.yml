@@ -13,8 +13,9 @@ mt_daily_env:
       sync_result: true
       cooks:
         - fetch_dataset:
-            template_code: mt_day_35        #单日站点数据
+            template_code: mt_day_35        #日累计站点数据
             dataset_cate: raw
+            datakit_pull_way: last_day
             columns: [ 站点id,注册骑手数,离职骑手数,入职骑手数,有完成单骑手数,完成单量,人效（完成订单）,meta_day ]
             ignore_null_error: true
             empty_df_record:
@@ -25,33 +26,43 @@ mt_daily_env:
               有完成单骑手数: 1
               完成单量: 1
               meta_day: 99999999
+              人效（完成订单）: 0.0
             rename:
               站点id: vendor_dc_id
-              注册骑手数: register_knight
-              离职骑手数: leave_knight
-              入职骑手数: entry_knight
-              有完成单骑手数: have_order_knight
-              完成单量: single_daily_order
+              注册骑手数: total_register_knight #register_knight
+              离职骑手数: total_leave_knight #leave_knight
+              入职骑手数: total_entry_knight #entry_knight
+              有完成单骑手数: total_have_order_knight #have_order_knight
+              完成单量: total_order  #single_daily_order
+              人效（完成订单）: total_utility
         - df_to_int:
-            - register_knight
+            - total_register_knight
         - df_to_int:
-            - leave_knight
+            - total_leave_knight
         - df_to_int:
-            - entry_knight
+            - total_entry_knight
         - df_to_int:
-            - have_order_knight
+            - total_have_order_knight
         - df_to_int:
-            - single_daily_order
+            - total_order
+        - df_to_float:
+            - total_utility
         - run_py:
             - |
               df = to_df(df)
-              need = df.groupby(by=['vendor_dc_id']).apply(lambda x: x.sort_values(by=['meta_day'])).reset_index(drop=True)
-              need_result = need.groupby(by=['vendor_dc_id']).cumsum().rename(columns={'register_knight':'total_register_knight','leave_knight':'total_leave_knight','entry_knight':'total_entry_knight','have_order_knight':'total_have_order_knight','single_daily_order':'total_order','meta_day':'meta_day_other'})
-              need = pd.merge(need,need_result,left_index=True,right_index=True,how='inner')
-              need['days'] = need['meta_day'].map(str).str[6:].map(int)
-              need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight']/need['days'],2)
-              need['avg_daily_knight'] = need['total_have_order_knight'] / need['days']
-              result = to_dd(need)
+              df['days'] = df['meta_day'].map(str).str[6:].map(int)
+              df['avg_daily_knight'] = df['total_have_order_knight'] / df['days']
+              result = to_dd(df)
+#        - run_py:
+#            - |
+#              df = to_df(df)
+#              need = df.groupby(by=['vendor_dc_id']).apply(lambda x: x.sort_values(by=['meta_day'])).reset_index(drop=True)
+#              need_result = need.groupby(by=['vendor_dc_id']).cumsum().rename(columns={'register_knight':'total_register_knight','leave_knight':'total_leave_knight','entry_knight':'total_entry_knight','have_order_knight':'total_have_order_knight','single_daily_order':'total_order','meta_day':'meta_day_other'})
+#              need = pd.merge(need,need_result,left_index=True,right_index=True,how='inner')
+#              need['days'] = need['meta_day'].map(str).str[6:].map(int)
+#              need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight']/need['days'],2)
+#              need['avg_daily_knight'] = need['total_have_order_knight'] / need['days']
+#              result = to_dd(need)
         - fetch_cols:
             columns: [vendor_dc_id,meta_day,total_register_knight,total_leave_knight,total_entry_knight,total_order,total_utility,avg_daily_knight]
 
@@ -60,7 +71,7 @@ mt_daily_env:
       sync_result: true
       cooks:
         - fetch_dataset:
-            template_code: mt_day_35        #单日站点数据
+            template_code: mt_day_61        #单日站点数据
             dataset_cate: raw
             columns: [站点名称,站点id,注册骑手数,离职骑手数,入职骑手数,有完成单骑手数,完成单量,人效（完成订单）,加盟商ID,meta_day]
             ignore_null_error: true
@@ -105,7 +116,7 @@ mt_daily_env:
         - stash_push_df: []
         - stash_join_df:
             on: [vendor_dc_id,meta_day]
-            how: outer
+            how: inner
             drop_stash: true
         - stash_push_df: []
 
@@ -134,7 +145,7 @@ mt_daily_env:
         - stash_push_df: []
         - stash_join_df:
             on: [vendor_dc_id,meta_day]
-            how: outer
+            how: inner
             drop_stash: true
         - df_eval:
             - |
@@ -159,7 +170,7 @@ mt_daily_env:
         - stash_push_df:  []
         - stash_join_df:
             on: [vendor_dc_id]
-            how: outer
+            how: inner
             drop_stash: true
 
         - run_py:

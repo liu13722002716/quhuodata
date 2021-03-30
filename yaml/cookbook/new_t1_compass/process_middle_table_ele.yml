@@ -146,8 +146,6 @@ ele_daily_env:
               团队名称: dc_name
         - set_date_column:
             src_column: 日期
-            format:
-              - YYYY-MM-DD
         - df_to_int:
             - 日期
         - df_rename_columns:
@@ -1429,11 +1427,11 @@ ele_daily_env:
               预警: '-'
         - df_rename_columns:
             - 站点ID: vendor_dc_id
-              预警: stimulate_replenish_rectify
+#              预警: stimulate_replenish_rectify
         - run_py:
             - |
               df = to_df(df)
-              df['stimulate_replenish_rectify_level'] = np.where((df['stimulate_replenish_rectify'].str.contains(u"安全")) | (df['stimulate_replenish_rectify'].str.contains(u"不参与")),u"安全",u"危险")
+              df[u'预警'] = np.where((df[u'预警'].str.contains(u"安全")) | (df[u'预警'].str.contains(u"不参与")),u"安全",u"危险")
               result = to_dd(df)
         - stash_push_df: []
 
@@ -1448,11 +1446,11 @@ ele_daily_env:
               异常站点运力覆盖: '-'
         - df_rename_columns:
             - 站点ID: vendor_dc_id
-              异常站点运力覆盖: abnormal_dc_cover
+#              异常站点运力覆盖: abnormal_dc_cover
         - run_py:
             - |
               df = to_df(df)
-              df['abnormal_dc_cover_level'] = np.where(df['abnormal_dc_cover'].str.contains(u"不"),u"安全",u"危险")
+              df[u'异常站点运力覆盖'] = np.where(df[u'异常站点运力覆盖'].str.contains(u"不"),u"安全",u"危险")
               result = to_dd(df)
         - stash_push_df: []
 
@@ -1466,18 +1464,18 @@ ele_daily_env:
             template_code: ele_day_71   # 清退预警--重庆（隔一日更新）
             dataset_cate: raw
             datakit_pull_way: last_day
-            columns: [ 站点ID,考核结果预估]
+            columns: [站点ID,考核结果预估]
             ignore_null_error: true
             empty_df_record:
               站点ID: '-'
               考核结果预估: '-'
         - df_rename_columns:
             - 站点ID: vendor_dc_id
-              考核结果预估: cq_dc_rectify
+#              考核结果预估: cq_dc_rectify
         - run_py:
             - |
               df = to_df(df)
-              df['cq_dc_rectify_level'] = np.where(df['cq_dc_rectify'].str.contains(u"需警惕"),u"危险",u"安全")
+              df[u'考核结果预估'] = np.where(df[u'考核结果预估'].str.contains(u"需警惕"),u"危险",u"安全")
               result = to_dd(df)
         - stash_push_df: []
         - stash_join_df:
@@ -1497,11 +1495,11 @@ ele_daily_env:
               是否触碰清退: '-'
         - df_rename_columns:
             - 团队ID: vendor_dc_id
-              是否触碰清退: sh_dc_optimize
+#              是否触碰清退: sh_dc_optimize
         - run_py:
             - |
               df = to_df(df)
-              df['sh_dc_optimize_level'] = np.where(df['sh_dc_optimize'].str.contains(u"触碰清退"),u"危险",u"安全")
+              df[u'是否触碰清退'] = np.where(df[u'是否触碰清退'].str.contains(u"触碰清退"),u"危险",u"安全")
               result = to_dd(df)
         - stash_push_df: []
 
@@ -1517,340 +1515,11 @@ ele_daily_env:
             on: vendor_dc_id
             how: inner
             drop_stash: true
-        - push_dataset:
-            key:  clear_warning_mini
-
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df = df[df['sh_dc_optimize'].notnull()]
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s"},{"name":"是否触碰清退","label":"%s","level":"%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','abnormal_dc_cover','abnormal_dc_cover_level','sh_dc_optimize','sh_dc_optimize_level']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: []
-
-        ###重庆商圈
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df = df[df['cq_dc_rectify'].notnull()]
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s"},{"name":"考核结果预估","label":"%s","level":"%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','abnormal_dc_cover','abnormal_dc_cover_level','cq_dc_rectify','cq_dc_rectify_level']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        - stash_push_df: []
-        ###非上海和重庆商圈
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df = df[(df['sh_dc_optimize'].isnull()) & (df['cq_dc_rectify'].isnull()) ]
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s"}]' % (a,b,c,d) for a,b,c,d in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','abnormal_dc_cover','abnormal_dc_cover_level']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: []
-
-        - stash_concat_df:
-            drop_stash: true
-        - drop_duplicates:
-            subset: [ vendor_dc_id ]
-        - push_dataset:
-            key: clear_warning_dc
-
-        - use_df:
-            key: clear_warning_mini
-
-        - add_cols:
-            - stimulate_replenish_rectify_level_value: 0
-        - df_set_column_val_if:
-            column: stimulate_replenish_rectify_level_value
-            condition: '[stimulate_replenish_rectify_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: stimulate_replenish_rectify_level_value
-            condition: '[stimulate_replenish_rectify_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - abnormal_dc_cover_level_value: 0
-        - df_set_column_val_if:
-            column: abnormal_dc_cover_level_value
-            condition: '[abnormal_dc_cover_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: abnormal_dc_cover_level_value
-            condition: '[abnormal_dc_cover_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - sh_dc_optimize_level_value: 0
-        - df_set_column_val_if:
-            column: sh_dc_optimize_level_value
-            condition: '[sh_dc_optimize_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: sh_dc_optimize_level_value
-            condition: '[sh_dc_optimize_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - cq_dc_rectify_level_value: 0
-        - df_set_column_val_if:
-            column: cq_dc_rectify_level_value
-            condition: '[cq_dc_rectify_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: cq_dc_rectify_level_value
-            condition: '[cq_dc_rectify_level] == u"安全"'
-            val: 3
-        - push_dataset:
-            key: clear_warning_mini_std
-
-        - use_df:
-            key: clear_warning_mini_std
-
-        - df_groupby:
-            by: [ coach_team_name ]
-        - df_max:
-            column: [ stimulate_replenish_rectify_level_value,abnormal_dc_cover_level_value,sh_dc_optimize_level_value,cq_dc_rectify_level_value]
-        - df_reset_index: [ ]
-        - df_rename_columns:
-            - stimulate_replenish_rectify_level_value: srrlv
-              abnormal_dc_cover_level_value: adclv
-              sh_dc_optimize_level_value:  sdolv
-              cq_dc_rectify_level_value: cdrlv
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_mini_std
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: inner
-            drop_stash: true
-        - push_dataset:
-            key: clear_warning_mini_ext
-
-        - use_df:
-            key:  clear_warning_mini_ext
-
-        #### stimulate_replenish_rectify
-        - df_select:
-            - '[stimulate_replenish_rectify_level_value] == [srrlv]'
-
-        - fetch_cols:
-            columns: [coach_team_name,dc_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'srrlv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-
-        - fetch_cols:
-            columns: [coach_team_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level,srrlv_dc_list]
-
-        - push_dataset:
-            key: clear_warning_city_stimulate_replenish_rectify
-
-        ### abnormal_dc_cover
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[abnormal_dc_cover_level_value] == [adclv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name, abnormal_dc_cover,abnormal_dc_cover_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'adclv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name, abnormal_dc_cover,abnormal_dc_cover_level,adclv_dc_list]
-        - push_dataset:
-            key: clear_warning_city_abnormal_dc_cover
-
-        ###sh_dc_optimize
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[sh_dc_optimize_level_value] == [sdolv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,sh_dc_optimize,sh_dc_optimize_level ]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'sdolv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,sh_dc_optimize,sh_dc_optimize_level,sdolv_dc_list]
-
-        - push_dataset:
-            key: clear_warning_sh_dc_optimize
-
-        #### cq_dc_rectify
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[cq_dc_rectify_level_value] == [cdrlv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,cq_dc_rectify,cq_dc_rectify_level ]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'cdrlv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,cq_dc_rectify,cq_dc_rectify_level,cdrlv_dc_list ]
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_stimulate_replenish_rectify
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_abnormal_dc_cover
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_sh_dc_optimize
-        - stash_push_df: [ ]
-
-        - stash_join_df:
-            on: [ coach_team_name]
-            how: inner
-            drop_stash: true
-        - pad_cols:
-            columns: [ srrlv_dc_list,adclv_dc_list,sdolv_dc_list,cdrlv_dc_list ]
-            default_value: '-'
-        - push_dataset:
-            key: clear_warning_city_mini
-
-        - use_df:
-            key: clear_warning_city_mini
-        ### 上海
-        - df_py_select:
-            - 'df["coach_team_name"].str.contains(u"上海")'
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s","dc_list":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s","dc_list":"%s"},{"name":"是否触碰清退","label":"%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f,g,h,i) for a,b,c,d,e,f,g,h,i in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','srrlv_dc_list','abnormal_dc_cover','abnormal_dc_cover_level','adclv_dc_list','sh_dc_optimize','sh_dc_optimize_level','sdolv_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: [ ]
-
-        ### 重庆
-        - use_df:
-            key: clear_warning_city_mini
-        - df_py_select:
-            - 'df["coach_team_name"].str.contains(u"重庆")'
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label":"%s","level":"%s","dc_list":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s","dc_list":"%s"},{"name":"考核结果预估","label":"%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f,g,h,i) for a,b,c,d,e,f,g,h,i in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','srrlv_dc_list','abnormal_dc_cover','abnormal_dc_cover_level','adclv_dc_list','cq_dc_rectify','cq_dc_rectify_level','cdrlv_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: [ ]
-
-        ###非上海和重庆
-        - use_df:
-            key: clear_warning_city_mini
-        - df_py_select:
-            - '~((df["coach_team_name"].str.contains(u"重庆")) | (df["coach_team_name"].str.contains(u"上海")))'
-
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s","dc_list": "%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','srrlv_dc_list','abnormal_dc_cover','abnormal_dc_cover_level','adclv_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: [ ]
-
-        - stash_concat_df:
-            drop_stash: true
-
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict]
-        - add_cols:
-            - dimension: 'C'
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_60_dc_std
-            columns: [supplier_id,城市]
-        - df_rename_columns:
-            - 城市: coach_team_name
-        - drop_duplicates:
-            subset: [supplier_id,coach_team_name]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - push_dataset:
-            key: clear_warning_coach
-
-        - use_df:
-            key: clear_warning_dc
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict,vendor_dc_id]
+        - df_fillna:
+            columns: [预警,异常站点运力覆盖,考核结果预估,是否触碰清退]
+            value: '-'
+        - set_meta_month_column:
+            - book_month
         - add_cols:
             - dimension: 'D'
         - stash_push_df: []
@@ -1862,15 +1531,8 @@ ele_daily_env:
             on: [vendor_dc_id]
             how: inner
             drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_coach
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        - set_meta_month_column:
-            - book_month
 
+####
     - name: clear_warning_mini
       sync_result: true
       cooks:
@@ -1878,16 +1540,14 @@ ele_daily_env:
             template_code: ele_day_60
             dataset_cate: raw
             datakit_pull_way: last_day
-            columns: [ 城市,团队ID,团队名称 ]
+            columns: [城市,团队ID]
             ignore_null_error: true
             empty_df_record:
               城市: '-'
               团队ID: '-'
-              团队名称: '-'
             rename:
               城市: coach_team_name
               团队ID: vendor_dc_id
-              团队名称: dc_name
         - run_py:
             - |
               df = df[df['vendor_dc_id'].notnull()]
@@ -1901,328 +1561,54 @@ ele_daily_env:
              dataset_cate: raw
              datakit_pull_way: last_day
              ignore_null_error: true
+             empty_df_record:
+               站点名称: '-'
+               站点ID: '-'
+               站点质量不达标清退: '-'
+               站点评级体系: '-'
+               小站点优化: '-'
+               上海商圈专项优化方案: '-'
              rename:
                 站点ID: vendor_dc_id
-                考核项1: evaluate_one
-                考核项1的值: evaluate_one_value
-                考核项2: evaluate_two
-                考核项2的值: evaluate_two_value
-                考核项3: evaluate_three
-                考核项3的值: evaluate_three_value
-                考核项4: evaluate_four
-                考核项4的值: evaluate_four_value
+                站点名称: dc_name
         - run_py:
             - |
               df = to_df(df)
-              df['evaluate_one_level'] = np.where(df['evaluate_one_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_one_value'].str.contains(u'不参与'),'-',u'危险'))
-              df['evaluate_two_level'] = np.where(df['evaluate_two_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_two_value'].str.contains(u'不参与'),'-',u'危险'))
-              df['evaluate_three_level'] = np.where(df['evaluate_three_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_three_value'].str.contains(u'不参与'),'-',u'危险'))
-              df['evaluate_four_level'] = np.where(df['evaluate_four_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_four_value'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'站点质量不达标清退'] = np.where(df[u'站点质量不达标清退'].str.contains(u"安全"),u"安全",np.where(df[u'站点质量不达标清退'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'站点评级体系'] = np.where(df[u'站点评级体系'].str.contains(u"安全"),u"安全",np.where(df[u'站点评级体系'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'小站点优化'] = np.where(df[u'小站点优化'].str.contains(u"安全"),u"安全",np.where(df[u'小站点优化'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'上海商圈专项优化方案'] = np.where(df[u'上海商圈专项优化方案'].str.contains(u"安全"),u"安全",np.where(df[u'上海商圈专项优化方案'].str.contains(u'不参与'),'-',u'危险'))
               result = to_dd(df)
         - stash_push_df: []
         - stash_join_df:
             on: vendor_dc_id
             how: inner
             drop_stash: true
-
-
-    - name: clear_warning_dc
-      sync_result: true
-      cooks:
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df = df.applymap(lambda x: u'%s' % x)
-              df['col_val_dict'] = [u'[{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"}]' % (a,b,c,d,e,f,g,h) for a,b,c,d,e,f,g,h in  df[['evaluate_one','evaluate_one_level','evaluate_two','evaluate_two_level','evaluate_three','evaluate_three_level','evaluate_four','evaluate_four_level']].to_dict(orient='split')['data'] ]
-              result = to_dd(df)
-
-
-    - name: clear_warning_mini_ext
-      sync_result: true
-      cooks:
-        - use_df:
-            key: clear_warning_mini
-
         - add_cols:
-            - evaluate_one_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_one_level_value
-            condition: '[evaluate_one_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_one_level_value
-            condition: '[evaluate_one_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - evaluate_two_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_two_level_value
-            condition: '[evaluate_two_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_two_level_value
-            condition: '[evaluate_two_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - evaluate_three_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_three_level_value
-            condition: '[evaluate_three_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_three_level_value
-            condition: '[evaluate_three_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - evaluate_four_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_four_level_value
-            condition: '[evaluate_four_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_four_level_value
-            condition: '[evaluate_four_level] == u"安全"'
-            val: 3
-        - push_dataset:
-            key: clear_warning_mini_std
+            - dimension: 'D'
+        - stash_push_df: [ ]
         - use_df:
-            key: clear_warning_mini_std
-
-        - df_groupby:
-            by: [ coach_team_name ]
-        - df_max:
-            column: [ evaluate_one_level_value,evaluate_two_level_value,evaluate_three_level_value,evaluate_four_level_value]
-        - df_reset_index: [ ]
-        - df_rename_columns:
-            - evaluate_one_level_value: srrlv
-              evaluate_two_level_value: adclv
-              evaluate_three_level_value:  sdolv
-              evaluate_four_level_value: cdrlv
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_mini_std
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: inner
-            drop_stash: true
-
-    - name: clear_warning_city_mini
-      sync_result: true
-      cooks:
-        - use_df:
-            key:  clear_warning_mini_ext
-
-        #### evaluate_one
-        - df_select:
-            - '[evaluate_one_level_value] == [srrlv]'
-        - fetch_cols:
-            columns: [coach_team_name,dc_name,evaluate_one,evaluate_one_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_one_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-
-        - fetch_cols:
-            columns: [coach_team_name,evaluate_one,evaluate_one_level,evaluate_one_dc_list]
-
-        - push_dataset:
-            key: clear_warning_city_stimulate_replenish_rectify
-
-        ### evaluate_two
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[evaluate_two_level_value] == [adclv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name, evaluate_two,evaluate_two_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_two_dc_list'})
-              result = to_dd(need)
+            key: std_qplus_dc_copy
+            columns: [ supplier_id,vendor_dc_id ]
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,evaluate_two,evaluate_two_level,evaluate_two_dc_list]
-        - push_dataset:
-            key: clear_warning_city_abnormal_dc_cover
-
-        ###evaluate_three
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[evaluate_three_level_value] == [sdolv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,evaluate_three,evaluate_three_level ]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_three_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,evaluate_three,evaluate_three_level,evaluate_three_dc_list]
-
-        - push_dataset:
-            key: clear_warning_sh_dc_optimize
-
-        #### evaluate_four
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[evaluate_four_level_value] == [cdrlv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,evaluate_four,evaluate_four_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_four_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,evaluate_four,evaluate_four_level,evaluate_four_dc_list ]
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_stimulate_replenish_rectify
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
+            on: [ vendor_dc_id ]
             how: inner
             drop_stash: true
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_abnormal_dc_cover
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_sh_dc_optimize
-        - stash_push_df: [ ]
-
-        - stash_join_df:
-            on: [ coach_team_name]
-            how: inner
-            drop_stash: true
-        - pad_cols:
-            columns: [ evaluate_one_dc_list,evaluate_two_dc_list,evaluate_three_dc_list,evaluate_four_dc_list ]
-            default_value: '-'
+        - set_meta_month_column:
+            - book_month
 
     - name: clean_warning
       sync_result: true
       cooks:
-        - use_df:
-            key: clear_warning_city_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"%s","level":"%s","dc_list":"%s"},{"name":"%s","level":"%s","dc_list":"%s"},{"name":"%s","level":"%s","dc_list":"%s"},{"name":"%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f,g,h,i,j,k,l) for a,b,c,d,e,f,g,h,i,j,k,l in  df[['evaluate_one','evaluate_one_level','evaluate_one_dc_list','evaluate_two','evaluate_two_level','evaluate_two_dc_list','evaluate_three','evaluate_three_level','evaluate_three_dc_list','evaluate_four','evaluate_four_level','evaluate_four_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict]
-        - add_cols:
-            - dimension: 'C'
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_60_dc_std
-            columns: [supplier_id,城市]
-        - df_rename_columns:
-            - 城市: coach_team_name
-        - drop_duplicates:
-            subset: [supplier_id,coach_team_name]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - push_dataset:
-            key: clear_warning_coach
-
-        - use_df:
-            key: clear_warning_dc
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict,vendor_dc_id]
-        - add_cols:
-            - dimension: 'D'
-        - stash_push_df: []
-        - use_df:
-            key: std_qplus_dc_copy
-            columns: [supplier_id,vendor_dc_id]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [vendor_dc_id]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_coach
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        - set_meta_month_column:
-            - book_month
-        - stash_push_df: []
-        - use_df:
-            key: clean_warning_before
-        - stash_push_df: []
-
-        - stash_concat_df:
-            drop_stash: true
-
-
+        - fetch_dataset:
+            dataset_type_code: clean_warning_before
+            dataset_cate: std
+            ignore_null_error: true
+        - when_empty_fetch_dataset:
+            dataset_type_code: clear_warning_mini
+            dataset_cate: std
+            ignore_null_error: true
 ####other
 
     ### 主体匹配表
@@ -2981,7 +2367,6 @@ ele_month_env:
 
 #  pre_load_dataset:
 #    - std_qplus_dc
-
   play:
     - name: std_qplus_dc_copy
       sync_result: true
@@ -2997,7 +2382,7 @@ ele_month_env:
             ignore_null_error: true
         - drop_duplicates:
             subset: [ supplier_id,vendor_dc_id  ]
-    ####权限表
+####权限表
     - name: authority_list
       sync_result: true
       cooks:
@@ -3036,9 +2421,10 @@ ele_month_env:
             condition: '[platform_code] == "meituan"'
             val: 美团
         - fetch_cols:
-            columns: [ platform_code,platform,supplier_id,supplier_name,coach_team_name,vendor_dc_id,dc_name,city_code,city_name]
+            columns: [ platform_code,platform,supplier_id,supplier_name,coach_team_name,vendor_dc_id,dc_name,city_code,city_name ]
         - set_meta_month_column:
             - month
+
 
     ### 私教和地理城市映射表
     - name: city_coach_map
@@ -3047,7 +2433,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_60  #KPI计算（北京1）(日更新)
             dataset_cate: raw
-#            month_offset: -1
             ignore_null_error: true
             columns: [城市,团队ID]
             empty_df_record:
@@ -3072,7 +2457,6 @@ ele_month_env:
         - fetch_dataset:
             template_code:  ele_day_60    #KPI计算（北京1）(日更新)
             dataset_cate: raw
-#            month_offset: -1
             ignore_null_error: true
             empty_df_record:
               城市: '-'
@@ -3106,7 +2490,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_62      # kpi计算模板--源数据（日更新）
             dataset_cate: raw
-#            month_offset: -1
             ignore_null_error: true
             datakit_pull_way: last_day
             columns: [团队ID,团队名称,骑手,全量单,日期,城市]
@@ -3122,8 +2505,6 @@ ele_month_env:
               团队名称: dc_name
         - set_date_column:
             src_column: 日期
-            format:
-              - YYYY-MM-DD
         - df_to_int:
             - 日期
         - df_rename_columns:
@@ -3144,7 +2525,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_67      # 商评分--站点难度 （日更新）
             dataset_cate: raw
-#            month_offset: -1
             ignore_null_error: true
             empty_df_record:
               团队ID: '-'
@@ -3168,7 +2548,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_month_77        # 站点评价体系(月更新)
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [ 团队ID,站点类型 ]
             ignore_null_error: true
@@ -3194,7 +2573,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_60
             dataset_cate: raw
-#            month_offset: -1
             ignore_null_error: true
             empty_df_record:
               城市: '-'
@@ -4043,7 +3421,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_60   #KPI计算（北京1）(日更新)
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [ 城市,团队ID,团队名称,KPI奖罚得分,快送降级单加分,目标线,目标线是否达标,安全线,安全线是否达标,平台触达结果1,平台触达结果2,平台触达结果3 ]
             ignore_null_error: true
@@ -4099,7 +3476,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_60   #KPI计算（北京1）(日更新)
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [ 城市,团队ID,团队名称,KPI奖罚得分,快送降级单加分,平均在线骑手数,人效,全量单平均日单量,全量单,系统接单数,有效完成单,超时数,超时率,超时分数,配送原因取消,配送原因取消率,配送原因取消分数,坏单,坏单率,坏单分数,虚假配送,虚假配送率,虚假配送分数,骑手T10超时单,骑手T10超时率,骑手T10超时得分]
             ignore_null_error: true
@@ -4210,7 +3586,6 @@ ele_month_env:
         - fetch_dataset:
             template_code:  ele_day_61  #kpi计算- 非奖罚(日更新)
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [ 城市,团队ID,团队名称,融合单有效完成单,质选有效完成单,星巴克有效完成单,淘鲜达有效完成单,融合单得分,质选得分,星巴克得分,淘鲜达得分,x值,y值,z值,全量单,得分]
             ignore_null_error: true
@@ -4289,7 +3664,6 @@ ele_month_env:
         - fetch_dataset:
             template_code:  ele_day_66   # 商评分--商评结果 （日更新）
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             columns: [ 城市,大区,有《食品经营许可证》,尾部站点整改不达标,站长评级,骑手出勤率,非奖罚得分,难度站点,单量占比增长,多业务承接,加分项,减分项,合计得分,折和100分后得分,评级,城市内排名,全量标品运营天数日均有效完成单,城市下限,城市规模上限,单量区间判定,城市商数量,城市单量区间,商数量上限,尾部强排规则]
             ignore_null_error: true
@@ -4405,18 +3779,18 @@ ele_month_env:
             template_code:  ele_day_69   #清退预警--东战
             dataset_cate: raw
             datakit_pull_way: last_day
-            columns: [ 站点ID,预警]
+            columns: [站点ID,预警]
             ignore_null_error: true
             empty_df_record:
               站点ID: '-'
               预警: '-'
         - df_rename_columns:
             - 站点ID: vendor_dc_id
-              预警: stimulate_replenish_rectify
+#              预警: stimulate_replenish_rectify
         - run_py:
             - |
               df = to_df(df)
-              df['stimulate_replenish_rectify_level'] = np.where((df['stimulate_replenish_rectify'].str.contains(u"安全")) | (df['stimulate_replenish_rectify'].str.contains(u"不参与")),u"安全",u"危险")
+              df[u'预警'] = np.where((df[u'预警'].str.contains(u"安全")) | (df[u'预警'].str.contains(u"不参与")),u"安全",u"危险")
               result = to_dd(df)
         - stash_push_df: []
 
@@ -4431,11 +3805,11 @@ ele_month_env:
               异常站点运力覆盖: '-'
         - df_rename_columns:
             - 站点ID: vendor_dc_id
-              异常站点运力覆盖: abnormal_dc_cover
+#              异常站点运力覆盖: abnormal_dc_cover
         - run_py:
             - |
               df = to_df(df)
-              df['abnormal_dc_cover_level'] = np.where(df['abnormal_dc_cover'].str.contains(u"不"),u"安全",u"危险")
+              df[u'异常站点运力覆盖'] = np.where(df[u'异常站点运力覆盖'].str.contains(u"不"),u"安全",u"危险")
               result = to_dd(df)
         - stash_push_df: []
 
@@ -4449,18 +3823,18 @@ ele_month_env:
             template_code: ele_day_71   # 清退预警--重庆（隔一日更新）
             dataset_cate: raw
             datakit_pull_way: last_day
-            columns: [ 站点ID,考核结果预估]
+            columns: [站点ID,考核结果预估]
             ignore_null_error: true
             empty_df_record:
               站点ID: '-'
               考核结果预估: '-'
         - df_rename_columns:
             - 站点ID: vendor_dc_id
-              考核结果预估: cq_dc_rectify
+#              考核结果预估: cq_dc_rectify
         - run_py:
             - |
               df = to_df(df)
-              df['cq_dc_rectify_level'] = np.where(df['cq_dc_rectify'].str.contains(u"需警惕"),u"危险",u"安全")
+              df[u'考核结果预估'] = np.where(df[u'考核结果预估'].str.contains(u"需警惕"),u"危险",u"安全")
               result = to_dd(df)
         - stash_push_df: []
         - stash_join_df:
@@ -4480,11 +3854,11 @@ ele_month_env:
               是否触碰清退: '-'
         - df_rename_columns:
             - 团队ID: vendor_dc_id
-              是否触碰清退: sh_dc_optimize
+#              是否触碰清退: sh_dc_optimize
         - run_py:
             - |
               df = to_df(df)
-              df['sh_dc_optimize_level'] = np.where(df['sh_dc_optimize'].str.contains(u"触碰清退"),u"危险",u"安全")
+              df[u'是否触碰清退'] = np.where(df[u'是否触碰清退'].str.contains(u"触碰清退"),u"危险",u"安全")
               result = to_dd(df)
         - stash_push_df: []
 
@@ -4500,340 +3874,11 @@ ele_month_env:
             on: vendor_dc_id
             how: inner
             drop_stash: true
-        - push_dataset:
-            key:  clear_warning_mini
-
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df = df[df['sh_dc_optimize'].notnull()]
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s"},{"name":"是否触碰清退","label":"%s","level":"%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','abnormal_dc_cover','abnormal_dc_cover_level','sh_dc_optimize','sh_dc_optimize_level']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: []
-
-        ###重庆商圈
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df = df[df['cq_dc_rectify'].notnull()]
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s"},{"name":"考核结果预估","label":"%s","level":"%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','abnormal_dc_cover','abnormal_dc_cover_level','cq_dc_rectify','cq_dc_rectify_level']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        - stash_push_df: []
-        ###非上海和重庆商圈
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df = df[(df['sh_dc_optimize'].isnull()) & (df['cq_dc_rectify'].isnull()) ]
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s"}]' % (a,b,c,d) for a,b,c,d in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','abnormal_dc_cover','abnormal_dc_cover_level']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: []
-
-        - stash_concat_df:
-            drop_stash: true
-        - drop_duplicates:
-            subset: [ vendor_dc_id ]
-        - push_dataset:
-            key: clear_warning_dc
-
-        - use_df:
-            key: clear_warning_mini
-
-        - add_cols:
-            - stimulate_replenish_rectify_level_value: 0
-        - df_set_column_val_if:
-            column: stimulate_replenish_rectify_level_value
-            condition: '[stimulate_replenish_rectify_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: stimulate_replenish_rectify_level_value
-            condition: '[stimulate_replenish_rectify_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - abnormal_dc_cover_level_value: 0
-        - df_set_column_val_if:
-            column: abnormal_dc_cover_level_value
-            condition: '[abnormal_dc_cover_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: abnormal_dc_cover_level_value
-            condition: '[abnormal_dc_cover_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - sh_dc_optimize_level_value: 0
-        - df_set_column_val_if:
-            column: sh_dc_optimize_level_value
-            condition: '[sh_dc_optimize_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: sh_dc_optimize_level_value
-            condition: '[sh_dc_optimize_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - cq_dc_rectify_level_value: 0
-        - df_set_column_val_if:
-            column: cq_dc_rectify_level_value
-            condition: '[cq_dc_rectify_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: cq_dc_rectify_level_value
-            condition: '[cq_dc_rectify_level] == u"安全"'
-            val: 3
-        - push_dataset:
-            key: clear_warning_mini_std
-
-        - use_df:
-            key: clear_warning_mini_std
-
-        - df_groupby:
-            by: [ coach_team_name ]
-        - df_max:
-            column: [ stimulate_replenish_rectify_level_value,abnormal_dc_cover_level_value,sh_dc_optimize_level_value,cq_dc_rectify_level_value]
-        - df_reset_index: [ ]
-        - df_rename_columns:
-            - stimulate_replenish_rectify_level_value: srrlv
-              abnormal_dc_cover_level_value: adclv
-              sh_dc_optimize_level_value:  sdolv
-              cq_dc_rectify_level_value: cdrlv
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_mini_std
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: inner
-            drop_stash: true
-        - push_dataset:
-            key: clear_warning_mini_ext
-
-        - use_df:
-            key:  clear_warning_mini_ext
-
-        #### stimulate_replenish_rectify
-        - df_select:
-            - '[stimulate_replenish_rectify_level_value] == [srrlv]'
-
-        - fetch_cols:
-            columns: [coach_team_name,dc_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'srrlv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-
-        - fetch_cols:
-            columns: [coach_team_name,stimulate_replenish_rectify,stimulate_replenish_rectify_level,srrlv_dc_list]
-
-        - push_dataset:
-            key: clear_warning_city_stimulate_replenish_rectify
-
-        ### abnormal_dc_cover
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[abnormal_dc_cover_level_value] == [adclv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name, abnormal_dc_cover,abnormal_dc_cover_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'adclv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name, abnormal_dc_cover,abnormal_dc_cover_level,adclv_dc_list]
-        - push_dataset:
-            key: clear_warning_city_abnormal_dc_cover
-
-        ###sh_dc_optimize
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[sh_dc_optimize_level_value] == [sdolv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,sh_dc_optimize,sh_dc_optimize_level ]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'sdolv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,sh_dc_optimize,sh_dc_optimize_level,sdolv_dc_list]
-
-        - push_dataset:
-            key: clear_warning_sh_dc_optimize
-
-        #### cq_dc_rectify
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[cq_dc_rectify_level_value] == [cdrlv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,cq_dc_rectify,cq_dc_rectify_level ]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'cdrlv_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,cq_dc_rectify,cq_dc_rectify_level,cdrlv_dc_list ]
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_stimulate_replenish_rectify
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_abnormal_dc_cover
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_sh_dc_optimize
-        - stash_push_df: [ ]
-
-        - stash_join_df:
-            on: [ coach_team_name]
-            how: inner
-            drop_stash: true
-        - pad_cols:
-            columns: [ srrlv_dc_list,adclv_dc_list,sdolv_dc_list,cdrlv_dc_list ]
-            default_value: '-'
-        - push_dataset:
-            key: clear_warning_city_mini
-
-        - use_df:
-            key: clear_warning_city_mini
-        ### 上海
-        - df_py_select:
-            - 'df["coach_team_name"].str.contains(u"上海")'
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s","dc_list":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s","dc_list":"%s"},{"name":"是否触碰清退","label":"%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f,g,h,i) for a,b,c,d,e,f,g,h,i in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','srrlv_dc_list','abnormal_dc_cover','abnormal_dc_cover_level','adclv_dc_list','sh_dc_optimize','sh_dc_optimize_level','sdolv_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: [ ]
-
-        ### 重庆
-        - use_df:
-            key: clear_warning_city_mini
-        - df_py_select:
-            - 'df["coach_team_name"].str.contains(u"重庆")'
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label":"%s","level":"%s","dc_list":"%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s","dc_list":"%s"},{"name":"考核结果预估","label":"%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f,g,h,i) for a,b,c,d,e,f,g,h,i in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','srrlv_dc_list','abnormal_dc_cover','abnormal_dc_cover_level','adclv_dc_list','cq_dc_rectify','cq_dc_rectify_level','cdrlv_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: [ ]
-
-        ###非上海和重庆
-        - use_df:
-            key: clear_warning_city_mini
-        - df_py_select:
-            - '~((df["coach_team_name"].str.contains(u"重庆")) | (df["coach_team_name"].str.contains(u"上海")))'
-
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"预警","label": "%s","level":"%s","dc_list": "%s"},{"name":"异常站点运力覆盖","label": "%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f) for a,b,c,d,e,f in  df[['stimulate_replenish_rectify','stimulate_replenish_rectify_level','srrlv_dc_list','abnormal_dc_cover','abnormal_dc_cover_level','adclv_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - stash_push_df: [ ]
-
-        - stash_concat_df:
-            drop_stash: true
-
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict]
-        - add_cols:
-            - dimension: 'C'
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_60_dc_std
-            columns: [supplier_id,城市]
-        - df_rename_columns:
-            - 城市: coach_team_name
-        - drop_duplicates:
-            subset: [supplier_id,coach_team_name]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - push_dataset:
-            key: clear_warning_coach
-
-        - use_df:
-            key: clear_warning_dc
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict,vendor_dc_id]
+        - df_fillna:
+            columns: [预警,异常站点运力覆盖,考核结果预估,是否触碰清退]
+            value: '-'
+        - set_meta_month_column:
+            - book_month
         - add_cols:
             - dimension: 'D'
         - stash_push_df: []
@@ -4845,15 +3890,8 @@ ele_month_env:
             on: [vendor_dc_id]
             how: inner
             drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_coach
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        - set_meta_month_column:
-            - book_month
 
+####
     - name: clear_warning_mini
       sync_result: true
       cooks:
@@ -4861,16 +3899,14 @@ ele_month_env:
             template_code: ele_day_60
             dataset_cate: raw
             datakit_pull_way: last_day
-            columns: [ 城市,团队ID,团队名称 ]
+            columns: [城市,团队ID]
             ignore_null_error: true
             empty_df_record:
               城市: '-'
               团队ID: '-'
-              团队名称: '-'
             rename:
               城市: coach_team_name
               团队ID: vendor_dc_id
-              团队名称: dc_name
         - run_py:
             - |
               df = df[df['vendor_dc_id'].notnull()]
@@ -4884,327 +3920,54 @@ ele_month_env:
              dataset_cate: raw
              datakit_pull_way: last_day
              ignore_null_error: true
+             empty_df_record:
+               站点名称: '-'
+               站点ID: '-'
+               站点质量不达标清退: '-'
+               站点评级体系: '-'
+               小站点优化: '-'
+               上海商圈专项优化方案: '-'
              rename:
                 站点ID: vendor_dc_id
-                考核项1: evaluate_one
-                考核项1的值: evaluate_one_value
-                考核项2: evaluate_two
-                考核项2的值: evaluate_two_value
-                考核项3: evaluate_three
-                考核项3的值: evaluate_three_value
-                考核项4: evaluate_four
-                考核项4的值: evaluate_four_value
+                站点名称: dc_name
         - run_py:
             - |
               df = to_df(df)
-              df['evaluate_one_level'] = np.where(df['evaluate_one_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_one_value'].str.contains(u'不参与'),'-',u'危险'))
-              df['evaluate_two_level'] = np.where(df['evaluate_two_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_two_value'].str.contains(u'不参与'),'-',u'危险'))
-              df['evaluate_three_level'] = np.where(df['evaluate_three_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_three_value'].str.contains(u'不参与'),'-',u'危险'))
-              df['evaluate_four_level'] = np.where(df['evaluate_four_value'].str.contains(u"安全"),u"安全",np.where(df['evaluate_four_value'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'站点质量不达标清退'] = np.where(df[u'站点质量不达标清退'].str.contains(u"安全"),u"安全",np.where(df[u'站点质量不达标清退'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'站点评级体系'] = np.where(df[u'站点评级体系'].str.contains(u"安全"),u"安全",np.where(df[u'站点评级体系'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'小站点优化'] = np.where(df[u'小站点优化'].str.contains(u"安全"),u"安全",np.where(df[u'小站点优化'].str.contains(u'不参与'),'-',u'危险'))
+              df[u'上海商圈专项优化方案'] = np.where(df[u'上海商圈专项优化方案'].str.contains(u"安全"),u"安全",np.where(df[u'上海商圈专项优化方案'].str.contains(u'不参与'),'-',u'危险'))
               result = to_dd(df)
         - stash_push_df: []
         - stash_join_df:
             on: vendor_dc_id
             how: inner
             drop_stash: true
-
-
-    - name: clear_warning_dc
-      sync_result: true
-      cooks:
-        - use_df:
-            key: clear_warning_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df = df.applymap(lambda x: u'%s' % x)
-              df['col_val_dict'] = [u'[{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"},{"name":"%s","level":"%s"}]' % (a,b,c,d,e,f,g,h) for a,b,c,d,e,f,g,h in  df[['evaluate_one','evaluate_one_level','evaluate_two','evaluate_two_level','evaluate_three','evaluate_three_level','evaluate_four','evaluate_four_level']].to_dict(orient='split')['data'] ]
-              result = to_dd(df)
-
-
-    - name: clear_warning_mini_ext
-      sync_result: true
-      cooks:
-        - use_df:
-            key: clear_warning_mini
-
         - add_cols:
-            - evaluate_one_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_one_level_value
-            condition: '[evaluate_one_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_one_level_value
-            condition: '[evaluate_one_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - evaluate_two_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_two_level_value
-            condition: '[evaluate_two_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_two_level_value
-            condition: '[evaluate_two_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - evaluate_three_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_three_level_value
-            condition: '[evaluate_three_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_three_level_value
-            condition: '[evaluate_three_level] == u"安全"'
-            val: 3
-
-        - add_cols:
-            - evaluate_four_level_value: 0
-        - df_set_column_val_if:
-            column: evaluate_four_level_value
-            condition: '[evaluate_four_level] == u"危险"'
-            val: 4
-
-        - df_set_column_val_if:
-            column: evaluate_four_level_value
-            condition: '[evaluate_four_level] == u"安全"'
-            val: 3
-        - push_dataset:
-            key: clear_warning_mini_std
+            - dimension: 'D'
+        - stash_push_df: [ ]
         - use_df:
-            key: clear_warning_mini_std
-
-        - df_groupby:
-            by: [ coach_team_name ]
-        - df_max:
-            column: [ evaluate_one_level_value,evaluate_two_level_value,evaluate_three_level_value,evaluate_four_level_value]
-        - df_reset_index: [ ]
-        - df_rename_columns:
-            - evaluate_one_level_value: srrlv
-              evaluate_two_level_value: adclv
-              evaluate_three_level_value:  sdolv
-              evaluate_four_level_value: cdrlv
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_mini_std
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: inner
-            drop_stash: true
-
-    - name: clear_warning_city_mini
-      sync_result: true
-      cooks:
-        - use_df:
-            key:  clear_warning_mini_ext
-
-        #### evaluate_one
-        - df_select:
-            - '[evaluate_one_level_value] == [srrlv]'
-        - fetch_cols:
-            columns: [coach_team_name,dc_name,evaluate_one,evaluate_one_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_one_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-
-        - fetch_cols:
-            columns: [coach_team_name,evaluate_one,evaluate_one_level,evaluate_one_dc_list]
-
-        - push_dataset:
-            key: clear_warning_city_stimulate_replenish_rectify
-
-        ### evaluate_two
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[evaluate_two_level_value] == [adclv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name, evaluate_two,evaluate_two_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_two_dc_list'})
-              result = to_dd(need)
+            key: std_qplus_dc_copy
+            columns: [ supplier_id,vendor_dc_id ]
         - stash_push_df: [ ]
         - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,evaluate_two,evaluate_two_level,evaluate_two_dc_list]
-        - push_dataset:
-            key: clear_warning_city_abnormal_dc_cover
-
-        ###evaluate_three
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[evaluate_three_level_value] == [sdolv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,evaluate_three,evaluate_three_level ]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_three_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,evaluate_three,evaluate_three_level,evaluate_three_dc_list]
-
-        - push_dataset:
-            key: clear_warning_sh_dc_optimize
-
-        #### evaluate_four
-        - use_df:
-            key: clear_warning_mini_ext
-        - df_select:
-            - '[evaluate_four_level_value] == [cdrlv]'
-        - fetch_cols:
-            columns: [ coach_team_name,dc_name,evaluate_four,evaluate_four_level]
-        - stash_push_df: []
-
-        - run_py:
-            - |
-              df = to_df(df)
-              f = lambda x,y: u'_'.join([u'%s' % i for i in x[y]])
-              need = df.groupby('coach_team_name',as_index=True).apply(f,y='dc_name').reset_index().rename(columns={0:u'evaluate_four_dc_list'})
-              result = to_dd(need)
-        - stash_push_df: [ ]
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: right
-            drop_stash: true
-        - drop_duplicates:
-            - [ coach_team_name ]
-        - fetch_cols:
-            columns: [ coach_team_name,evaluate_four,evaluate_four_level,evaluate_four_dc_list ]
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_stimulate_replenish_rectify
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
+            on: [ vendor_dc_id ]
             how: inner
             drop_stash: true
-        - stash_push_df: []
-
-        - use_df:
-            key: clear_warning_city_abnormal_dc_cover
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ coach_team_name ]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_sh_dc_optimize
-        - stash_push_df: [ ]
-
-        - stash_join_df:
-            on: [ coach_team_name]
-            how: inner
-            drop_stash: true
-        - pad_cols:
-            columns: [ evaluate_one_dc_list,evaluate_two_dc_list,evaluate_three_dc_list,evaluate_four_dc_list ]
-            default_value: '-'
+        - set_meta_month_column:
+            - book_month
 
     - name: clean_warning
       sync_result: true
       cooks:
-        - use_df:
-            key: clear_warning_city_mini
-        - run_py:
-            - |
-              df = to_df(df)
-              df['col_val_dict'] = '0'
-              df['col_val_dict'] = [u'[{"name":"%s","level":"%s","dc_list":"%s"},{"name":"%s","level":"%s","dc_list":"%s"},{"name":"%s","level":"%s","dc_list":"%s"},{"name":"%s","level":"%s","dc_list":"%s"}]' % (a,b,c,d,e,f,g,h,i,j,k,l) for a,b,c,d,e,f,g,h,i,j,k,l in  df[['evaluate_one','evaluate_one_level','evaluate_one_dc_list','evaluate_two','evaluate_two_level','evaluate_two_dc_list','evaluate_three','evaluate_three_level','evaluate_three_dc_list','evaluate_four','evaluate_four_level','evaluate_four_dc_list']].to_dict(orient='split')['data'] ]
-              result = df
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict]
-        - add_cols:
-            - dimension: 'C'
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_60_dc_std
-            columns: [supplier_id,城市]
-        - df_rename_columns:
-            - 城市: coach_team_name
-        - drop_duplicates:
-            subset: [supplier_id,coach_team_name]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [coach_team_name]
-            how: right
-            drop_stash: true
-        - push_dataset:
-            key: clear_warning_coach
-
-        - use_df:
-            key: clear_warning_dc
-        - fetch_cols:
-            columns: [coach_team_name,col_val_dict,vendor_dc_id]
-        - add_cols:
-            - dimension: 'D'
-        - stash_push_df: []
-        - use_df:
-            key: std_qplus_dc_copy
-            columns: [supplier_id,vendor_dc_id]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [vendor_dc_id]
-            how: inner
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: clear_warning_coach
-        - stash_push_df: []
-        - stash_concat_df:
-            drop_stash: true
-        - set_meta_month_column:
-            - book_month
-        - stash_push_df: []
-        - use_df:
-            key: clean_warning_before
-        - stash_push_df: []
-
-        - stash_concat_df:
-            drop_stash: true
-
+        - fetch_dataset:
+            dataset_type_code: clean_warning_before
+            dataset_cate: std
+            ignore_null_error: true
+        - when_empty_fetch_dataset:
+            dataset_type_code: clear_warning_mini
+            dataset_cate: std
+            ignore_null_error: true
 
 ####other
 
@@ -5241,7 +4004,6 @@ ele_month_env:
             dataset_cate: raw
             template_code: ele_day_63
             datakit_pull_way: last_day
-#            month_offset: -1
             ignore_null_error: true
             empty_df_record:
               城市: '-'
@@ -5268,7 +4030,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_60
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             ignore_null_error: true
             empty_df_record:
@@ -5671,7 +4432,6 @@ ele_month_env:
             dataset_cate: raw
             template_code: ele_day_75
             datakit_pull_way: last_day
-#            month_offset: -1
             ignore_null_error: true
             empty_df_record:
               城市: '-'
@@ -5721,7 +4481,6 @@ ele_month_env:
             dataset_cate: raw
             template_code: ele_day_63
             datakit_pull_way: last_day
-#            month_offset: -1
             ignore_null_error: true
             empty_df_record:
               城市: '-'
@@ -5765,7 +4524,6 @@ ele_month_env:
         - fetch_dataset:
             template_code: ele_day_60
             dataset_cate: raw
-#            month_offset: -1
             datakit_pull_way: last_day
             ignore_null_error: true
             empty_df_record:
@@ -5956,35 +4714,3 @@ ele_month_env:
         - stash_push_df: []
         - stash_concat_df:
             drop_stash: true
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

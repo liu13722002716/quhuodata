@@ -415,10 +415,12 @@ ele_month_env:
             datakit_pull_way: last_day
             dataset_cate: raw
             template_code: ele_month_57
-            columns: [团队ID, 骑手id,运单号, 运单送达时间, 骑手T超时时长, 用户评价状态,用户评价责任方,下载城市,是否T+2用户评价]
+            columns: [团队ID,团队名称, 骑手id,配送员姓名,运单号, 运单送达时间, 骑手T超时时长, 用户评价状态,用户评价责任方,下载城市,是否T+2用户评价]
             rename:
               团队ID: 站点ID
+              团队名称: 站点
               骑手id: 骑手ID
+              配送员姓名: 骑手
         - set_meta_month_column:
             - month
         - set_meta_days_column:
@@ -440,7 +442,9 @@ ele_month_env:
             columns:
               - 账单时间
               - 团队ID
+              - 团队名称
               - 骑手ID
+              - 骑手名称
               - 金额
               - 账单类型
               - 业务类型
@@ -464,6 +468,8 @@ ele_month_env:
               - 加盟商ID
         - rename_cols:
             - 团队ID: 站点ID
+              团队名称: 站点
+              骑手名称: 骑手
         - set_date_column:
             src_column: 账单时间
             format: MM-DD-YY
@@ -500,6 +506,43 @@ ele_month_env:
             template_code: ele_month_59
             rename:
               骑手id: 骑手ID
+              团队: 站点
+
+   # 饿了么代理商账单（除配送费外）的日累计账单，生成月数据集；节省饿了么薪资中间表生成时间
+    - name: ele_month_36_std_salary
+      sync_result: true
+      cooks:
+        - fetch_dataset:
+            datakit_pull_way: last_day
+            columns:
+              - 账单时间
+              - 加盟商ID
+              - 团队ID
+              - 团队名称
+              - 骑手ID
+              - 骑手名称
+              - 金额
+              - 账单类型
+              - 业务类型
+              - 详情
+              - 订单号
+              - 运单号
+            dataset_cate: raw
+            template_code: ele_day_36
+        - rename_cols:
+            - 团队ID: 站点ID
+              团队名称: 站点
+              骑手名称: 骑手
+        - set_date_column:
+            src_column: 账单时间
+            format: MM-DD-YY
+        - str_strip_column:
+            - 订单号
+        - str_strip_column:
+            - 运单号
+        - set_meta_month_column:
+            - month
+
 
     - name: ele_month_48_std
       sync_result: true
