@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4c0b0ba9-8186-465c-a9cb-ecf256d4ad6b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/quhuodata/0.1.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/quhuodata" beforeDir="false" afterPath="$PROJECT_DIR$/quhuodata" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass/process_middle_table_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass/process_middle_table_mt.yml" afterDir="false" />
@@ -31,8 +33,8 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass" />
-    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass/process_middle_table_mt.yml" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
