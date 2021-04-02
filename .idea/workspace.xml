@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4c0b0ba9-8186-465c-a9cb-ecf256d4ad6b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/0.1elm.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quhuodata/0.0.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/quhuodata" beforeDir="false" afterPath="$PROJECT_DIR$/quhuodata" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml" beforeDir="false" afterPath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass/process_middle_table_mt.yml" beforeDir="false" afterPath="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass/process_middle_table_mt.yml" afterDir="false" />
@@ -10,6 +13,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/quhuodata" />
@@ -32,12 +42,40 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t1_compass/process_middle_table_ele.yml" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass/process_middle_table_mt.yml" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/quhuodata/yaml/cookbook/new_t2_compass" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="0.0" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="gitub" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/0.0.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.0.0" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -61,5 +99,16 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/quhuodata/yaml/datakit_cooks.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
