@@ -9,7 +9,7 @@ mt_daily_env:
     cluster_client_address: tcp://172.31.54.193:8786
 
   play:
-    - name: mt_dc_cum_month    # 月累计站点数据
+    - name: mt_dc_cum_month    #月累计站点数据
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -175,13 +175,22 @@ mt_daily_env:
             on: [vendor_dc_id,meta_day]
             how: outer
             drop_stash: true
-        - df_eval:
+        - run_py:
             - |
-              [have_order_ratio] = [have_order_knight] / [register_knight]
-              [entry_ratio] = [entry_knight] / [register_knight]
-              [leave_ratio] = [leave_knight] / [register_knight]
-              [total_entry_ratio] = [total_entry_knight] /  [total_register_knight]
-              [total_leave_ratio] = [total_leave_knight] / [total_register_knight]
+              df = to_df(df)
+              df['have_order_ratio'] = df['have_order_knight'] / df['register_knight']
+              df['entry_ratio'] = df['entry_knight'] / df['register_knight']
+              df['leave_ratio'] = df['leave_knight'] / df['register_knight']
+              df['total_entry_ratio'] = df['total_entry_knight'] /  df['total_register_knight']
+              df['total_leave_ratio'] = df['total_leave_knight'] / df['total_register_knight']
+              result = to_dd(df)
+#        - df_eval:
+#            - |
+#              [have_order_ratio] = [have_order_knight] / [register_knight]
+#              [entry_ratio] = [entry_knight] / [register_knight]
+#              [leave_ratio] = [leave_knight] / [register_knight]
+#              [total_entry_ratio] = [total_entry_knight] /  [total_register_knight]
+#              [total_leave_ratio] = [total_leave_knight] / [total_register_knight]
         - stash_push_df: []
 
         - fetch_dataset:
@@ -328,11 +337,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] > [total_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] < [total_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] == [total_order_rank_before]'
@@ -343,11 +352,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] > [single_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] < [single_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] == [single_daily_order_rank_before]'
@@ -358,11 +367,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] > [avg_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] < [avg_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] == [avg_daily_order_rank_before]'
@@ -373,11 +382,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] > [avg_daily_knight_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] < [avg_daily_knight_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] == [avg_daily_knight_rank_before]'
@@ -388,11 +397,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] > [single_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] < [single_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] == [single_utility_rank_before]'
@@ -403,11 +412,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] > [total_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] < [total_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] == [total_utility_rank_before]'
@@ -753,11 +762,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] > [total_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] < [total_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] == [total_order_rank_before]'
@@ -768,11 +777,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] > [single_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] < [single_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] == [single_daily_order_rank_before]'
@@ -783,11 +792,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] > [avg_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] < [avg_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] == [avg_daily_order_rank_before]'
@@ -798,11 +807,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] > [avg_daily_knight_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] < [avg_daily_knight_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] == [avg_daily_knight_rank_before]'
@@ -813,11 +822,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] > [single_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] < [single_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] == [single_utility_rank_before]'
@@ -828,11 +837,11 @@ mt_daily_env:
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] > [total_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] < [total_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] == [total_utility_rank_before]'
@@ -938,6 +947,24 @@ mt_daily_env:
             dataset_cate: std
             month_offset: -1
             ignore_null_error: true
+            empty_df_record:
+              supplier_name: '-'
+              supplier_id: '-'
+              city_name: '-'
+              vendor_dc_id: '-'
+              dc_name: '-'
+              book_month: 999999
+              dimension: '-'
+              star_level: 0.0
+              kpi_score: 0.0
+              total_utility: 0.0
+              avg_daily_order: 0.0
+              star_level_rank: 0
+              daily_stay_ratio_rank: 0
+              daily_stay_ratio: 0.0
+              total_leave_ratio: 0.0
+              total_entry_ratio: 0.0
+
         - stash_push_df: []
 
         - use_df:
@@ -947,7 +974,8 @@ mt_daily_env:
             - |
               df = to_df(df)
               max_day = df['book_day'].max()
-              result = df[df['book_day'] == max_day]
+              df = df[df['book_day'] == max_day]
+              result = to_dd(df)
         - fetch_cols:
             columns: [supplier_name,supplier_id,city_name,vendor_dc_id,dc_name,book_month,dimension,star_level,kpi_score,total_utility,avg_daily_order,star_level_rank,daily_stay_ratio_rank,daily_stay_ratio,total_leave_ratio,total_entry_ratio]
         - stash_push_df: []
@@ -1096,13 +1124,13 @@ mt_daily_env:
               配送原因未完成数: 0
               一般超时单量(考核): 0
               严重超时单量(考核): 0
-              提前点送达率(复合): 0
-              15分钟超时订单占比: 0
-              不满意率: 0
-              配送原因未完成率: 0
-              复合准时率（考核）: 0
-              meta_day: 0
-              meta_month: 0
+              提前点送达率(复合): 0.0%
+              15分钟超时订单占比: 0.0%
+              不满意率: 0.0%
+              配送原因未完成率: 0.0%
+              复合准时率（考核）: 0.0%
+              meta_day: 99999999
+              meta_month: 999999
             columns:
               - 加盟站ID
               - 加盟站名称
@@ -1255,21 +1283,21 @@ mt_daily_env:
             ignore_null_error: true
             empty_df_record:
               站点ID: '-'
-              复合准时率X: 0
-              复合准时率Y: 0
-              复合准时率Z: 0
-              配送原因未完成率X: 0
-              配送原因未完成率Y: 0
-              配送原因未完成率Z: 0
-              不满意率X: 0
-              不满意率Y: 0
-              不满意率Z: 0
-              提前点送达率X: 0
-              提前点送达率Y: 0
-              提前点送达率Z: 0
-              15分钟超时订单占比X: 0
-              15分钟超时订单占比Y: 0
-              15分钟超时订单占比Z: 0
+              复合准时率X: 0.0%
+              复合准时率Y: 0.0%
+              复合准时率Z: 0.0%
+              配送原因未完成率X: 0.0%
+              配送原因未完成率Y: 0.0%
+              配送原因未完成率Z: 0.0%
+              不满意率X: 0.0%
+              不满意率Y: 0.0%
+              不满意率Z: 0.0%
+              提前点送达率X: 0.0%
+              提前点送达率Y: 0.0%
+              提前点送达率Z: 0.0%
+              15分钟超时订单占比X: 0.0%
+              15分钟超时订单占比Y: 0.0%
+              15分钟超时订单占比Z: 0.0%
             columns:
               - 站点ID
               - 复合准时率X
@@ -1462,7 +1490,7 @@ mt_daily_env:
             - '[advance_delivery_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -1496,7 +1524,7 @@ mt_daily_env:
             - '[over_15_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -1530,7 +1558,7 @@ mt_daily_env:
             - '[dissatisfy_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -1564,7 +1592,7 @@ mt_daily_env:
             - '[unfinished_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -1598,7 +1626,7 @@ mt_daily_env:
             - '[punctuality_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
 ###日均单
         - df_eval:
             - '[avg_daily_order] = [total_order]/[days]'
@@ -1911,7 +1939,7 @@ mt_month_env:
     cluster_client_address: tcp://172.31.54.193:8786
 
   play:
-    - name: mt_dc_cum_month    # 月累计站点数据
+    - name: mt_dc_cum_month    #月累计站点数据
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -2077,13 +2105,22 @@ mt_month_env:
             on: [vendor_dc_id,meta_day]
             how: outer
             drop_stash: true
-        - df_eval:
+        - run_py:
             - |
-              [have_order_ratio] = [have_order_knight] / [register_knight]
-              [entry_ratio] = [entry_knight] / [register_knight]
-              [leave_ratio] = [leave_knight] / [register_knight]
-              [total_entry_ratio] = [total_entry_knight] /  [total_register_knight]
-              [total_leave_ratio] = [total_leave_knight] / [total_register_knight]
+              df = to_df(df)
+              df['have_order_ratio'] = df['have_order_knight'] / df['register_knight']
+              df['entry_ratio'] = df['entry_knight'] / df['register_knight']
+              df['leave_ratio'] = df['leave_knight'] / df['register_knight']
+              df['total_entry_ratio'] = df['total_entry_knight'] /  df['total_register_knight']
+              df['total_leave_ratio'] = df['total_leave_knight'] / df['total_register_knight']
+              result = to_dd(df)
+#        - df_eval:
+#            - |
+#              [have_order_ratio] = [have_order_knight] / [register_knight]
+#              [entry_ratio] = [entry_knight] / [register_knight]
+#              [leave_ratio] = [leave_knight] / [register_knight]
+#              [total_entry_ratio] = [total_entry_knight] /  [total_register_knight]
+#              [total_leave_ratio] = [total_leave_knight] / [total_register_knight]
         - stash_push_df: []
 
         - fetch_dataset:
@@ -2230,11 +2267,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] > [total_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] < [total_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] == [total_order_rank_before]'
@@ -2245,11 +2282,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] > [single_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] < [single_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] == [single_daily_order_rank_before]'
@@ -2260,11 +2297,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] > [avg_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] < [avg_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] == [avg_daily_order_rank_before]'
@@ -2275,11 +2312,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] > [avg_daily_knight_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] < [avg_daily_knight_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] == [avg_daily_knight_rank_before]'
@@ -2290,11 +2327,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] > [single_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] < [single_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] == [single_utility_rank_before]'
@@ -2305,11 +2342,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] > [total_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] < [total_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] == [total_utility_rank_before]'
@@ -2655,11 +2692,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] > [total_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] < [total_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_order_rank_status
             condition: '[total_order_rank] == [total_order_rank_before]'
@@ -2670,11 +2707,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] > [single_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] < [single_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_daily_order_rank_status
             condition: '[single_daily_order_rank] == [single_daily_order_rank_before]'
@@ -2685,11 +2722,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] > [avg_daily_order_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] < [avg_daily_order_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_order_rank_status
             condition: '[avg_daily_order_rank] == [avg_daily_order_rank_before]'
@@ -2700,11 +2737,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] > [avg_daily_knight_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] < [avg_daily_knight_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: avg_daily_knight_rank_status
             condition: '[avg_daily_knight_rank] == [avg_daily_knight_rank_before]'
@@ -2715,11 +2752,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] > [single_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] < [single_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: single_utility_rank_status
             condition: '[single_utility_rank] == [single_utility_rank_before]'
@@ -2730,11 +2767,11 @@ mt_month_env:
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] > [total_utility_rank_before]'
-            val: 'up'
+            val: 'down'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] < [total_utility_rank_before]'
-            val: 'down'
+            val: 'up'
         - df_set_column_val_if:
             column: total_utility_rank_status
             condition: '[total_utility_rank] == [total_utility_rank_before]'
@@ -2840,6 +2877,24 @@ mt_month_env:
             dataset_cate: std
             month_offset: -1
             ignore_null_error: true
+            empty_df_record:
+              supplier_name: '-'
+              supplier_id: '-'
+              city_name: '-'
+              vendor_dc_id: '-'
+              dc_name: '-'
+              book_month: 999999
+              dimension: '-'
+              star_level: 0.0
+              kpi_score: 0.0
+              total_utility: 0.0
+              avg_daily_order: 0.0
+              star_level_rank: 0
+              daily_stay_ratio_rank: 0
+              daily_stay_ratio: 0.0
+              total_leave_ratio: 0.0
+              total_entry_ratio: 0.0
+
         - stash_push_df: []
 
         - use_df:
@@ -2849,7 +2904,8 @@ mt_month_env:
             - |
               df = to_df(df)
               max_day = df['book_day'].max()
-              result = df[df['book_day'] == max_day]
+              df = df[df['book_day'] == max_day]
+              result = to_dd(df)
         - fetch_cols:
             columns: [supplier_name,supplier_id,city_name,vendor_dc_id,dc_name,book_month,dimension,star_level,kpi_score,total_utility,avg_daily_order,star_level_rank,daily_stay_ratio_rank,daily_stay_ratio,total_leave_ratio,total_entry_ratio]
         - stash_push_df: []
@@ -2998,13 +3054,13 @@ mt_month_env:
               配送原因未完成数: 0
               一般超时单量(考核): 0
               严重超时单量(考核): 0
-              提前点送达率(复合): 0
-              15分钟超时订单占比: 0
-              不满意率: 0
-              配送原因未完成率: 0
-              复合准时率（考核）: 0
-              meta_day: 0
-              meta_month: 0
+              提前点送达率(复合): 0.0%
+              15分钟超时订单占比: 0.0%
+              不满意率: 0.0%
+              配送原因未完成率: 0.0%
+              复合准时率（考核）: 0.0%
+              meta_day: 99999999
+              meta_month: 999999
             columns:
               - 加盟站ID
               - 加盟站名称
@@ -3157,21 +3213,21 @@ mt_month_env:
             ignore_null_error: true
             empty_df_record:
               站点ID: '-'
-              复合准时率X: 0
-              复合准时率Y: 0
-              复合准时率Z: 0
-              配送原因未完成率X: 0
-              配送原因未完成率Y: 0
-              配送原因未完成率Z: 0
-              不满意率X: 0
-              不满意率Y: 0
-              不满意率Z: 0
-              提前点送达率X: 0
-              提前点送达率Y: 0
-              提前点送达率Z: 0
-              15分钟超时订单占比X: 0
-              15分钟超时订单占比Y: 0
-              15分钟超时订单占比Z: 0
+              复合准时率X: 0.0%
+              复合准时率Y: 0.0%
+              复合准时率Z: 0.0%
+              配送原因未完成率X: 0.0%
+              配送原因未完成率Y: 0.0%
+              配送原因未完成率Z: 0.0%
+              不满意率X: 0.0%
+              不满意率Y: 0.0%
+              不满意率Z: 0.0%
+              提前点送达率X: 0.0%
+              提前点送达率Y: 0.0%
+              提前点送达率Z: 0.0%
+              15分钟超时订单占比X: 0.0%
+              15分钟超时订单占比Y: 0.0%
+              15分钟超时订单占比Z: 0.0%
             columns:
               - 站点ID
               - 复合准时率X
@@ -3364,7 +3420,7 @@ mt_month_env:
             - '[advance_delivery_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -3398,7 +3454,7 @@ mt_month_env:
             - '[over_15_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -3432,7 +3488,7 @@ mt_month_env:
             - '[dissatisfy_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -3466,7 +3522,7 @@ mt_month_env:
             - '[unfinished_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
         - push_dataset:
             key: mt_kpi_detail_mini
 
@@ -3500,7 +3556,7 @@ mt_month_env:
             - '[punctuality_ratio_score] = 120'
         - stash_push_df: []
         - stash_concat_df:
-            stash_drop: True
+            drop_stash: True
 ###日均单
         - df_eval:
             - '[avg_daily_order] = [total_order]/[days]'
@@ -3801,4 +3857,3 @@ mt_month_env:
                 df = to_df(df)
                 df=df[df['book_day']==df['book_day'].max()]
                 result = to_dd(df)
-
