@@ -336,8 +336,8 @@ dataset_pipeline:
          Q-30208,Q-30209,Q-30210,Q-303,CPQ-30301,Q-30301,Q-30302,Q-30303,QS-4014,Q-401,Q-2001,C-704,Q-2005,C-705,Q-402,
          Q-403,Q-404,Q-500,Q-600,Q-700,Q-800,Q-900,C-706,C-707]
 
-#  - row_int_format_by_index:
-#      index_rows: [C-701, C-702, C-703, C-704, C-705, C-706, C-707]
+  - row_int_format_by_index:
+      index_rows: [C-701, C-702, C-703, C-704, C-705, C-706, C-707,C-708]
 
   - row_pct_format_by_index:
       index_rows: [CPQ-301, CPQ-302, CPQ-30301,QAH-30103]
