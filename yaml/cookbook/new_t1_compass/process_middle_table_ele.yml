@@ -1566,8 +1566,8 @@ ele_daily_env:
                站点ID: '-'
                站点质量不达标清退: '-'
                站点评级体系: '-'
-               小站点优化: '-'
                上海商圈专项优化方案: '-'
+#               小站点优化: '-'
              rename:
                 站点ID: vendor_dc_id
                 站点名称: dc_name
@@ -1576,9 +1576,10 @@ ele_daily_env:
               df = to_df(df)
               df[u'站点质量不达标清退'] = np.where(df[u'站点质量不达标清退'].str.contains(u"安全"),u"安全",np.where(df[u'站点质量不达标清退'].str.contains(u'不参与'),'-',u'危险'))
               df[u'站点评级体系'] = np.where(df[u'站点评级体系'].str.contains(u"安全"),u"安全",np.where(df[u'站点评级体系'].str.contains(u'不参与'),'-',u'危险'))
-              df[u'小站点优化'] = np.where(df[u'小站点优化'].str.contains(u"安全"),u"安全",np.where(df[u'小站点优化'].str.contains(u'不参与'),'-',u'危险'))
               df[u'上海商圈专项优化方案'] = np.where(df[u'上海商圈专项优化方案'].str.contains(u"安全"),u"安全",np.where(df[u'上海商圈专项优化方案'].str.contains(u'不参与'),'-',u'危险'))
               result = to_dd(df)
+#              df[u'小站点优化'] = np.where(df[u'小站点优化'].str.contains(u"安全"),u"安全",np.where(df[u'小站点优化'].str.contains(u'不参与'),'-',u'危险'))
+
         - stash_push_df: []
         - stash_join_df:
             on: vendor_dc_id
