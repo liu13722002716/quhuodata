@@ -545,7 +545,7 @@ mt_daily_env:
               need = df.groupby(by=['city_name']).apply(lambda x: x.sort_values(by=['meta_day'])).reset_index(drop=True)
               need_result = need.groupby(by=['city_name']).cumsum().rename(columns={'register_knight':'total_register_knight','have_order_knight':'total_have_order_knight','single_daily_order':'total_order','meta_day':'meta_day_other'})
               need = pd.merge(need,need_result,left_index=True,right_index=True,how='inner')
-              need['days'] = need['meta_day'].map(str).str[6:].map(int)
+              need['days'] = need['meta_day'].map(str).str[6:8].map(int)
               need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight']/need['days'],2)
               need['avg_daily_knight'] = need['total_have_order_knight'] / need['days']
               result = to_dd(need)
@@ -665,8 +665,8 @@ mt_daily_env:
         - run_py:
             - |
               df = to_df(df)
-              df['days'] = df['meta_day'].map(str).str[6:].map(int)
-              result = df
+              df['days'] = df['meta_day'].map(str).str[6:8].map(int)
+              result = to_dd(df)
         - df_eval:
             - |
               [avg_daily_order] = [total_order] / [days]
@@ -1019,7 +1019,7 @@ mt_daily_env:
               max_day = df['meta_day'].max()
               df_max_day = df[df['meta_day'] == max_day ][['vendor_dc_id','dc_name','knight_id','single_daily_order','on_guard_time','meta_day']]
               df = pd.merge(df_max_day,need,on=['vendor_dc_id','knight_id'],how='left',sort=False)
-              df['days'] = df['meta_day'].map(str).str[6:].map(int)
+              df['days'] = df['meta_day'].map(str).str[6:8].map(int)
               df['attendance_ratio'] = df['attendance'] / df['days']
               result = to_dd(df)
         - add_cols:
@@ -1455,7 +1455,7 @@ mt_daily_env:
         - run_py:
             - |
                 df=to_df(df)
-                df['days'] = df['book_day'].map(str).str[6:].map(int)
+                df['days'] = df['book_day'].map(str).str[6:8].map(int)
                 result = to_dd(df)
         - push_dataset:
             key: mt_kpi_detail_mini
@@ -1868,7 +1868,7 @@ mt_daily_env:
             - |
                 df=to_df(df)
                 df['max_days']=df['book_day'].max()
-                df['days'] = df['max_days'].map(str).str[6:].map(int)
+                df['days'] = df['max_days'].map(str).str[6:8].map(int)
                 result = to_dd(df)
         - push_dataset:
             key: mt_day_18_knight_detail
@@ -2475,7 +2475,7 @@ mt_month_env:
               need = df.groupby(by=['city_name']).apply(lambda x: x.sort_values(by=['meta_day'])).reset_index(drop=True)
               need_result = need.groupby(by=['city_name']).cumsum().rename(columns={'register_knight':'total_register_knight','have_order_knight':'total_have_order_knight','single_daily_order':'total_order','meta_day':'meta_day_other'})
               need = pd.merge(need,need_result,left_index=True,right_index=True,how='inner')
-              need['days'] = need['meta_day'].map(str).str[6:].map(int)
+              need['days'] = need['meta_day'].map(str).str[6:8].map(int)
               need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight']/need['days'],2)
               need['avg_daily_knight'] = need['total_have_order_knight'] / need['days']
               result = to_dd(need)
@@ -2595,8 +2595,8 @@ mt_month_env:
         - run_py:
             - |
               df = to_df(df)
-              df['days'] = df['meta_day'].map(str).str[6:].map(int)
-              result = df
+              df['days'] = df['meta_day'].map(str).str[6:8].map(int)
+              result = to_dd(df)
         - df_eval:
             - |
               [avg_daily_order] = [total_order] / [days]
@@ -2949,7 +2949,7 @@ mt_month_env:
               max_day = df['meta_day'].max()
               df_max_day = df[df['meta_day'] == max_day ][['vendor_dc_id','dc_name','knight_id','single_daily_order','on_guard_time','meta_day']]
               df = pd.merge(df_max_day,need,on=['vendor_dc_id','knight_id'],how='left',sort=False)
-              df['days'] = df['meta_day'].map(str).str[6:].map(int)
+              df['days'] = df['meta_day'].map(str).str[6:8].map(int)
               df['attendance_ratio'] = df['attendance'] / df['days']
               result = to_dd(df)
         - add_cols:
@@ -3385,7 +3385,7 @@ mt_month_env:
         - run_py:
             - |
                 df=to_df(df)
-                df['days'] = df['book_day'].map(str).str[6:].map(int)
+                df['days'] = df['book_day'].map(str).str[6:8].map(int)
                 result = to_dd(df)
         - push_dataset:
             key: mt_kpi_detail_mini
@@ -3761,7 +3761,7 @@ mt_month_env:
               骑手ID: '-'
               骑手: '-'
               站点ID: '-'
-              站点: '-'
+              站点: '-'mt_dc_cum_month
               骑手接单量: 0
               完成单量: 0
               在岗时长: 0
@@ -3798,7 +3798,7 @@ mt_month_env:
             - |
                 df=to_df(df)
                 df['max_days']=df['book_day'].max()
-                df['days'] = df['max_days'].map(str).str[6:].map(int)
+                df['days'] = df['max_days'].map(str).str[6:8].map(int)
                 result = to_dd(df)
         - push_dataset:
             key: mt_day_18_knight_detail
