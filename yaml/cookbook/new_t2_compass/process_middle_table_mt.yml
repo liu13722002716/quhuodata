@@ -546,7 +546,7 @@ mt_daily_env:
               need_result = need.groupby(by=['city_name']).cumsum().rename(columns={'register_knight':'total_register_knight','have_order_knight':'total_have_order_knight','single_daily_order':'total_order','meta_day':'meta_day_other'})
               need = pd.merge(need,need_result,left_index=True,right_index=True,how='inner')
               need['days'] = need['meta_day'].map(str).str[6:8].map(int)
-              need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight']/need['days'],2)
+              need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight'],2)
               need['avg_daily_knight'] = need['total_have_order_knight'] / need['days']
               result = to_dd(need)
         - fetch_cols:
@@ -937,6 +937,8 @@ mt_daily_env:
             drop_stash: true
         - df_rename_columns:
             - meta_day: book_day
+        - df_to_int:
+            - book_day
 
 ### 历史星级KPI
     - name: mt_star_level_and_kpi_tendency
@@ -1637,7 +1639,7 @@ mt_daily_env:
         - df_to_int:
             - serious_over_time_orders
         - df_eval:
-            - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*[Z1]'
+            - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*(1-[Z1])'
         - df_eval:
             - '[punctuality_surplus] = [punctuality_contains] - 1*[ordinary_over_time_orders] - 5*[serious_over_time_orders]'
 
@@ -2476,7 +2478,7 @@ mt_month_env:
               need_result = need.groupby(by=['city_name']).cumsum().rename(columns={'register_knight':'total_register_knight','have_order_knight':'total_have_order_knight','single_daily_order':'total_order','meta_day':'meta_day_other'})
               need = pd.merge(need,need_result,left_index=True,right_index=True,how='inner')
               need['days'] = need['meta_day'].map(str).str[6:8].map(int)
-              need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight']/need['days'],2)
+              need['total_utility'] = np.round(need['total_order'] / need['total_have_order_knight'],2)
               need['avg_daily_knight'] = need['total_have_order_knight'] / need['days']
               result = to_dd(need)
         - fetch_cols:
@@ -2867,6 +2869,8 @@ mt_month_env:
             drop_stash: true
         - df_rename_columns:
             - meta_day: book_day
+        - df_to_int:
+            - book_day
 
 ### 历史星级KPI
     - name: mt_star_level_and_kpi_tendency
