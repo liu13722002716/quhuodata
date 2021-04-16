@@ -339,14 +339,14 @@ dataset_pipeline:
       index_rows: [C-701, C-702, C-703, C-704, C-705, C-706, C-707,C-708]
 
   - row_pct_format_by_index:
-      index_rows: [CPQ-301, CPQ-302, CPQ-30301,QAH-30103]
+      index_rows: [CPQ-301, CPQ-302, CPQ-30301]
 
   - row_money_format_by_index:
       index_rows: [
           QS-3013, Q-301, Q-30101, QAH-30101, Q-30102, QAH-30102, Q-30103, Q-30104, Q-30105, Q-30106, Q-30107,
           Q-302, Q-30201, QAH-3020101, Q-3020101, Q-3020102, Q-30202, Q-30203, Q-30204, Q-30205, Q-30206, Q-30207,
           Q-30208, Q-30209, Q-30210, Q-303, Q-30301, Q-30302, Q-30303, QS-4014, Q-401, Q-2001, Q-2005, Q-402,
-          Q-403, Q-404, Q-500, Q-600, Q-700, Q-800, Q-900,Q-30108
+          Q-403, Q-404, Q-500, Q-600, Q-700, Q-800, Q-900,Q-30108, QAH-30103
       ]
 
   - df_rename_columns:
