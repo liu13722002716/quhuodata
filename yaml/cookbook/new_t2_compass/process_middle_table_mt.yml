@@ -1639,7 +1639,7 @@ mt_daily_env:
         - df_to_int:
             - serious_over_time_orders
         - df_eval:
-            - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*(1-[Z1])'
+            - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*(1 - [Z1])'
         - df_eval:
             - '[punctuality_surplus] = [punctuality_contains] - 1*[ordinary_over_time_orders] - 5*[serious_over_time_orders]'
 
@@ -3571,7 +3571,7 @@ mt_month_env:
         - df_to_int:
             - serious_over_time_orders
         - df_eval:
-            - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*[Z1]'
+            - '[punctuality_contains] = [avg_daily_order]*[当月总天数]*(1 - [Z1])'
         - df_eval:
             - '[punctuality_surplus] = [punctuality_contains] - 1*[ordinary_over_time_orders] - 5*[serious_over_time_orders]'
 
