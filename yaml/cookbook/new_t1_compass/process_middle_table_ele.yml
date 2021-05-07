@@ -1389,151 +1389,7 @@ ele_daily_env:
             - book_month
 
 #### 清退预警
-    - name: clean_warning_before
-      sync_result: true
-      cooks:
-        - fetch_dataset:
-            template_code: ele_day_60
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [ 城市,团队ID,团队名称 ]
-            ignore_null_error: true
-            empty_df_record:
-              城市: '-'
-              团队ID: '-'
-              团队名称: '-'
-            rename:
-              城市: coach_team_name
-              团队ID: vendor_dc_id
-              团队名称: dc_name
-        - run_py:
-            - |
-              df = df[df['vendor_dc_id'].notnull()]
-              result = df
-        - drop_duplicates:
-            subset: [ coach_team_name,vendor_dc_id ]
-        - push_dataset:
-            key: coach_vendor_dc_id_map
-
-
-        - fetch_dataset:
-            template_code:  ele_day_69   #清退预警--东战
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [站点ID,预警]
-            ignore_null_error: true
-            empty_df_record:
-              站点ID: '-'
-              预警: '-'
-        - df_rename_columns:
-            - 站点ID: vendor_dc_id
-#              预警: stimulate_replenish_rectify
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'预警'] = np.where((df[u'预警'].str.contains(u"安全")) | (df[u'预警'].str.contains(u"不参与")),u"安全",u"危险")
-              result = to_dd(df)
-        - stash_push_df: []
-
-        - fetch_dataset:
-            template_code:  ele_day_70    # 清退预警---运力覆盖
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [站点ID,异常站点运力覆盖]
-            ignore_null_error: true
-            empty_df_record:
-              站点ID: '-'
-              异常站点运力覆盖: '-'
-        - df_rename_columns:
-            - 站点ID: vendor_dc_id
-#              异常站点运力覆盖: abnormal_dc_cover
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'异常站点运力覆盖'] = np.where(df[u'异常站点运力覆盖'].str.contains(u"不"),u"安全",u"危险")
-              result = to_dd(df)
-        - stash_push_df: []
-
-        - stash_join_df:
-            on: [ vendor_dc_id ]
-            how: outer
-            drop_stash: true
-        - stash_push_df: []
-
-        - fetch_dataset:
-            template_code: ele_day_71   # 清退预警--重庆（隔一日更新）
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [站点ID,考核结果预估]
-            ignore_null_error: true
-            empty_df_record:
-              站点ID: '-'
-              考核结果预估: '-'
-        - df_rename_columns:
-            - 站点ID: vendor_dc_id
-#              考核结果预估: cq_dc_rectify
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'考核结果预估'] = np.where(df[u'考核结果预估'].str.contains(u"需警惕"),u"危险",u"安全")
-              result = to_dd(df)
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ vendor_dc_id ]
-            how: outer
-            drop_stash: true
-        - stash_push_df: []
-
-        - fetch_dataset:
-            template_code:  ele_day_72   # 清退预警--上海（隔一日更新）
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [ 团队ID,是否触碰清退]
-            ignore_null_error: true
-            empty_df_record:
-              团队ID: '-'
-              是否触碰清退: '-'
-        - df_rename_columns:
-            - 团队ID: vendor_dc_id
-#              是否触碰清退: sh_dc_optimize
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'是否触碰清退'] = np.where(df[u'是否触碰清退'].str.contains(u"触碰清退"),u"危险",u"安全")
-              result = to_dd(df)
-        - stash_push_df: []
-
-        - stash_join_df:
-            on: [vendor_dc_id ]
-            how: outer
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: coach_vendor_dc_id_map
-        - stash_push_df: []
-        - stash_join_df:
-            on: vendor_dc_id
-            how: inner
-            drop_stash: true
-        - df_fillna:
-            columns: [预警,异常站点运力覆盖,考核结果预估,是否触碰清退]
-            value: '-'
-        - set_meta_month_column:
-            - book_month
-        - add_cols:
-            - dimension: 'D'
-        - stash_push_df: []
-        - use_df:
-            key: std_qplus_dc_copy
-            columns: [supplier_id,vendor_dc_id]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [vendor_dc_id]
-            how: inner
-            drop_stash: true
-
-####
-    - name: clear_warning_mini
+    - name: clean_warning
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -1567,7 +1423,6 @@ ele_daily_env:
                站点质量不达标清退: '-'
                站点评级体系: '-'
                上海商圈专项优化方案: '-'
-#               小站点优化: '-'
              rename:
                 站点ID: vendor_dc_id
                 站点名称: dc_name
@@ -1578,7 +1433,6 @@ ele_daily_env:
               df[u'站点评级体系'] = np.where(df[u'站点评级体系'].str.contains(u"安全"),u"安全",np.where(df[u'站点评级体系'].str.contains(u'不参与'),'-',u'危险'))
               df[u'上海商圈专项优化方案'] = np.where(df[u'上海商圈专项优化方案'].str.contains(u"安全"),u"安全",np.where(df[u'上海商圈专项优化方案'].str.contains(u'不参与'),'-',u'危险'))
               result = to_dd(df)
-#              df[u'小站点优化'] = np.where(df[u'小站点优化'].str.contains(u"安全"),u"安全",np.where(df[u'小站点优化'].str.contains(u'不参与'),'-',u'危险'))
 
         - stash_push_df: []
         - stash_join_df:
@@ -1599,17 +1453,6 @@ ele_daily_env:
         - set_meta_month_column:
             - book_month
 
-    - name: clean_warning
-      sync_result: true
-      cooks:
-        - fetch_dataset:
-            dataset_type_code: clean_warning_before
-            dataset_cate: std
-            ignore_null_error: true
-        - when_empty_fetch_dataset:
-            dataset_type_code: clear_warning_mini
-            dataset_cate: std
-            ignore_null_error: true
 ####other
 
     ### 主体匹配表
@@ -3748,152 +3591,8 @@ ele_month_env:
         - set_meta_month_column:
             - book_month
 
-#### 清退预警
-    - name: clean_warning_before
-      sync_result: true
-      cooks:
-        - fetch_dataset:
-            template_code: ele_day_60
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [ 城市,团队ID,团队名称 ]
-            ignore_null_error: true
-            empty_df_record:
-              城市: '-'
-              团队ID: '-'
-              团队名称: '-'
-            rename:
-              城市: coach_team_name
-              团队ID: vendor_dc_id
-              团队名称: dc_name
-        - run_py:
-            - |
-              df = df[df['vendor_dc_id'].notnull()]
-              result = df
-        - drop_duplicates:
-            subset: [ coach_team_name,vendor_dc_id ]
-        - push_dataset:
-            key: coach_vendor_dc_id_map
-
-
-        - fetch_dataset:
-            template_code:  ele_day_69   #清退预警--东战
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [站点ID,预警]
-            ignore_null_error: true
-            empty_df_record:
-              站点ID: '-'
-              预警: '-'
-        - df_rename_columns:
-            - 站点ID: vendor_dc_id
-#              预警: stimulate_replenish_rectify
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'预警'] = np.where((df[u'预警'].str.contains(u"安全")) | (df[u'预警'].str.contains(u"不参与")),u"安全",u"危险")
-              result = to_dd(df)
-        - stash_push_df: []
-
-        - fetch_dataset:
-            template_code:  ele_day_70    # 清退预警---运力覆盖
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [站点ID,异常站点运力覆盖]
-            ignore_null_error: true
-            empty_df_record:
-              站点ID: '-'
-              异常站点运力覆盖: '-'
-        - df_rename_columns:
-            - 站点ID: vendor_dc_id
-#              异常站点运力覆盖: abnormal_dc_cover
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'异常站点运力覆盖'] = np.where(df[u'异常站点运力覆盖'].str.contains(u"不"),u"安全",u"危险")
-              result = to_dd(df)
-        - stash_push_df: []
-
-        - stash_join_df:
-            on: [ vendor_dc_id ]
-            how: outer
-            drop_stash: true
-        - stash_push_df: []
-
-        - fetch_dataset:
-            template_code: ele_day_71   # 清退预警--重庆（隔一日更新）
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [站点ID,考核结果预估]
-            ignore_null_error: true
-            empty_df_record:
-              站点ID: '-'
-              考核结果预估: '-'
-        - df_rename_columns:
-            - 站点ID: vendor_dc_id
-#              考核结果预估: cq_dc_rectify
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'考核结果预估'] = np.where(df[u'考核结果预估'].str.contains(u"需警惕"),u"危险",u"安全")
-              result = to_dd(df)
-        - stash_push_df: []
-        - stash_join_df:
-            on: [ vendor_dc_id ]
-            how: outer
-            drop_stash: true
-        - stash_push_df: []
-
-        - fetch_dataset:
-            template_code:  ele_day_72   # 清退预警--上海（隔一日更新）
-            dataset_cate: raw
-            datakit_pull_way: last_day
-            columns: [ 团队ID,是否触碰清退]
-            ignore_null_error: true
-            empty_df_record:
-              团队ID: '-'
-              是否触碰清退: '-'
-        - df_rename_columns:
-            - 团队ID: vendor_dc_id
-#              是否触碰清退: sh_dc_optimize
-        - run_py:
-            - |
-              df = to_df(df)
-              df[u'是否触碰清退'] = np.where(df[u'是否触碰清退'].str.contains(u"触碰清退"),u"危险",u"安全")
-              result = to_dd(df)
-        - stash_push_df: []
-
-        - stash_join_df:
-            on: [vendor_dc_id ]
-            how: outer
-            drop_stash: true
-        - stash_push_df: []
-        - use_df:
-            key: coach_vendor_dc_id_map
-        - stash_push_df: []
-        - stash_join_df:
-            on: vendor_dc_id
-            how: inner
-            drop_stash: true
-        - df_fillna:
-            columns: [预警,异常站点运力覆盖,考核结果预估,是否触碰清退]
-            value: '-'
-        - set_meta_month_column:
-            - book_month
-        - add_cols:
-            - dimension: 'D'
-        - stash_push_df: []
-        - use_df:
-            key: std_qplus_dc_copy
-            columns: [supplier_id,vendor_dc_id]
-        - stash_push_df: []
-        - stash_join_df:
-            on: [vendor_dc_id]
-            how: inner
-            drop_stash: true
-
-####
-    - name: clear_warning_mini
+##### 清退预警
+    - name: clean_warning
       sync_result: true
       cooks:
         - fetch_dataset:
@@ -3926,7 +3625,6 @@ ele_month_env:
                站点ID: '-'
                站点质量不达标清退: '-'
                站点评级体系: '-'
-               小站点优化: '-'
                上海商圈专项优化方案: '-'
              rename:
                 站点ID: vendor_dc_id
@@ -3936,7 +3634,6 @@ ele_month_env:
               df = to_df(df)
               df[u'站点质量不达标清退'] = np.where(df[u'站点质量不达标清退'].str.contains(u"安全"),u"安全",np.where(df[u'站点质量不达标清退'].str.contains(u'不参与'),'-',u'危险'))
               df[u'站点评级体系'] = np.where(df[u'站点评级体系'].str.contains(u"安全"),u"安全",np.where(df[u'站点评级体系'].str.contains(u'不参与'),'-',u'危险'))
-              df[u'小站点优化'] = np.where(df[u'小站点优化'].str.contains(u"安全"),u"安全",np.where(df[u'小站点优化'].str.contains(u'不参与'),'-',u'危险'))
               df[u'上海商圈专项优化方案'] = np.where(df[u'上海商圈专项优化方案'].str.contains(u"安全"),u"安全",np.where(df[u'上海商圈专项优化方案'].str.contains(u'不参与'),'-',u'危险'))
               result = to_dd(df)
         - stash_push_df: []
@@ -3957,18 +3654,6 @@ ele_month_env:
             drop_stash: true
         - set_meta_month_column:
             - book_month
-
-    - name: clean_warning
-      sync_result: true
-      cooks:
-        - fetch_dataset:
-            dataset_type_code: clean_warning_before
-            dataset_cate: std
-            ignore_null_error: true
-        - when_empty_fetch_dataset:
-            dataset_type_code: clear_warning_mini
-            dataset_cate: std
-            ignore_null_error: true
 
 ####other
 
