@@ -6,7 +6,7 @@ ele_month_env:
     play_on_dask_cluster: true
     dask_client_set_as_default: true
     platform_code: elem
-    cluster_client_address: tcp://172.31.54.193:8786
+    cluster_client_address: 'dask-scheduler-service.databus:8786'
   play:
     - cooks:
         - fetch_dataset:
@@ -40,9 +40,6 @@ ele_month_env:
             - 团队ID: 站点ID
         - set_date_column:
             src_column: 账单时间
-            format:
-              - MM-DD-YY
-              - YYYY-MM-DD
         - set_meta_month_column:
             - month
         - set_weekday_column:
@@ -287,6 +284,7 @@ ele_month_env:
       sync_result: true
 #      keep_result: true
       name: ele_month_33_std
+
     - cooks:
         - use_df:
             key: ele_month_33_std
@@ -296,113 +294,34 @@ ele_month_env:
             - p1: [配送原因取消, 骑手T+12超时,坏单,超时,虚假配送,违规送达]
         - drop_duplicates:
             - [运单号, 问题单类型]
-        - push_dataset:
-            key: ele_month_33_std_tmp
+        - stash_push_df: []
         - use_df:
             key: ele_month_35_std_lookup_map
             columns: [账单时间, 骑手ID, 站点ID, 运单号]
         - drop_duplicates:
             - [账单时间, 骑手ID, 站点ID, 运单号]
-        - push_dataset:
-            key: ele_month_35_std_lookup_map_mini
-        - use_df:
-            key: ele_month_33_std_tmp
-        - df_merge:
-            other_df:
-              key: ele_month_35_std_lookup_map_mini
-            on: 运单号
-            how: left
-            # force_rebuild_dask: true
-        - df_reset_index: []
-        - push_dataset:
-            key: ele_month_33_std_tmp
-        - use_df:
-            key: ele_month_33_std_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 虚假配送
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 虚假配送单量
-        - df_reset_index: []
         - stash_push_df: []
-        - use_df:
-            key: ele_month_33_std_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 配送原因取消
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 配送原因取消单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_month_33_std_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 骑手T+12超时
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 骑手T12超时单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_month_33_std_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 坏单
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 坏单单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_month_33_std_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 超时
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 超时单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_month_33_std_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 违规送达
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 违规送达单量
-        - df_reset_index: []
-        - stash_push_df: []
-        # merge
         - stash_join_df:
-            on: [账单时间, 骑手ID, 站点ID]
-            how: outer
-            fillna: 0
+            on: 运单号
+            how: right
             drop_stash: true
-            # force_rebuild_dask: true
-            dtypes:
-              虚假配送单量: int64
-              配送原因取消单量: int64
-              骑手T12超时单量: int64
-              坏单单量: int64
-              超时单量: int64
-              违规送达单量: int64
-        - df_reset_index: []
+        - run_py: ## 透视表
+            - |
+              df = to_df(df).copy()
+              df = df.pivot_table(values="运单号",index=['账单时间','骑手ID','站点ID'],columns="问题单类型",aggfunc="count").reset_index()
+              result = to_dd(df)
+        - pad_cols:   # 判断当前列是否存在，若存在返回当前列，若不存在创建列为默认值，防止计算时不存在列报错
+            columns: [配送原因取消, 骑手T+12超时,坏单,超时,虚假配送,违规送达]
+            default_value: 0
+        - df_rename_columns:
+            - 配送原因取消: 配送原因取消单量
+              骑手T+12超时: 骑手T12超时单量
+              坏单: 坏单单量
+              超时: 超时单量
+              虚假配送: 虚假配送单量
+              违规送达: 违规送达单量
+        - df_fillna:
+            value: 0
         - set_meta_month_column:
             - month
       sync_result: true
@@ -548,9 +467,9 @@ ele_month_env:
     - name: ele_month_48_std
       sync_result: true
       cooks:
-      - fetch_dataset:
-          datakit_pull_way: last_day
-          columns:
+        - fetch_dataset:
+            datakit_pull_way: last_day
+            columns:
               - 骑手ID
               - 团队ID
               - 考勤日期
@@ -562,30 +481,30 @@ ele_month_env:
               - 晚高峰在线时长
               - 晚间在线时长
               - 晚间夜宵在线时长
-          dataset_cate: raw
-          template_code: ele_month_48
-          rename:
-              团队ID: 站点ID
-      - set_meta_month_column:
-          - month
-      - set_date_column:
-          src_column: 考勤日期
-      - df_fillna:
-          columns: [ 全天在线时长,凌晨夜宵在线时长,早餐在线时长,午高峰在线时长,下午在线时长,晚高峰在线时长,晚间在线时长,晚间夜宵在线时长 ]
-          value: '-'
-      - run_py:
-          - |
-            df = to_df(df)
-            fn = lambda x: (int(re.match(u'(.*)小时(.*)分钟', x, ).group(1)) * 60 + int(re.match(u'(.*)小时(.*)分钟', x, ).group(2))) if re.match(u'(.*)小时(.*)分钟', x, ) else 0
-            df[u'全天在线时长-分钟'] = df[u'全天在线时长'].apply(fn)
-            df[u'凌晨夜宵在线时长-分钟'] = df[u'凌晨夜宵在线时长'].apply(fn)
-            df[u'早餐在线时长-分钟'] = df[u'早餐在线时长'].apply(fn)
-            df[u'午高峰在线时长-分钟'] = df[u'午高峰在线时长'].apply(fn)
-            df[u'下午在线时长-分钟'] = df[u'下午在线时长'].apply(fn)
-            df[u'晚高峰在线时长-分钟'] = df[u'晚高峰在线时长'].apply(fn)
-            df[u'晚间在线时长-分钟'] = df[u'晚间在线时长'].apply(fn)
-            df[u'晚间夜宵在线时长-分钟'] = df[u'晚间夜宵在线时长'].apply(fn)
-            result = to_dd(df)
+            dataset_cate: raw
+            template_code: ele_month_48
+            rename:
+                团队ID: 站点ID
+        - set_meta_month_column:
+            - month
+        - set_date_column:
+            src_column: 考勤日期
+        - df_fillna:
+            columns: [ 全天在线时长,凌晨夜宵在线时长,早餐在线时长,午高峰在线时长,下午在线时长,晚高峰在线时长,晚间在线时长,晚间夜宵在线时长 ]
+            value: '-'
+        - run_py:
+            - |
+              df = to_df(df).copy()
+              fn = lambda x: (int(re.match(u'(.*)小时(.*)分钟', x, ).group(1)) * 60 + int(re.match(u'(.*)小时(.*)分钟', x, ).group(2))) if re.match(u'(.*)小时(.*)分钟', x, ) else 0
+              df[u'全天在线时长-分钟'] = df[u'全天在线时长'].apply(fn)
+              df[u'凌晨夜宵在线时长-分钟'] = df[u'凌晨夜宵在线时长'].apply(fn)
+              df[u'早餐在线时长-分钟'] = df[u'早餐在线时长'].apply(fn)
+              df[u'午高峰在线时长-分钟'] = df[u'午高峰在线时长'].apply(fn)
+              df[u'下午在线时长-分钟'] = df[u'下午在线时长'].apply(fn)
+              df[u'晚高峰在线时长-分钟'] = df[u'晚高峰在线时长'].apply(fn)
+              df[u'晚间在线时长-分钟'] = df[u'晚间在线时长'].apply(fn)
+              df[u'晚间夜宵在线时长-分钟'] = df[u'晚间夜宵在线时长'].apply(fn)
+              result = to_dd(df)
 
 
 ele_daily_env:
@@ -595,7 +514,7 @@ ele_daily_env:
     play_on_dask_cluster: true
     dask_client_set_as_default: true
     platform_code: elem
-    cluster_client_address: tcp://172.31.54.193:8786
+    cluster_client_address: 'dask-scheduler-service.databus:8786'
   play:
     - cooks:
         - fetch_dataset:
@@ -949,127 +868,40 @@ ele_daily_env:
     - cooks:
         - use_df:
             key: ele_day_32_std
-            columns:  [运单号, 问题单类型]
+            columns: [运单号, 问题单类型]
         - df_select:
             - '[问题单类型] in @p1'
             - p1: [配送原因取消, 骑手T+12超时,坏单,超时,虚假配送,违规送达]
         - drop_duplicates:
             - [运单号, 问题单类型]
-        #        - dask_persist_compute:
-        #            sync_compute: true
-        #            chunk_size: 3000
-        - push_dataset:
-            key: ele_day_32_std_tmp
+        - stash_push_df: []
         - use_df:
             key: ele_day_34_std_lookup_map
             columns: [账单时间, 骑手ID, 站点ID, 运单号]
-        #        - dask_persist_compute:
-        #            sync_compute: true
-        #            chunk_size: 3000
         - drop_duplicates:
             - [账单时间, 骑手ID, 站点ID, 运单号]
-        - push_dataset:
-            key: ele_day_34_std_lookup_map_mini
-        - use_df:
-            key: ele_day_32_std_tmp
-        - df_merge:
-            other_df:
-              key: ele_day_34_std_lookup_map_mini
-            on: 运单号
-            how: left
-#            force_rebuild_dask: true
-#            chunk_size: 2000
-            # left_index: true
-            # right_index: true
-        - push_dataset:
-            key: ele_day_32_std_ext_tmp
-        - use_df:
-            key: ele_day_32_std_ext_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 虚假配送
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 虚假配送单量
-        - df_reset_index: []
         - stash_push_df: []
-        - use_df:
-            key: ele_day_32_std_ext_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 配送原因取消
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 配送原因取消单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_32_std_ext_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 骑手T+12超时
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 骑手T12超时单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_32_std_ext_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 坏单
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 坏单单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_32_std_ext_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 超时
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 超时单量
-        - df_reset_index: []
-        - stash_push_df: []
-        - use_df:
-            key: ele_day_32_std_ext_tmp
-        - df_select:
-            - '[问题单类型] == @p5'
-            - p5: 违规送达
-        - df_groupby:
-            by: [账单时间, 骑手ID, 站点ID]
-        - df_count:
-            column: 运单号
-            rename: 违规送达单量
-        - df_reset_index: []
-        - stash_push_df: []
-        # merge
         - stash_join_df:
-            on: [账单时间, 骑手ID, 站点ID]
-            how: outer
-            fillna: 0
+            on: 运单号
+            how: right
             drop_stash: true
-#            force_rebuild_dask: true
-            dtypes:
-              虚假配送单量: int64
-              配送原因取消单量: int64
-              骑手T12超时单量: int64
-              坏单单量: int64
-              超时单量: int64
-              违规送达单量: int64
-        - df_reset_index: []
+        - run_py: ## 透视表
+            - |
+              df = to_df(df).copy()
+              df = df.pivot_table(values="运单号",index=['账单时间','骑手ID','站点ID'],columns="问题单类型",aggfunc="count").reset_index()
+              result = to_dd(df)
+        - pad_cols:   # 判断当前列是否存在，若存在返回当前列，若不存在创建列为默认值，防止计算时不存在列报错
+            columns: [配送原因取消, 骑手T+12超时,坏单,超时,虚假配送,违规送达]
+            default_value: 0
+        - df_rename_columns:
+            - 配送原因取消: 配送原因取消单量
+              骑手T+12超时: 骑手T12超时单量
+              坏单: 坏单单量
+              超时: 超时单量
+              虚假配送: 虚假配送单量
+              违规送达: 违规送达单量
+        - df_fillna:
+            value: 0
         - set_meta_month_column:
             - month
       sync_result: true
