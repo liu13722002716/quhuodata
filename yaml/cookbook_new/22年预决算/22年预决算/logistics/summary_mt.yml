@@ -1,0 +1,428 @@
+
+dataset_vis:
+  vis_grid:
+    columns: []
+    row_sort:
+      sort_orders: []
+      sort_by: index
+
+dataset_pipeline:
+#  - df_select:
+#      - '[industry_id] == @v1'
+#      - v1: wai_mai
+  - add_cols:
+      - mt: 外卖-美团
+  - pivot_table:
+      values: money
+      index: [ac_code, ac_name]
+      columns: [mt]
+      aggfunc: sum
+
+  - row_pad_value_by_index:
+      index_col: ac_code
+      pad_values:
+        C-101: 0
+        Q-1010101: 0
+        Q-101010201: 0
+        Q-101010202: 0
+        Q-101010203: 0
+        Q-101010301: 0
+        Q-101010302: 0
+        Q-101010401: 0
+        Q-101010402: 0
+        Q-101010403: 0
+        Q-701: 0
+        Q-201010101: 0
+        Q-201010102: 0
+        Q-201010103: 0
+        Q-201010104: 0
+        Q-201010105: 0
+        Q-2010102: 0
+        Q-20103: 0
+        Q-20201: 0
+        Q-20202: 0
+        Q-20203: 0
+        Q-20204: 0
+        Q-20206: 0
+        Q-20207: 0
+        Q-110101: 0
+        Q-11020101: 0
+        Q-11020102: 0
+        Q-110202: 0
+        Q-110204: 0
+        Q-110205: 0
+        Q-110206: 0
+        Q-2050101: 0
+        Q-2050102: 0
+        Q-20502: 0
+        Q-20601: 0
+        Q-20605: 0
+        Q-20708: 0
+        Q-20701: 0
+        Q-20702: 0
+        Q-20709: 0
+        Q-30102: 0
+        Q-30109: 0
+        Q-3020101: 0
+        Q-3020102: 0
+        Q-30301: 0
+        Q-30302: 0
+        Q-30206: 0
+        Q-30203: 0
+        Q-30205: 0
+        Q-30202: 0
+        Q-800: 0
+        Q-30101: 0
+        Q-30108: 0
+        Q-2006: 0
+        Q-2007: 0
+        Q-2008: 0
+        Q-2009: 0
+        Q-1103: 0
+        Q-1104: 0
+        Q-1105: 0
+        Q-600: 0
+        Q-402: 0
+        Q-405: 0
+        Q-406: 0
+
+  - df_fillna:
+      value: 0.0
+
+  - row_eval_by_index:
+      exp_str: |
+                {{QS-1010102}} = {{Q-101010201}} + {{Q-101010202}} + {{Q-101010203}}
+                {{QS-1010103}} = {{Q-101010301}} + {{Q-101010302}}
+                {{QS-1010104}} = {{Q-101010401}} + {{Q-101010402}} + {{Q-101010403}}
+                {{QS-10101}} = {{Q-1010101}} + {{QS-1010102}} + {{QS-1010103}} + {{QS-1010104}}
+                {{QS-2010101}} = {{Q-201010101}} + {{Q-201010102}} + {{Q-201010103}} + {{Q-201010104}} + {{Q-201010105}}
+                {{QS-202}} = {{Q-20201}} + {{Q-20202}} + {{Q-20203}} + {{Q-20204}} + {{Q-20206}} - {{Q-20207}}
+                {{QS-20267}} = {{Q-20206}} - {{Q-20207}}
+                {{QS-201013}} = {{QS-2010101}} + {{Q-2010102}} + {{Q-20103}}
+                {{QS-2012}} = {{QS-201013}} + {{QS-202}}
+                {{QS-172}} = {{QS-10101}} + {{Q-701}} - {{QS-2012}}
+                {{CPQS-172}} = {{QS-172}} / {{QS-10101}}
+                {{QS-3018}} = {{Q-30101}} + {{Q-30108}} + {{Q-110101}}
+                {{QS-30118}} = {{Q-30101}} + {{Q-30108}}
+                {{QS-110201}} = {{Q-11020101}} + {{Q-11020102}} + {{Q-110202}} + {{Q-110204}} + {{Q-110205}} + {{Q-110206}}
+                {{QS-1102012}} = {{Q-11020101}} + {{Q-11020102}}
+                {{QS-205}} = {{Q-2050101}} + {{Q-2050102}} + {{Q-20502}}
+                {{QS-206}} = {{Q-20601}} + {{Q-20605}}
+                {{QS-207}} = {{Q-20708}} + {{Q-20701}} + {{Q-20702}} + {{Q-20709}}
+                {{QS-23017}} = {{QS-3018}} + {{QS-110201}} + {{QS-205}} + {{QS-206}} + {{QS-207}} + {{Q-1103}} + {{Q-1104}} + {{Q-1105}}
+                {{QS-272}} = {{QS-172}} - {{QS-23017}}
+                {{CPQS-272}} = {{QS-272}} / {{QS-10101}}
+                {{QS-301}} = {{Q-30102}} + {{Q-30109}}
+                {{QS-30201}} = {{Q-3020101}} + {{Q-3020102}}
+                {{QS-3023}} = {{Q-30301}} + {{Q-30302}} + {{Q-30206}} + {{Q-30203}} + {{Q-30205}} + {{Q-30202}}
+                {{QS-303}} = {{Q-30301}} + {{Q-30302}}
+                {{QS-3013}} = {{QS-301}} + {{QS-30201}} + {{QS-3023}}
+                {{QS-4026}} = {{Q-405}} + {{Q-406}} + {{Q-402}}
+                {{QS-10000}} = {{QS-272}} - {{QS-3013}} + {{Q-600}} - {{QS-4026}} + {{Q-701}} - {{Q-800}}
+                {{CPQS-10000}} = {{QS-10000}} / {{QS-10101}}
+
+      index_col: ac_code
+      exclude_cols: [ac_name]
+      target_rows:
+        - index: Q-2006
+          cols:
+            ac_name: 本月需求金额
+        - index: Q-2007
+          cols:
+            ac_name: 临时借款
+        - index: Q-2008
+          cols:
+            ac_name: 偿还借款
+        - index: Q-2009
+          cols:
+            ac_name: 内部拆借
+        - index: C-101
+          cols:
+            ac_name: 单量
+        - index: QS-10101
+          cols:
+            ac_name: 主营业务收入
+        - index: Q-1010101
+          cols:
+            ac_name: 基础收入
+        - index: QS-1010102
+          cols:
+            ac_name: KPI收入
+        - index: Q-101010201
+          cols:
+            ac_name: 月度KPI收入
+        - index: Q-101010202
+          cols:
+            ac_name: 周期KPI收入
+        - index: Q-101010203
+          cols:
+            ac_name: 非主营奖励收入
+        - index: QS-1010103
+          cols:
+            ac_name: 政策收入
+        - index: Q-101010301
+          cols:
+            ac_name: 短线政策收入
+        - index: Q-101010302
+          cols:
+            ac_name: 长线政策收入
+        - index: QS-1010104
+          cols:
+            ac_name: 运营罚款收入
+        - index: Q-101010401
+          cols:
+            ac_name: 骑士活动扣款
+        - index: Q-101010402
+          cols:
+            ac_name: 运营其他扣罚
+        - index: Q-101010403
+          cols:
+            ac_name: 运营非常规扣款
+        - index: Q-701
+          cols:
+            ac_name: 营业外收入
+        - index: QS-2012
+          cols:
+            ac_name: 一线骑手成本
+        - index: QS-201013
+          cols:
+            ac_name: 一线服务费
+        - index: QS-2010101
+          cols:
+            ac_name: 全职
+        - index: Q-201010101
+          cols:
+            ac_name: 全职标准工资
+        - index: Q-201010102
+          cols:
+            ac_name: 运营补扣款
+        - index: Q-201010103
+          cols:
+            ac_name: 人资补扣款
+        - index: Q-201010104
+          cols:
+            ac_name: 政策骑手工资
+        - index: Q-201010105
+          cols:
+            ac_name: 气候补贴工资
+        - index: Q-2010102
+          cols:
+            ac_name: 兼职
+        - index: Q-20103
+          cols:
+            ac_name: 骑手福利
+        - index: QS-202
+          cols:
+            ac_name: 保险成本
+        - index: Q-20203
+          cols:
+            ac_name: 社保公积金
+        - index: Q-20201
+          cols:
+            ac_name: 意外险
+        - index: Q-20202
+          cols:
+            ac_name: 工伤险
+        - index: Q-20204
+          cols:
+            ac_name: 商业保险外赔偿成本
+        - index: QS-20267
+          cols:
+            ac_name: 保险垫付费用
+        - index: Q-20206
+          cols:
+            ac_name: 保险垫付
+        - index: Q-20207
+          cols:
+            ac_name: 保险理赔回款
+        - index: QS-172
+          cols:
+            ac_name: 一线利润
+        - index: CPQS-172
+          cols:
+            ac_name: 一线利润率
+        - index: QS-23017
+          cols:
+            ac_name: 二线成本
+        - index: QS-3018
+          cols:
+            ac_name: 人员成本
+        - index: QS-30118
+          cols:
+            ac_name: 二线服务费
+        - index: Q-110101
+          cols:
+            ac_name: 社保公积金
+        - index: QS-110201
+          cols:
+            ac_name: 办公管理费用
+        - index: QS-1102012
+          cols:
+            ac_name: 物资采购
+        - index: Q-11020101
+          cols:
+            ac_name: 低值易耗
+        - index: Q-11020102
+          cols:
+            ac_name: 固定资产
+        - index: Q-110202
+          cols:
+            ac_name: 办公费
+        - index: Q-110204
+          cols:
+            ac_name: 差旅费
+        - index: Q-110205
+          cols:
+            ac_name: 招待费
+        - index: Q-110206
+          cols:
+            ac_name: 团建福利费
+        - index: QS-205
+          cols:
+            ac_name: 房屋费用
+        - index: Q-2050101
+          cols:
+            ac_name: 站点办公
+        - index: Q-2050102
+          cols:
+            ac_name: 骑手宿舍
+        - index: Q-20502
+          cols:
+            ac_name: 房屋其他费用
+        - index: QS-206
+          cols:
+            ac_name: 装备采购成本
+        - index: Q-20601
+          cols:
+            ac_name: 两轮电动车及电池
+        - index: Q-20605
+          cols:
+            ac_name: 一线劳动者物资装备
+        - index: QS-207
+          cols:
+            ac_name: 招聘成本
+        - index: Q-20708
+          cols:
+            ac_name: 被推荐人费用
+        - index: Q-20701
+          cols:
+            ac_name: 内部招聘
+        - index: Q-20702
+          cols:
+            ac_name: 外部招聘
+        - index: Q-20709
+          cols:
+            ac_name: 平台招聘扣款
+        - index: Q-1103
+          cols:
+            ac_name: 返税
+        - index: Q-1105
+          cols:
+            ac_name: 三方服务费
+        - index: Q-1104
+          cols:
+            ac_name: 税金及附加
+        - index: QS-272
+          cols:
+            ac_name: 二线利润
+        - index: CPQS-272
+          cols:
+            ac_name: 二线利润率
+        - index: QS-3013
+          cols:
+            ac_name: 管理费用（城市/大区/总部）
+        - index: QS-301
+          cols:
+            ac_name: 人员成本
+        - index: Q-30102
+          cols:
+            ac_name: 工资
+        - index: Q-30109
+          cols:
+            ac_name: 社保公积金
+        - index: QS-30201
+          cols:
+            ac_name: 房屋费用
+        - index: Q-3020101
+          cols:
+            ac_name: 房屋租金
+        - index: Q-3020102
+          cols:
+            ac_name: 房屋其他费用
+        - index: QS-3023
+          cols:
+            ac_name: 办公管理费用
+        - index: QS-303
+          cols:
+            ac_name: 物资采购
+        - index: Q-30301
+          cols:
+            ac_name: 低值易耗品摊销
+        - index: Q-30302
+          cols:
+            ac_name: 固定资产折旧
+        - index: Q-30206
+          cols:
+            ac_name: 办公费
+        - index: Q-30203
+          cols:
+            ac_name: 差旅费
+        - index: Q-30205
+          cols:
+            ac_name: 招待费
+        - index: Q-30202
+          cols:
+            ac_name: 团建福利费
+        - index: Q-600
+          cols:
+            ac_name: 投资收益
+        - index: QS-4026
+          cols:
+            ac_name: 财务费用
+        - index: Q-402
+          cols:
+            ac_name: 利息收入
+        - index: Q-405
+          cols:
+            ac_name: 资金使用费用
+        - index: Q-406
+          cols:
+            ac_name: 资金还款服务费
+        - index: Q-800
+          cols:
+            ac_name: 营业外支出
+        - index: QS-10000
+          cols:
+            ac_name: 利润
+        - index: CPQS-10000
+          cols:
+            ac_name: 利润率
+
+  - sort_by_index:
+      sort_list: [Q-2006,Q-2007,Q-2008,Q-2009,C-101,QS-10101,Q-1010101,QS-1010102,Q-101010201,Q-101010202,Q-101010203,QS-1010103,Q-101010301,Q-101010302,QS-1010104,Q-101010401,Q-101010402,Q-101010403,Q-701,QS-2012,QS-201013,QS-2010101,Q-201010101,Q-201010102,Q-201010103,Q-201010104,Q-201010105,Q-2010102,Q-20103,QS-202,Q-20203,Q-20201,Q-20202,Q-20204,QS-20267,Q-20206,Q-20207,QS-172,CPQS-172,QS-23017,QS-3018,QS-30118,Q-110101,QS-110201,QS-1102012,Q-11020101,Q-11020102,Q-110202,Q-110204,Q-110205,Q-110206,QS-205,Q-2050101,Q-2050102,Q-20502,QS-206,Q-20601,Q-20605,QS-207,Q-20708,Q-20701,Q-20702,Q-20709,Q-1103,Q-1105,Q-1104,QS-272,CPQS-272,QS-3013,QS-301,Q-30102,Q-30109,QS-30201,Q-3020101,Q-3020102,QS-3023,QS-303,Q-30301,Q-30302,Q-30206,Q-30203,Q-30205,Q-30202,Q-600,QS-4026,Q-402,Q-405,Q-406,Q-800,QS-10000,CPQS-10000]
+
+  - row_int_format_by_index:
+      index_rows: [C-101]
+
+  - row_pct_format_by_index:
+      index_rows: [CPQS-172, CPQS-272, CPQS-10000]
+
+  - row_money_format_by_index:
+      index_rows: [Q-2006,Q-2007,Q-2008,Q-2009,QS-10101,Q-1010101,QS-1010102,Q-101010201,Q-101010202,Q-101010203,QS-1010103,Q-101010301,Q-101010302,QS-1010104,Q-101010401,Q-101010402,Q-101010403,Q-701,QS-2012,QS-201013,QS-2010101,Q-201010101,Q-201010102,Q-201010103,Q-201010104,Q-201010105,Q-2010102,Q-20103,QS-202,Q-20203,Q-20201,Q-20202,Q-20204,QS-20267,Q-20206,Q-20207,QS-172,QS-23017,QS-3018,QS-30118,Q-110101,QS-110201,QS-1102012,Q-11020101,Q-11020102,Q-110202,Q-110204,Q-110205,Q-110206,QS-205,Q-2050101,Q-2050102,Q-20502,QS-206,Q-20601,Q-20605,QS-207,Q-20708,Q-20701,Q-20702,Q-20709,Q-1103,Q-1105,Q-1104,QS-272,QS-3013,QS-301,Q-30102,Q-30109,QS-30201,Q-3020101,Q-3020102,QS-3023,QS-303,Q-30301,Q-30302,Q-30206,Q-30203,Q-30205,Q-30202,Q-600,QS-4026,Q-402,Q-405,Q-406,Q-800,QS-10000]
+
+  - df_rename_columns:
+      - ac_code: 科目编号
+        ac_name: 科目名称
+
+  - fetch_cols:
+      columns: [科目名称, 科目编号, 外卖-美团]
+
+  - sort_by_columns:
+      sort_list: [科目名称, 科目编号, 外卖-美团]
+
+  - df_fillna:
+      value: 0.0
+
+datasource:
+  query: {}
+  datasource_type: qcode_biz_dataset

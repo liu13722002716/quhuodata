@@ -1,0 +1,268 @@
+
+dataset_vis:
+  vis_grid:
+    columns: []
+    row_sort:
+      sort_orders: []
+      sort_by: index
+
+dataset_pipeline:
+#  - df_select:
+#      - '[industry_id] == @v1 & [platform_id] in @v2'
+#      - v1: chu_xing
+#        v2: [danche]
+  - add_cols:
+      - danche: 出行-单车汇总
+  - pivot_table:
+      values: money
+      index: [ac_code, ac_name]
+      columns: [danche]
+      aggfunc: sum
+
+  - row_pad_value_by_index:
+      index_col: ac_code
+      pad_values:
+        Q-1030101: 0
+        Q-1030102: 0
+        Q-10302: 0
+        Q-701: 0
+        Q-201010101: 0
+        Q-2010102: 0
+        Q-2010104: 0
+        Q-20201: 0
+        Q-20202: 0
+        Q-20203: 0
+        Q-20204: 0
+        Q-20602: 0
+        Q-20603: 0
+        Q-20605: 0
+        Q-20701: 0
+        Q-20702: 0
+        Q-30101: 0
+        Q-110101: 0
+        Q-30102: 0
+        Q-30109: 0
+        Q-3020101: 0
+        Q-3020102: 0
+        Q-30301: 0
+        Q-30302: 0
+        Q-30206: 0
+        Q-30203: 0
+        Q-30205: 0
+        Q-30202: 0
+        Q-800: 0
+
+  - df_fillna:
+      value: 0.0
+
+  - row_eval_by_index:
+      exp_str: |
+                {{QS-10301}} = {{Q-1030101}} + {{Q-1030102}}
+                {{QS-103}} = {{QS-10301}} + {{Q-10302}}
+                {{QS-20101}} = {{Q-201010101}} + {{Q-2010102}} + {{Q-2010104}}
+                {{QS-202}} = {{Q-20201}} + {{Q-20202}} + {{Q-20203}} + {{Q-20204}}
+                {{QS-206}} = {{Q-20602}} + {{Q-20603}} + {{Q-20605}}
+                {{QS-207}} = {{Q-20701}} + {{Q-20702}}
+                {{QS-2017}} = {{QS-20101}} + {{QS-202}} + {{QS-206}} + {{QS-207}}
+                {{QS-172}} = {{QS-103}} + {{Q-701}} - {{QS-2017}}
+                {{CPQS-172}} = {{QS-172}} / {{QS-103}}
+                {{QS-13}} = {{Q-30101}} + {{Q-110101}}
+                {{QS-31}} = {{Q-30101}} + {{Q-110101}}
+                {{QS-1000}} = {{QS-172}} - {{QS-13}}
+                {{CPQS-1000}} = {{QS-1000}} / {{QS-103}}
+                {{QS-301}} = {{Q-30102}} + {{Q-30109}}
+                {{QS-302}} = {{Q-3020101}} + {{Q-3020102}}
+                {{QS-3023}} = {{Q-30301}} + {{Q-30302}} + {{Q-30206}} + {{Q-30203}} + {{Q-30205}} + {{Q-30202}}
+                {{QS-303}} = {{Q-30301}} + {{Q-30302}}
+                {{QS-3013}} = {{QS-301}} + {{QS-302}} + {{QS-3023}}
+                {{QS-10000}} = {{QS-1000}} - {{QS-3013}} - {{Q-800}}
+                {{CPQS-10000}} = {{QS-10000}} / {{QS-103}}
+
+      index_col: ac_code
+      exclude_cols: [ac_name]
+      target_rows:
+        - index: QS-103
+          cols:
+            ac_name: 主营业务收入
+        - index: QS-10301
+          cols:
+            ac_name: 装卸搬运收入
+        - index: Q-1030101
+          cols:
+            ac_name: 换电收入
+        - index: Q-1030102
+          cols:
+            ac_name: 城际干线收入
+        - index: Q-10302
+          cols:
+            ac_name: 调度维修收入
+        - index: Q-701
+          cols:
+            ac_name: 营业外收入
+        - index: QS-2017
+          cols:
+            ac_name: 一线成本
+        - index: QS-20101
+          cols:
+            ac_name: 一线服务费
+        - index: Q-201010101
+          cols:
+            ac_name: 全职工资
+        - index: Q-2010102
+          cols:
+            ac_name: 兼职
+        - index: Q-2010104
+          cols:
+            ac_name: 司机成本
+        - index: QS-202
+          cols:
+            ac_name: 保险成本
+        - index: Q-20201
+          cols:
+            ac_name: 意外险
+        - index: Q-20202
+          cols:
+            ac_name: 工伤险
+        - index: Q-20203
+          cols:
+            ac_name: 社保公积金
+        - index: Q-20204
+          cols:
+            ac_name: 商业保险外赔偿成本
+        - index: QS-206
+          cols:
+            ac_name: 装备成本
+        - index: Q-20602
+          cols:
+            ac_name: 三轮电动车及电池
+        - index: Q-20603
+          cols:
+            ac_name: 四轮车及电池
+        - index: Q-20605
+          cols:
+            ac_name: 一线劳动者物资装备
+        - index: QS-207
+          cols:
+            ac_name: 招聘成本
+        - index: Q-20701
+          cols:
+            ac_name: 内部招聘
+        - index: Q-20702
+          cols:
+            ac_name: 外部招聘
+        - index: QS-172
+          cols:
+            ac_name: 一线利润
+        - index: CPQS-172
+          cols:
+            ac_name: 一线利润率
+        - index: QS-13
+          cols:
+            ac_name: 二线成本
+        - index: QS-31
+          cols:
+            ac_name: 人员成本
+        - index: Q-30101
+          cols:
+            ac_name: 二线服务费
+        - index: Q-110101
+          cols:
+            ac_name: 社保公积金
+        - index: QS-1000
+          cols:
+            ac_name: 二线利润
+        - index: CPQS-1000
+          cols:
+            ac_name: 二线利润率
+        - index: QS-3013
+          cols:
+            ac_name: 管理费用
+        - index: QS-301
+          cols:
+            ac_name: 人员成本
+        - index: Q-30102
+          cols:
+            ac_name: 工资
+        - index: Q-30109
+          cols:
+            ac_name: 社保公积金
+        - index: QS-302
+          cols:
+            ac_name: 房屋费用
+        - index: Q-3020101
+          cols:
+            ac_name: 房屋租金
+        - index: Q-3020102
+          cols:
+            ac_name: 房屋其他费用
+        - index: QS-3023
+          cols:
+            ac_name: 办公管理费用
+        - index: QS-303
+          cols:
+            ac_name: 物资采购
+        - index: Q-30301
+          cols:
+            ac_name: 低值易耗品摊销
+        - index: Q-30302
+          cols:
+            ac_name: 固定资产折旧
+        - index: Q-30206
+          cols:
+            ac_name: 办公费
+        - index: Q-30203
+          cols:
+            ac_name: 差旅费
+        - index: Q-30205
+          cols:
+            ac_name: 招待费
+        - index: Q-30202
+          cols:
+            ac_name: 团建福利费
+        - index: Q-800
+          cols:
+            ac_name: 营业外支出
+        - index: QS-10000
+          cols:
+            ac_name: 利润
+        - index: CPQS-10000
+          cols:
+            ac_name: 利润率
+
+  - sort_by_index:
+      sort_list: [QS-103, QS-10301, Q-1030101, Q-1030102, Q-10302, Q-701, QS-2017, QS-20101, Q-201010101, Q-2010102, Q-2010104, QS-202, Q-20201, Q-20202, Q-20203, Q-20204, QS-206, Q-20602, Q-20603, Q-20605, QS-207, Q-20701, Q-20702, QS-172, CPQS-172, QS-13, QS-31, Q-30101, Q-110101, QS-1000, CPQS-1000, QS-3013, QS-301, Q-30102, Q-30109, QS-302, Q-3020101, Q-3020102, QS-3023, QS-303, Q-30301, Q-30302, Q-30206, Q-30203, Q-30205, Q-30202, Q-800, QS-10000, CPQS-10000]
+
+#  - row_int_format_by_index:
+#      index_rows: []
+#
+#  - row_float_format_by_index:
+#      index_rows: []
+
+  - row_pct_format_by_index:
+      index_rows: [CPQS-172, CPQS-1000, CPQS-10000]
+
+  - row_money_format_by_index:
+      index_rows: [QS-103, QS-10301, Q-1030101, Q-1030102, Q-10302, Q-701, QS-2017, QS-20101, Q-201010101, Q-2010102, Q-2010104, QS-202, Q-20201, Q-20202, Q-20203, Q-20204, QS-206, Q-20602, Q-20603, Q-20605, QS-207, Q-20701, Q-20702, QS-172, QS-13, QS-31, Q-30101, Q-110101, QS-1000, QS-3013, QS-301, Q-30102, Q-30109, QS-302, Q-3020101, Q-3020102, QS-3023, QS-303, Q-30301, Q-30302, Q-30206, Q-30203, Q-30205, Q-30202, Q-800, QS-10000]
+
+  - df_rename_columns:
+      - ac_code: 科目编号
+        ac_name: 科目名称
+
+  - run_py:
+      - |
+        df = to_df(df)
+        df['科目等级'] = ['一级','二级','三级','三级','二级','一级','一级','二级','三级','三级','三级','二级','三级','三级','三级','三级','二级','三级','三级','三级','二级','三级','三级','一级','一级','一级','二级','三级','三级','一级','一级','一级','一级','二级','二级','一级','二级','二级','一级','二级','三级','三级','二级','二级','二级','二级','一级','一级','一级']
+        result = df
+
+  - fetch_cols:
+      columns: [科目名称, 科目编号, 出行-单车汇总, 科目等级]
+
+  - sort_by_columns:
+      sort_list: [科目名称, 科目编号, 出行-单车汇总, 科目等级]
+
+  - df_fillna:
+      value: 0.0
+
+datasource:
+  query: {}
+  datasource_type: qcode_biz_dataset

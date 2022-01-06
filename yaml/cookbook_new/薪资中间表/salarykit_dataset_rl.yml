@@ -1,0 +1,721 @@
+rl_daily_env:
+  context_defaults:
+    platform_code: relian
+    play_on_dask_cluster: true
+    delay_compute: true
+    sync_result_from_cluster: true
+    dask_client_set_as_default: true
+    debug: true
+    cluster_client_address: 'dask-scheduler-service.databus:8786'
+##用到的dataset
+#    # 数据统计-骑士维度数据统计
+#     rl_day_3
+#    # 骑手管理-骑手账号管理
+#     rl_day_6
+#    # aoao系统数据
+#     aoao_knight_order_summary_daily
+#    # 骑手ID-城市+身份证号_转换表
+#     rl_month_23
+
+  #  预计算的数据集
+   #  日累计
+  play:
+    - name: rl_worker_order_common_kpi_by_daily_t2
+      sync_result: true
+      cooks:
+# 数据统计-骑士维度数据统计
+        - fetch_dataset:
+            template_code: rl_day_3
+            dataset_cate: raw
+            ignore_null_error: true
+            columns: [骑士ID,订单TC,meta_month,meta_day,骑士姓名]
+            empty_df_record:
+              骑士ID: 'RIDER_ID_NULL'
+              骑士姓名: 'RIDER_NAME_NULL'
+              站点: 'HOST_NULL'
+              订单TC: 0
+              meta_day: 19790101
+              meta_month: 197901
+#转float为str
+        - df_to_int:
+            - 骑士ID
+        - df_to_str:
+            - 骑士ID
+        - run_py:
+            - |
+              #从包含名字、特殊字符和ID的字符串字段'骑士姓名'中抽取站点ID和姓名
+              df['站点ID提取']=df['骑士姓名'].apply(  lambda x: 'unpaired' if re.search(r"[a-zA-Z0-9]+",x) is None   else x[re.search(r"[a-zA-Z0-9]+",x).start():re.search(r"[a-zA-Z0-9]+",x).end()]       )
+              df['骑士姓名']=df['骑士姓名'].apply(  lambda x: 'unpaired' if re.search(r"[\u4e00-\u9fa5]+",x) is None   else x[re.search(r"[\u4e00-\u9fa5]+",x).start():re.search(r"[\u4e00-\u9fa5]+",x).end()]       )
+              result=df
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,站点ID提取,骑士姓名 ]
+        - df_rename_columns:
+            - 站点ID提取: 站点ID
+        - stash_push_df: []
+
+####对于抽取到的站点ID，用转换表中的（站点ID,站点）对进行转换
+# 骑手ID-城市+身份证号_转换表
+        - fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            ignore_null_error: true
+            month_offset: -1
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+        - when_empty_fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            month_offset: -2
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+            empty_df_record:
+              骑手ID: 'RIDER_ID_NULL'
+              站点ID: 'HOST_ID_NULL'
+              站点名称: 'HOST_NAME_NULL'
+              骑手姓名: 'RIDER_NAME_NULL'
+        - df_rename_columns:
+            - 骑手ID: 骑士ID
+              站点名称: 站点
+              站点ID: 站点ID
+              骑手姓名: 骑手姓名23
+        - df_to_str:
+            - 骑士ID
+        - df_fillna:
+            columns: [站点ID,站点]
+            value: '-'
+        - fetch_cols:
+            columns: [站点ID,站点]
+        - drop_duplicates:
+            subset: [站点ID,站点]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [站点ID]
+            how: right
+            drop_stash: true
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,骑士姓名,站点ID,站点]
+        - df_fillna:
+            columns: [站点]
+            value: '-'
+###至此，能抽到ID且能匹配上的都匹配上了，其他匹配不上的都带了'-'
+        - stash_push_df: []
+
+
+####对于未抽取到的站点ID，用转换表中的（骑士ID,站点ID,站点）对进行转换
+# 骑手ID-城市+身份证号_转换表
+        - fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            month_offset: -1
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+            ignore_null_error: true
+        - when_empty_fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            month_offset: -2
+            ignore_null_error: true
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+            empty_df_record:
+              骑手ID: 'RIDER_ID_NULL'
+              站点ID: 'HOST_ID_NULL'
+              站点名称: 'HOST_NAME_NULL'
+              骑手姓名: 'RIDER_NAME_NULL'
+        - df_rename_columns:
+            - 骑手ID: 骑士ID
+              站点名称: 站点23
+              站点ID: 站点ID23
+              骑手姓名: 骑手姓名23
+        - df_to_str:
+            - 骑士ID
+        - df_fillna:
+            columns: [站点ID23,站点23,骑手姓名23,骑士ID]
+            value: '-'
+        - stash_push_df: []
+        - stash_join_df:
+            on: [骑士ID]
+            how: right
+            drop_stash: true
+        - run_py:
+            - |
+              df=to_df(df).copy()
+              df.index = range(len(df))
+              df.loc[df['站点ID']=='unpaired','站点']=df['站点23']
+              df.loc[df['站点ID']=='unpaired','站点ID'  ]=df['站点ID23']
+              df.loc[df['骑士姓名']=='unpaired','骑士姓名']=df['骑手姓名23']
+              result=to_dd(df)
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,骑士姓名,站点ID,站点]
+        - df_fillna:
+            columns: [站点ID,站点,骑士姓名]
+            value: '-'
+        - push_dataset:
+            key: rl_day_salary_template_middle_table_useless
+
+
+##基于现有（站点ID,站点）对，对相同站点ID和相同站点但另一字段缺失的字段补全
+        - use_df:
+            key: rl_day_salary_template_middle_table_useless
+        - fetch_cols:
+            columns: [站点,站点ID]
+        - df_select:
+            - '[站点] != @p1 &[站点ID]!=@p1'
+            - p1: '-'
+        - drop_duplicates:
+            subset: [站点ID,站点 ]
+        - push_dataset:
+            key: rl_day_salary_template_middle_table_tsf
+
+
+        - use_df:
+            key: rl_day_salary_template_middle_table_useless
+        - stash_push_df: []
+        - use_df:
+            key: rl_day_salary_template_middle_table_tsf
+        - df_rename_columns:
+            - 站点: 站点补充
+        - stash_push_df: []
+        - stash_join_df:
+            on: [站点ID]
+            how: right
+            drop_stash: true
+        - stash_push_df: []
+        - use_df:
+            key: rl_day_salary_template_middle_table_tsf
+        - df_rename_columns:
+            - 站点ID: 站点ID补充
+        - stash_push_df: []
+        - stash_join_df:
+            on: [站点]
+            how: right
+            drop_stash: true
+        - df_fillna:
+            columns: [站点ID,站点,站点ID补充,站点补充]
+            value: '-'
+        - run_py:
+            - |
+              df=to_df(df)
+              df.index = range(len(df))
+              df.loc[(df['站点ID']=='-' )& (df['站点ID补充']!='-'),'站点ID']=df['站点ID补充']
+              df.loc[(df['站点']=='-') & (df['站点补充']!='-'),'站点']=df['站点补充']
+              result=to_dd(df)
+        - fetch_cols:
+            columns: [骑士ID,订单TC,meta_month,meta_day,骑士姓名,站点ID,站点]
+        - stash_push_df: []
+
+        - fetch_dataset:
+            template_code: rl_day_6
+            dataset_cate: raw
+            ignore_null_error: true
+            columns: [骑手Id,城市,身份证号码,姓名]
+            empty_df_record:
+              骑手Id: 'RIDER_ID_NULL'
+              城市: 'CITY_NULL'
+              身份证号码: 'ID_NULL'
+              姓名: '姓名'
+        - df_to_str:
+            - 身份证号码
+        - df_rename_columns:
+            - 骑手Id: 骑士ID
+              姓名: 骑士姓名
+        - df_to_str:
+            - 骑士ID
+#骑士ID在rl_day_6中非PK，需加上字段'骑士姓名'中名字的那部分，由于'骑士姓名'为名字、特殊字符和站点名称的组合，故用正则
+        - run_py:
+            - |
+              df['骑士姓名']=df['骑士姓名'].apply(  lambda x: 'unpaired' if re.search(r"[\u4e00-\u9fa5]+",x) is None   else x[re.search(r"[\u4e00-\u9fa5]+",x).start():re.search(r"[\u4e00-\u9fa5]+",x).end()]       )
+              result=df
+        - stash_push_df: []
+        - stash_join_df:
+            on: [ 骑士ID,骑士姓名 ]
+            how: right
+            drop_stash: true
+        - df_fillna:
+            columns: [城市,身份证号码,站点ID,站点]
+            value: '-'
+        - sort_by_columns:
+            sort_list: [城市,站点ID,站点,骑士ID,骑士姓名,身份证号码,订单TC,meta_day,meta_month]
+        - stash_push_df: []
+
+        - fetch_dataset:
+            dataset_type_code: aoao_knight_order_summary_daily
+            dataset_cate: std
+            columns: [ 骑手ID,门店名称,订单TC,归属日期,归属月份,门店ID ,骑手姓名,城市,身份证号码]
+            empty_df_record:
+              骑手ID: 'RIDER_ID_NULL'
+              门店名称: 'HOST_NULL'
+              门店ID: 'HOST_NULL'
+              订单TC: 0
+              归属日期: 19790101
+              归属月份: 197901
+              骑手姓名: 'RIDER_NAME_NULL'
+              身份证号码: 'ID_NULL'
+              城市: 'CITY_NULL'
+        - df_rename_columns:
+            - 门店名称: 站点
+              骑手ID: 骑士ID
+              归属日期: meta_day
+              归属月份: meta_month
+              门店ID: 站点ID
+              骑手姓名: 骑士姓名
+        - df_to_str:
+            - 站点ID
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,站点ID,站点,骑士姓名,城市,身份证号码 ]
+        - stash_push_df: []
+        - stash_concat_df:
+            drop_stash: True
+        - drop_duplicates:
+            subset: [ 骑士ID,订单TC,meta_month,meta_day,站点ID,站点,骑士姓名,城市,身份证号码 ]
+        - df_rename_columns:
+            - 骑士ID: 骑手ID
+              骑士姓名: 骑手姓名
+              身份证号码: 本人身份证号码
+              订单TC: 完成单量
+        - add_cols:
+            - 出勤天数: 1
+        - sort_by_columns:
+            sort_list: [城市,站点ID,站点,骑手ID,骑手姓名,本人身份证号码,完成单量,出勤天数,meta_month,meta_day]
+        - df_set_column_val_if:
+            column: 城市
+            condition: '([城市] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点ID
+            condition: '([站点ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点
+            condition: '([站点] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手ID
+            condition: '([骑手ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手姓名
+            condition: '([骑手姓名] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 本人身份证号码
+            condition: '([本人身份证号码] == @p1)  '
+            params:
+                p1: '-'
+            val:
+    - name: rl_worker_order_common_kpi_by_monthly_t2
+      sync_result: true
+      cooks:
+        - fetch_dataset:
+            dataset_type_code: rl_worker_order_common_kpi_by_daily_t2
+            dataset_cate: std
+        - df_fillna:
+            columns: [城市,站点ID,站点,骑手ID,骑手姓名,本人身份证号码]
+            value: '-'
+
+
+
+
+        - df_groupby:
+            by: [meta_month,站点ID,骑手ID,站点,城市,本人身份证号码,骑手姓名]
+        - df_sum:
+            column: [完成单量,出勤天数]
+        - df_reset_index: []
+        - sort_by_columns:
+            sort_list: [城市,站点ID,站点,骑手ID,骑手姓名,本人身份证号码,完成单量,出勤天数,meta_month]
+        - df_set_column_val_if:
+            column: 城市
+            condition: '([城市] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点ID
+            condition: '([站点ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点
+            condition: '([站点] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手ID
+            condition: '([骑手ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手姓名
+            condition: '([骑手姓名] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 本人身份证号码
+            condition: '([本人身份证号码] == @p1)  '
+            params:
+                p1: '-'
+            val:
+
+
+rl_monthly_env:
+  context_defaults:
+    platform_code: relian
+    play_on_dask_cluster: true
+    delay_compute: true
+    sync_result_from_cluster: true
+    dask_client_set_as_default: true
+    debug: true
+    cluster_client_address: 'dask-scheduler-service.databus:8786'
+  play:
+    - name: rl_worker_order_common_kpi_by_daily_month
+      sync_result: true
+      cooks:
+# 数据统计-骑士维度数据统计
+        - fetch_dataset:
+            template_code: rl_day_3
+            dataset_cate: raw
+            ignore_null_error: true
+            columns: [骑士ID,订单TC,meta_month,meta_day,骑士姓名]
+            empty_df_record:
+              骑士ID: 'RIDER_ID_NULL'
+              骑士姓名: 'RIDER_NAME_NULL'
+              站点: 'HOST_NULL'
+              订单TC: 0
+              meta_day: 19790101
+              meta_month: 197901
+#转float为str
+        - df_to_int:
+            - 骑士ID
+        - df_to_str:
+            - 骑士ID
+        - run_py:
+            - |
+              #从包含名字、特殊字符和ID的字符串字段'骑士姓名'中抽取站点ID和姓名
+              df['站点ID提取']=df['骑士姓名'].apply(  lambda x: 'unpaired' if re.search(r"[a-zA-Z0-9]+",x) is None   else x[re.search(r"[a-zA-Z0-9]+",x).start():re.search(r"[a-zA-Z0-9]+",x).end()]       )
+              df['骑士姓名']=df['骑士姓名'].apply(  lambda x: 'unpaired' if re.search(r"[\u4e00-\u9fa5]+",x) is None   else x[re.search(r"[\u4e00-\u9fa5]+",x).start():re.search(r"[\u4e00-\u9fa5]+",x).end()]       )
+              result=df
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,站点ID提取,骑士姓名 ]
+        - df_rename_columns:
+            - 站点ID提取: 站点ID
+        - stash_push_df: []
+
+####对于抽取到的站点ID，用转换表中的（站点ID,站点）对进行转换
+# 骑手ID-城市+身份证号_转换表
+        - fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            ignore_null_error: true
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+        - when_empty_fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            month_offset: -1
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+            empty_df_record:
+              骑手ID: 'RIDER_ID_NULL'
+              站点ID: 'HOST_ID_NULL'
+              站点名称: 'HOST_NAME_NULL'
+              骑手姓名: 'RIDER_NAME_NULL'
+        - df_rename_columns:
+            - 骑手ID: 骑士ID
+              站点名称: 站点
+              站点ID: 站点ID
+              骑手姓名: 骑手姓名23
+        - df_to_str:
+            - 骑士ID
+        - df_fillna:
+            columns: [站点ID,站点]
+            value: '-'
+        - fetch_cols:
+            columns: [站点ID,站点]
+        - drop_duplicates:
+            subset: [站点ID,站点]
+        - stash_push_df: []
+        - stash_join_df:
+            on: [站点ID]
+            how: right
+            drop_stash: true
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,骑士姓名,站点ID,站点]
+        - df_fillna:
+            columns: [站点]
+            value: '-'
+###至此，能抽到ID且能匹配上的都匹配上了，其他匹配不上的都带了'-'
+        - stash_push_df: []
+
+
+####对于未抽取到的站点ID，用转换表中的（骑士ID,站点ID,站点）对进行转换
+# 骑手ID-城市+身份证号_转换表
+        - fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+            ignore_null_error: true
+
+        - when_empty_fetch_dataset:
+            template_code: rl_month_23
+            dataset_cate: raw
+            month_offset: -1
+            ignore_null_error: true
+            columns: [ 骑手ID,站点ID,站点名称,骑手姓名]
+            empty_df_record:
+              骑手ID: 'RIDER_ID_NULL'
+              站点ID: 'HOST_ID_NULL'
+              站点名称: 'HOST_NAME_NULL'
+              骑手姓名: 'RIDER_NAME_NULL'
+        - df_rename_columns:
+            - 骑手ID: 骑士ID
+              站点名称: 站点23
+              站点ID: 站点ID23
+              骑手姓名: 骑手姓名23
+        - df_to_str:
+            - 骑士ID
+        - df_fillna:
+            columns: [站点ID23,站点23,骑手姓名23,骑士ID]
+            value: '-'
+        - stash_push_df: []
+        - stash_join_df:
+            on: [骑士ID]
+            how: right
+            drop_stash: true
+        - run_py:
+            - |
+              df=to_df(df).copy()
+              df.index = range(len(df))
+              df.loc[df['站点ID']=='unpaired','站点']=df['站点23']
+              df.loc[df['站点ID']=='unpaired','站点ID'  ]=df['站点ID23']
+              df.loc[df['骑士姓名']=='unpaired','骑士姓名']=df['骑手姓名23']
+              result=to_dd(df)
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,骑士姓名,站点ID,站点]
+        - df_fillna:
+            columns: [站点ID,站点,骑士姓名]
+            value: '-'
+        - push_dataset:
+            key: rl_day_salary_template_middle_table_useless
+
+
+##基于现有（站点ID,站点）对，对相同站点ID和相同站点但另一字段缺失的字段补全
+        - use_df:
+            key: rl_day_salary_template_middle_table_useless
+        - fetch_cols:
+            columns: [站点,站点ID]
+        - df_select:
+            - '[站点] != @p1 &[站点ID]!=@p1'
+            - p1: '-'
+        - drop_duplicates:
+            subset: [站点ID,站点 ]
+        - push_dataset:
+            key: rl_day_salary_template_middle_table_tsf
+
+
+        - use_df:
+            key: rl_day_salary_template_middle_table_useless
+        - stash_push_df: []
+        - use_df:
+            key: rl_day_salary_template_middle_table_tsf
+        - df_rename_columns:
+            - 站点: 站点补充
+        - stash_push_df: []
+        - stash_join_df:
+            on: [站点ID]
+            how: right
+            drop_stash: true
+        - stash_push_df: []
+        - use_df:
+            key: rl_day_salary_template_middle_table_tsf
+        - df_rename_columns:
+            - 站点ID: 站点ID补充
+        - stash_push_df: []
+        - stash_join_df:
+            on: [站点]
+            how: right
+            drop_stash: true
+        - df_fillna:
+            columns: [站点ID,站点,站点ID补充,站点补充]
+            value: '-'
+        - run_py:
+            - |
+              df=to_df(df)
+              df.index = range(len(df))
+              df.loc[(df['站点ID']=='-' )& (df['站点ID补充']!='-'),'站点ID']=df['站点ID补充']
+              df.loc[(df['站点']=='-') & (df['站点补充']!='-'),'站点']=df['站点补充']
+              result=to_dd(df)
+        - fetch_cols:
+            columns: [骑士ID,订单TC,meta_month,meta_day,骑士姓名,站点ID,站点]
+        - stash_push_df: []
+
+        - fetch_dataset:
+            template_code: rl_day_6
+            dataset_cate: raw
+
+            ignore_null_error: true
+            columns: [骑手Id,城市,身份证号码,姓名]
+            empty_df_record:
+              骑手Id: 'RIDER_ID_NULL'
+              城市: 'CITY_NULL'
+              身份证号码: 'ID_NULL'
+              姓名: '姓名'
+        - df_to_str:
+            - 身份证号码
+        - df_rename_columns:
+            - 骑手Id: 骑士ID
+              姓名: 骑士姓名
+        - df_to_str:
+            - 骑士ID
+#骑士ID在rl_day_6中非PK，需加上字段'骑士姓名'中名字的那部分，由于'骑士姓名'为名字、特殊字符和站点名称的组合，故用正则
+        - run_py:
+            - |
+              df['骑士姓名']=df['骑士姓名'].apply(  lambda x: 'unpaired' if re.search(r"[\u4e00-\u9fa5]+",x) is None   else x[re.search(r"[\u4e00-\u9fa5]+",x).start():re.search(r"[\u4e00-\u9fa5]+",x).end()]       )
+              result=df
+        - stash_push_df: []
+        - stash_join_df:
+            on: [ 骑士ID,骑士姓名 ]
+            how: right
+            drop_stash: true
+        - df_fillna:
+            columns: [城市,身份证号码,站点ID,站点]
+            value: '-'
+        - sort_by_columns:
+            sort_list: [城市,站点ID,站点,骑士ID,骑士姓名,身份证号码,订单TC,meta_day,meta_month]
+        - stash_push_df: []
+
+        - fetch_dataset:
+            dataset_type_code: aoao_knight_order_summary_daily
+            dataset_cate: std
+
+            columns: [ 骑手ID,门店名称,订单TC,归属日期,归属月份,门店ID ,骑手姓名,城市,身份证号码]
+            empty_df_record:
+              骑手ID: 'RIDER_ID_NULL'
+              门店名称: 'HOST_NULL'
+              门店ID: 'HOST_NULL'
+              订单TC: 0
+              归属日期: 19790101
+              归属月份: 197901
+              骑手姓名: 'RIDER_NAME_NULL'
+              身份证号码: 'ID_NULL'
+              城市: 'CITY_NULL'
+        - df_rename_columns:
+            - 门店名称: 站点
+              骑手ID: 骑士ID
+              归属日期: meta_day
+              归属月份: meta_month
+              门店ID: 站点ID
+              骑手姓名: 骑士姓名
+        - df_to_str:
+            - 站点ID
+        - fetch_cols:
+            columns: [ 骑士ID,订单TC,meta_month,meta_day,站点ID,站点,骑士姓名,城市,身份证号码 ]
+        - stash_push_df: []
+        - stash_concat_df:
+            drop_stash: True
+        - drop_duplicates:
+            subset: [ 骑士ID,订单TC,meta_month,meta_day,站点ID,站点,骑士姓名,城市,身份证号码 ]
+        - df_rename_columns:
+            - 骑士ID: 骑手ID
+              骑士姓名: 骑手姓名
+              身份证号码: 本人身份证号码
+              订单TC: 完成单量
+        - add_cols:
+            - 出勤天数: 1
+        - sort_by_columns:
+            sort_list: [城市,站点ID,站点,骑手ID,骑手姓名,本人身份证号码,完成单量,出勤天数,meta_month,meta_day]
+        - df_set_column_val_if:
+            column: 城市
+            condition: '([城市] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点ID
+            condition: '([站点ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点
+            condition: '([站点] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手ID
+            condition: '([骑手ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手姓名
+            condition: '([骑手姓名] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 本人身份证号码
+            condition: '([本人身份证号码] == @p1)  '
+            params:
+                p1: '-'
+            val:
+    - name: rl_worker_order_common_kpi_by_monthly_month
+      sync_result: true
+      cooks:
+        - fetch_dataset:
+            dataset_type_code: rl_worker_order_common_kpi_by_daily_month
+            dataset_cate: std
+        - df_fillna:
+            columns: [ 城市,站点ID,站点,骑手ID,骑手姓名,本人身份证号码 ]
+            value: '-'
+        - df_groupby:
+            by: [meta_month,站点ID,骑手ID,站点,城市,本人身份证号码,骑手姓名]
+        - df_sum:
+            column: [完成单量,出勤天数]
+        - df_reset_index: []
+        - sort_by_columns:
+            sort_list: [城市,站点ID,站点,骑手ID,骑手姓名,本人身份证号码,完成单量,出勤天数,meta_month]
+        - df_set_column_val_if:
+            column: 城市
+            condition: '([城市] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点ID
+            condition: '([站点ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 站点
+            condition: '([站点] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手ID
+            condition: '([骑手ID] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 骑手姓名
+            condition: '([骑手姓名] == @p1)  '
+            params:
+                p1: '-'
+            val:
+        - df_set_column_val_if:
+            column: 本人身份证号码
+            condition: '([本人身份证号码] == @p1)  '
+            params:
+                p1: '-'
+            val:

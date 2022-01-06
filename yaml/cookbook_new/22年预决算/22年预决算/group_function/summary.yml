@@ -1,0 +1,184 @@
+
+dataset_vis:
+  vis_grid:
+    columns: []
+    row_sort:
+      sort_orders: []
+      sort_by: index
+
+dataset_pipeline:
+#  - df_select:
+#      - '[industry_id] == @v1 & [platform_id] in @v2'
+#      - v1: 集团职能
+  - add_cols:
+      - jituan: 集团职能汇总
+
+  - pivot_table:
+      values: money
+      index: [ac_code, ac_name]
+      columns: [jituan]
+      aggfunc: sum
+
+  - row_pad_value_by_index:
+      index_col: ac_code
+      pad_values:
+        Q-30102: 0
+        Q-30109: 0
+        Q-30106: 0
+        Q-3020101: 0
+        Q-3020102: 0
+        Q-30301: 0
+        Q-30302: 0
+        Q-30206: 0
+        Q-30203: 0
+        Q-30204: 0
+        Q-30205: 0
+        Q-30202: 0
+        Q-30208: 0
+        Q-30209: 0
+        Q-30211: 0
+        Q-30212: 0
+        Q-30207: 0
+        Q-400: 0
+        Q-500: 0
+        Q-600: 0
+        Q-700: 0
+        Q-800: 0
+        Q-900: 0
+
+  - df_fillna:
+      value: 0.0
+
+  - row_eval_by_index:
+      exp_str: |
+                {{QS-301}} = {{Q-30102}} + {{Q-30109}} + {{Q-30106}}
+                {{QS-30201}} = {{Q-3020101}} + {{Q-3020102}}
+                {{QS-3023}} = {{Q-30301}} + {{Q-30302}} + {{Q-30206}} + {{Q-30203}} + {{Q-30205}} + {{Q-30202}} + {{Q-30208}} + {{Q-30209}} + {{Q-30204}} + {{Q-30211}} + {{Q-30212}}
+                {{QS-3013}} = {{QS-301}} + {{QS-30201}} + {{QS-3023}} + {{Q-30207}}
+                {{QS-10000}} = {{QS-3013}} - {{Q-400}} - {{Q-500}} + {{Q-600}} + {{Q-700}} - {{Q-800}} - {{Q-900}}
+
+      index_col: ac_code
+      exclude_cols: [ac_name]
+      target_rows:
+        - index: QS-3013
+          cols:
+            ac_name: 管理费用
+        - index: QS-301
+          cols:
+            ac_name: 人员成本
+        - index: Q-30102
+          cols:
+            ac_name: 工资
+        - index: Q-30109
+          cols:
+            ac_name: 社保公积金
+        - index: Q-30106
+          cols:
+            ac_name: 残保金
+        - index: QS-30201
+          cols:
+            ac_name: 房屋费用
+        - index: Q-3020101
+          cols:
+            ac_name: 房屋租金
+        - index: Q-3020102
+          cols:
+            ac_name: 房屋其他费用
+        - index: QS-3023
+          cols:
+            ac_name: 办公管理费用
+        - index: Q-30301
+          cols:
+            ac_name: 低值易耗品摊销
+        - index: Q-30302
+          cols:
+            ac_name: 固定资产折旧
+        - index: Q-30206
+          cols:
+            ac_name: 办公费
+        - index: Q-30203
+          cols:
+            ac_name: 差旅费
+        - index: Q-30204
+          cols:
+            ac_name: 市内交通费
+        - index: Q-30205
+          cols:
+            ac_name: 招待费
+        - index: Q-30202
+          cols:
+            ac_name: 团建福利费
+        - index: Q-30208
+          cols:
+            ac_name: 印花税
+        - index: Q-30209
+          cols:
+            ac_name: 佣金
+        - index: Q-30211
+          cols:
+            ac_name: 招聘费用
+        - index: Q-30212
+          cols:
+            ac_name: 其他
+        - index: Q-30207
+          cols:
+            ac_name: 咨询费
+        - index: Q-400
+          cols:
+            ac_name: 财务费用
+        - index: Q-500
+          cols:
+            ac_name: 资产减值损失
+        - index: Q-600
+          cols:
+            ac_name: 投资收益
+        - index: Q-700
+          cols:
+            ac_name: 营业外收入
+        - index: Q-800
+          cols:
+            ac_name: 营业外支出
+        - index: Q-900
+          cols:
+            ac_name: 所得税
+        - index: QS-10000
+          cols:
+            ac_name: 利润
+
+  - sort_by_index:
+      sort_list: [QS-3013, QS-301, Q-30102, Q-30109, Q-30106, QS-30201, Q-3020101, Q-3020102, QS-3023, Q-30301, Q-30302, Q-30206, Q-30203, Q-30204, Q-30205, Q-30202, Q-30208, Q-30209, Q-30211, Q-30212, Q-30207, Q-400, Q-500, Q-600, Q-700, Q-800, Q-900, QS-10000]
+
+#  - row_int_format_by_index:
+#      index_rows: []
+#
+#  - row_float_format_by_index:
+#      index_rows: []
+#
+#  - row_pct_format_by_index:
+#      index_rows: []
+
+  - row_money_format_by_index:
+      index_rows: [QS-3013, QS-301, Q-30102, Q-30109, Q-30106, QS-30201, Q-3020101, Q-3020102, QS-3023, Q-30301, Q-30302, Q-30206, Q-30203, Q-30204, Q-30205, Q-30202, Q-30208, Q-30209, Q-30211, Q-30212, Q-30207, Q-400, Q-500, Q-600, Q-700, Q-800, Q-900, QS-10000]
+
+  - df_rename_columns:
+      - ac_code: 科目编号
+        ac_name: 科目名称
+
+  - run_py:
+      - |
+        df = to_df(df)
+        df['科目等级'] = ['一级','二级','三级','三级','三级','二级','三级','三级','二级','三级','三级','三级','三级','三级','三级','三级','三级','三级','三级','三级','一级','一级','一级','一级','一级','一级','一级','一级']
+        result = df
+
+  - fetch_cols:
+      columns: [科目名称, 科目编号, 集团职能汇总, 科目等级]
+
+  - sort_by_columns:
+      sort_list: [科目名称, 科目编号, 集团职能汇总, 科目等级]
+
+  - df_fillna:
+      value: 0.0
+
+datasource:
+  query: {}
+  datasource_type: qcode_biz_dataset
